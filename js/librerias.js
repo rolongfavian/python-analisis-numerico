@@ -1,6 +1,6 @@
 /* ============================================
    librerias.js — Tienda de librerías Python
-   v3 - Integrada con Google Drive (sync entre dispositivos)
+   v4 - Parser robusto de la API de PyScript
    ============================================ */
 
 (function () {
@@ -86,7 +86,7 @@
   }
 
   // ============================================================
-  // CACHÉ DEL CATÁLOGO
+  // CACHÉ
   // ============================================================
   function leerCacheCatalogo() {
     try {
@@ -107,6 +107,42 @@
         paquetes: paquetes
       }));
     } catch (e) {}
+  }
+
+  // ============================================================
+  // PARSER ROBUSTO DE LA API
+  // ============================================================
+  /**
+   * La API de PyScript devuelve paquetes con estructura variable.
+   * Este parser intenta extraer name/summary de cualquier formato.
+   */
+  function parsearPaquete(p) {
+    if (!p || typeof p !== 'object') return null;
+
+    // Caso 1: la API anida todo dentro de "package"
+    const base = p.package && typeof p.package === 'object' ? p.package : p;
+
+    // Extraer nombre: prioriza "name", luego "package_name", luego "pypi_name"
+    const nombre = base.name || base.package_name || base.pypi_name || p.name || p.package_name;
+    if (!nombre || typeof nombre !== 'string') return null;
+
+    // Extraer resumen
+    const summary = base.summary || base.description || p.summary || p.description || '';
+
+    // Extraer categoría
+    const category = base.category || p.category || 'Populares en PyPI';
+
+    // Extraer estado de compatibilidad (varios formatos posibles)
+    const status = base.status || p.status || base.state || p.state;
+    const isGreen = !status || status === 'green' || status === 'supported' || status === 'compatible';
+
+    return {
+      name: String(nombre).trim(),
+      summary: String(summary).trim(),
+      category: String(category).trim(),
+      _status: status,
+      _isGreen: isGreen
+    };
   }
 
   // ============================================================
@@ -132,22 +168,41 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
-      const paquetes = (data.packages || [])
-        .filter(p => p.status === 'green')
-        .map(p => ({
-          name: p.name,
-          summary: p.summary || '',
-          category: 'Populares en PyPI'
-        }));
+      // Detectar array de paquetes en cualquier propiedad
+      let crudos = [];
+      if (Array.isArray(data)) {
+        crudos = data;
+      } else if (Array.isArray(data.packages)) {
+        crudos = data.packages;
+      } else if (Array.isArray(data.data)) {
+        crudos = data.data;
+      } else if (Array.isArray(data.results)) {
+        crudos = data.results;
+      }
 
-      if (paquetes.length > 0) {
-        catalogoActual = paquetes;
-        guardarCacheCatalogo(paquetes);
+      // Parsear todos y filtrar los válidos
+      const paquetes = crudos
+        .map(parsearPaquete)
+        .filter(p => p && p.name && p.name.length > 0 && p.name !== 'undefined');
+
+      // Priorizar los compatibles verdes si hay info de status
+      const tieneStatus = paquetes.some(p => p._status);
+      const filtrados = tieneStatus
+        ? paquetes.filter(p => p._isGreen)
+        : paquetes;
+
+      if (filtrados.length > 0) {
+        catalogoActual = filtrados.map(p => ({
+          name: p.name,
+          summary: p.summary,
+          category: p.category
+        }));
+        guardarCacheCatalogo(catalogoActual);
         cargando = false;
         renderCatalogo();
         return;
       }
-      throw new Error('API vacía');
+      throw new Error('API sin paquetes válidos');
     } catch (e) {
       console.warn('[tienda] API no disponible, uso catálogo local:', e.message);
     }
@@ -171,9 +226,10 @@
   function filtrarCatalogo() {
     const q = filtroTexto.trim().toLowerCase();
     return catalogoActual.filter(p => {
+      if (!p.name) return false;
       if (filtroCategoria !== 'Todas' && p.category !== filtroCategoria) return false;
       if (!q) return true;
-      return (p.name || '').toLowerCase().includes(q)
+      return p.name.toLowerCase().includes(q)
         || (p.summary || '').toLowerCase().includes(q);
     });
   }
@@ -251,6 +307,11 @@
   // ============================================================
   async function instalarDesdeTienda(nombre, boton) {
     const result = document.getElementById('libs-result');
+
+    if (!nombre || nombre === 'undefined') {
+      if (result) result.innerHTML = '<div class="libs-msg error">Nombre de paquete inválido.</div>';
+      return;
+    }
 
     if (typeof window.instalarPaquetePyodide !== 'function') {
       if (result) result.innerHTML = '<div class="libs-msg error">Pyodide aún no está listo. Espera unos segundos.</div>';
