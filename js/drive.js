@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v4 - Con importación de archivos
+   v5 - Layout fijo, salir, enlace público, recordar sesión
    ============================================ */
 
 (function () {
@@ -91,6 +91,9 @@
 
           await refreshFileList();
           if (window.guardado) window.guardado.intentarSubirTodo();
+
+          // Guardar sesión
+          marcarSesionConectada();
           showToast('Conectado a Google Drive');
         } catch (e) {
           showToast('Error al preparar carpeta: ' + e.message, true);
@@ -142,6 +145,92 @@
   }
 
   // ============================================================
+  // RECORDAR SESIÓN
+  // ============================================================
+
+  function marcarSesionConectada() {
+    localStorage.setItem('drive_connected', '1');
+    localStorage.setItem('drive_last_connect', Date.now());
+  }
+
+  function haySesionGuardada() {
+    return localStorage.getItem('drive_connected') === '1';
+  }
+
+  async function intentarReconectarSilencioso() {
+    if (!haySesionGuardada()) return;
+    if (typeof google === 'undefined' || !google.accounts) {
+      setTimeout(intentarReconectarSilencioso, 2000);
+      return;
+    }
+
+    try {
+      const client = google.accounts.oauth2.initTokenClient({
+        client_id: CLIENT_ID,
+        scope: SCOPES,
+        prompt: 'none',
+        callback: async (response) => {
+          if (response.error) {
+            console.log('[drive] Reconexión silenciosa falló');
+            return;
+          }
+          driveToken = response.access_token;
+          guestMode = false;
+
+          try {
+            await ensureDriveFolder();
+            updateDriveStatus(true);
+
+            const gw = document.getElementById('guest-warning');
+            if (gw) gw.style.display = 'none';
+
+            const setup = document.getElementById('drive-setup');
+            const layout = document.getElementById('env-layout');
+            if (setup) setup.style.display = 'none';
+            if (layout) layout.style.display = 'grid';
+
+            await refreshFileList();
+            if (window.guardado) window.guardado.intentarSubirTodo();
+            showToast('Sesión restaurada');
+          } catch (e) {
+            console.log('[drive] Error en reconexión:', e);
+          }
+        }
+      });
+      client.requestAccessToken();
+    } catch (e) {
+      console.log('[drive] No se pudo reconectar silenciosamente:', e);
+    }
+  }
+
+  function salirDrive() {
+    if (!confirm('¿Quieres salir? Los archivos en Drive se quedan guardados.')) return;
+
+    driveToken = null;
+    driveFolderId = null;
+    guestMode = false;
+    currentFileId = null;
+    currentFileName = null;
+
+    localStorage.removeItem('drive_connected');
+    localStorage.removeItem('drive_last_connect');
+
+    const layout = document.getElementById('env-layout');
+    const setup = document.getElementById('drive-setup');
+    if (layout) layout.style.display = 'none';
+    if (setup) setup.style.display = 'block';
+
+    if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+      editorsMap['env-editor'].setValue('');
+    }
+    const fnInput = document.getElementById('env-filename');
+    if (fnInput) fnInput.value = 'nuevo.ipynb';
+
+    updateDriveStatus(false);
+    showToast('Sesión cerrada');
+  }
+
+  // ============================================================
   // MODO INVITADO
   // ============================================================
 
@@ -149,6 +238,9 @@
     guestMode = true;
     driveToken = null;
     updateDriveStatus(false);
+
+    localStorage.removeItem('drive_connected');
+    localStorage.removeItem('drive_last_connect');
 
     const setup = document.getElementById('drive-setup');
     const layout = document.getElementById('env-layout');
@@ -879,6 +971,8 @@
     box.dataset.fileId = fileId;
     document.querySelectorAll('#modal-share .radio-option').forEach(o => o.classList.remove('selected'));
     document.querySelector('#modal-share .radio-option[data-role="reader"]').classList.add('selected');
+    const resDiv = document.getElementById('share-link-result');
+    if (resDiv) resDiv.style.display = 'none';
     abrirModal('modal-share');
   }
 
@@ -923,6 +1017,74 @@
       }
     } catch (e) {
       showToast('Error: ' + e.message, true);
+    }
+  }
+
+  async function generarEnlaceCompartido() {
+    const box = document.getElementById('modal-share');
+    if (!box) return;
+    const fileId = box.dataset.fileId;
+    const rolSelected = document.querySelector('#modal-share .radio-option.selected');
+    if (!fileId || !rolSelected) { showToast('Error: no hay archivo seleccionado', true); return; }
+
+    const role = rolSelected.dataset.role;
+
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${fileId}/permissions`,
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + driveToken,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            type: 'anyone',
+            role: role
+          })
+        }
+      );
+
+      if (!res.ok) {
+        const err = await res.json();
+        showToast('Error: ' + (err.error?.message || 'no se pudo generar el enlace'), true);
+        return;
+      }
+
+      const infoRes = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${fileId}?fields=webViewLink`,
+        { headers: { 'Authorization': 'Bearer ' + driveToken } }
+      );
+      const info = await infoRes.json();
+      const link = info.webViewLink || '';
+
+      const resultDiv = document.getElementById('share-link-result');
+      const input = document.getElementById('share-link-input');
+      if (resultDiv && input) {
+        input.value = link;
+        resultDiv.style.display = 'block';
+      }
+      showToast('Enlace generado (' + (role === 'reader' ? 'solo lectura' : 'puede editar') + ')');
+    } catch (e) {
+      showToast('Error: ' + e.message, true);
+    }
+  }
+
+  function copiarEnlaceAlPortapapeles() {
+    const input = document.getElementById('share-link-input');
+    if (!input) return;
+    input.select();
+    input.setSelectionRange(0, 99999);
+    try {
+      navigator.clipboard.writeText(input.value).then(() => {
+        showToast('Enlace copiado al portapapeles');
+      }).catch(() => {
+        document.execCommand('copy');
+        showToast('Enlace copiado');
+      });
+    } catch (e) {
+      document.execCommand('copy');
+      showToast('Enlace copiado');
     }
   }
 
@@ -1346,6 +1508,7 @@
   // ============================================================
   window.connectDrive = connectDrive;
   window.activarModoInvitado = activarModoInvitado;
+  window.salirDrive = salirDrive;
   window.refreshFileList = refreshFileList;
   window.navigateTo = navigateTo;
   window.navigateToPath = navigateToPath;
@@ -1369,6 +1532,8 @@
   window.confirmarCompartir = confirmarCompartir;
   window.confirmarMover = confirmarMover;
   window.seleccionarRolShare = seleccionarRolShare;
+  window.generarEnlaceCompartido = generarEnlaceCompartido;
+  window.copiarEnlaceAlPortapapeles = copiarEnlaceAlPortapapeles;
   window.cerrarModal = cerrarModal;
   window.cerrarTodosLosModales = cerrarTodosLosModales;
   window.marcarCambio = marcarCambio;
@@ -1386,5 +1551,10 @@
         editorsMap['env-editor'].on('change', marcarCambio);
       }
     }, 1000);
+  });
+
+  // Intentar reconectar al cargar
+  window.addEventListener('load', () => {
+    setTimeout(intentarReconectarSilencioso, 3000);
   });
 })();

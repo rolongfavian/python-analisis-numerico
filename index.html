@@ -91,6 +91,9 @@ window.MathJax = {
       <button onclick="refreshFileList()" title="Recargar">
         <span class="material-symbols-outlined">refresh</span>
       </button>
+      <button onclick="salirDrive()" title="Salir" class="danger">
+        <span class="material-symbols-outlined">logout</span> Salir
+      </button>
     </div>
     <input type="file" id="import-input" accept=".ipynb,.py" style="display:none" onchange="importarArchivo(event)">
     <ul class="env-files" id="env-file-list">
@@ -237,8 +240,10 @@ window.MathJax = {
   <div class="modal-box">
     <h3>Compartir</h3>
     <p>Comparte <strong id="share-name">archivo</strong> con otra persona. Necesita una cuenta de Google.</p>
+
     <label for="share-email">Correo electrónico</label>
     <input type="email" id="share-email" placeholder="correo@gmail.com">
+
     <label>Permisos</label>
     <div class="radio-group">
       <div class="radio-option selected" data-role="reader" onclick="seleccionarRolShare(this)">
@@ -250,9 +255,26 @@ window.MathJax = {
         Puede editar
       </div>
     </div>
+
     <div class="actions">
       <button onclick="cerrarModal('modal-share')">Cancelar</button>
-      <button class="primary" onclick="confirmarCompartir()">Compartir</button>
+      <button class="primary" onclick="confirmarCompartir()">Compartir con correo</button>
+    </div>
+
+    <div style="margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
+      <label>Enlace público para copiar</label>
+      <p style="font-size: 0.75rem; color: var(--text-dim); margin: 0.3rem 0 0.6rem;">
+        Cualquiera con el enlace podrá abrirlo (necesita cuenta de Google). El permiso será el mismo que elegiste arriba.
+      </p>
+      <button class="primary" onclick="generarEnlaceCompartido()" style="width: 100%;">
+        <span class="material-symbols-outlined">link</span> Generar enlace
+      </button>
+      <div id="share-link-result" style="display:none; margin-top: 0.8rem;">
+        <input type="text" id="share-link-input" readonly style="width: 100%; font-size: 0.75rem; padding: 8px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 4px; color: var(--text); margin-bottom: 6px;">
+        <button onclick="copiarEnlaceAlPortapapeles()" style="width: 100%;">
+          <span class="material-symbols-outlined">content_copy</span> Copiar enlace
+        </button>
+      </div>
     </div>
   </div>
 </div>
