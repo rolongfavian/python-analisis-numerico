@@ -138,6 +138,9 @@ window.MathJax = {
     <button id="btn-show-output" onclick="mostrarOutput()" title="Mostrar salida">
       <span class="material-symbols-outlined">expand_less</span> Mostrar salida
     </button>
+    <button id="btn-clear-output" onclick="limpiarOutputEnv()" title="Limpiar salida">
+      <span class="material-symbols-outlined">delete_sweep</span> Limpiar
+    </button>
   </div>
 </div>
 </div>
@@ -322,9 +325,7 @@ window.MathJax = {
   </div>
 </div>
 
-<!-- ============================================================
-     MODAL TIENDA DE LIBRERÍAS
-     ============================================================ -->
+<!-- Modal de la tienda -->
 <div class="modal-overlay" id="modal-libs" onclick="if(event.target===this) cerrarModalLibrerias()">
   <div class="modal-box modal-libs" style="max-width: 680px;">
     <div class="libs-header">

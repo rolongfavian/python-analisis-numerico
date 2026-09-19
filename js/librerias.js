@@ -1,6 +1,6 @@
 /* ============================================
    librerias.js — Tienda de librerías Python
-   v4 - Parser robusto de la API de PyScript
+   v5 - Parser robusto + catálogo curado + sync Drive
    ============================================ */
 
 (function () {
@@ -10,6 +10,7 @@
   const CACHE_KEY = 'libs_catalogo_cache';
   const CACHE_TTL = 24 * 60 * 60 * 1000;
 
+  // Catálogo curado (fallback si la API falla)
   const CATALOGO_LOCAL = [
     { name: 'numpy',           summary: 'Álgebra lineal y arrays multidimensionales',                  category: 'Cálculo numérico' },
     { name: 'scipy',           summary: 'Métodos numéricos: integración, optimización, EDOs',         category: 'Cálculo numérico' },
@@ -102,37 +103,23 @@
 
   function guardarCacheCatalogo(paquetes) {
     try {
-      localStorage.setItem(CACHE_KEY, JSON.stringify({
-        ts: Date.now(),
-        paquetes: paquetes
-      }));
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ ts: Date.now(), paquetes }));
     } catch (e) {}
   }
 
   // ============================================================
-  // PARSER ROBUSTO DE LA API
+  // PARSER ROBUSTO
   // ============================================================
-  /**
-   * La API de PyScript devuelve paquetes con estructura variable.
-   * Este parser intenta extraer name/summary de cualquier formato.
-   */
   function parsearPaquete(p) {
     if (!p || typeof p !== 'object') return null;
-
-    // Caso 1: la API anida todo dentro de "package"
     const base = p.package && typeof p.package === 'object' ? p.package : p;
 
-    // Extraer nombre: prioriza "name", luego "package_name", luego "pypi_name"
     const nombre = base.name || base.package_name || base.pypi_name || p.name || p.package_name;
     if (!nombre || typeof nombre !== 'string') return null;
+    if (nombre === 'undefined' || nombre.trim() === '') return null;
 
-    // Extraer resumen
     const summary = base.summary || base.description || p.summary || p.description || '';
-
-    // Extraer categoría
     const category = base.category || p.category || 'Populares en PyPI';
-
-    // Extraer estado de compatibilidad (varios formatos posibles)
     const status = base.status || p.status || base.state || p.state;
     const isGreen = !status || status === 'green' || status === 'supported' || status === 'compatible';
 
@@ -168,28 +155,18 @@
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
-      // Detectar array de paquetes en cualquier propiedad
       let crudos = [];
-      if (Array.isArray(data)) {
-        crudos = data;
-      } else if (Array.isArray(data.packages)) {
-        crudos = data.packages;
-      } else if (Array.isArray(data.data)) {
-        crudos = data.data;
-      } else if (Array.isArray(data.results)) {
-        crudos = data.results;
-      }
+      if (Array.isArray(data)) crudos = data;
+      else if (Array.isArray(data.packages)) crudos = data.packages;
+      else if (Array.isArray(data.data)) crudos = data.data;
+      else if (Array.isArray(data.results)) crudos = data.results;
 
-      // Parsear todos y filtrar los válidos
       const paquetes = crudos
         .map(parsearPaquete)
-        .filter(p => p && p.name && p.name.length > 0 && p.name !== 'undefined');
+        .filter(p => p && p.name && p.name.length > 0);
 
-      // Priorizar los compatibles verdes si hay info de status
       const tieneStatus = paquetes.some(p => p._status);
-      const filtrados = tieneStatus
-        ? paquetes.filter(p => p._isGreen)
-        : paquetes;
+      const filtrados = tieneStatus ? paquetes.filter(p => p._isGreen) : paquetes;
 
       if (filtrados.length > 0) {
         catalogoActual = filtrados.map(p => ({
@@ -229,8 +206,7 @@
       if (!p.name) return false;
       if (filtroCategoria !== 'Todas' && p.category !== filtroCategoria) return false;
       if (!q) return true;
-      return p.name.toLowerCase().includes(q)
-        || (p.summary || '').toLowerCase().includes(q);
+      return p.name.toLowerCase().includes(q) || (p.summary || '').toLowerCase().includes(q);
     });
   }
 
@@ -246,7 +222,6 @@
     }
 
     const lista = filtrarCatalogo();
-
     if (lista.length === 0) {
       cont.innerHTML = '<div class="libs-empty">No hay librerías que coincidan con la búsqueda.</div>';
       return;
@@ -368,9 +343,7 @@
       renderCatalogo();
     }
 
-    setTimeout(() => {
-      if (search) search.focus();
-    }, 150);
+    setTimeout(() => { if (search) search.focus(); }, 150);
   }
 
   function cerrarModalLibrerias() {
@@ -379,7 +352,7 @@
   }
 
   // ============================================================
-  // LISTA DE INSTALADAS (CHIPS)
+  // INSTALADAS (CHIPS)
   // ============================================================
   function renderInstaladas() {
     const cont = document.getElementById('libs-instaladas');
@@ -412,7 +385,7 @@
   }
 
   // ============================================================
-  // REINSTALAR AL INICIAR
+  // REINSTALAR
   // ============================================================
   async function reinstalarAlIniciar() {
     const lista = leerInstaladas();
@@ -436,7 +409,7 @@
   }
 
   // ============================================================
-  // SINCRONIZACIÓN CON DRIVE
+  // SYNC CON DRIVE
   // ============================================================
   async function sincronizarLibreriasAlConectar() {
     if (typeof window.leerLibreriasDrive !== 'function') return;
@@ -485,7 +458,7 @@
   }
 
   // ============================================================
-  // INICIALIZACIÓN
+  // INIT
   // ============================================================
   function init() {
     renderInstaladas();

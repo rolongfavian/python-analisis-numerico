@@ -1052,3 +1052,76 @@ li.CodeMirror-hint-active {
   }
   .env-toolbar button { padding: 5px 8px; }
 }
+
+/* ============================================================
+   IMÁGENES DE MATPLOTLIB EN EL OUTPUT
+   ============================================================ */
+.output-image-wrap {
+  margin: 10px 0;
+  text-align: center;
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+.output-image {
+  max-width: 100%;
+  height: auto;
+  display: block;
+  margin: 0 auto;
+  border-radius: 4px;
+}
+.output-error {
+  color: var(--danger);
+  background: var(--danger-soft);
+  padding: 10px 12px;
+  border-radius: 5px;
+  border-left: 3px solid var(--danger);
+  margin: 0 0 8px 0;
+  white-space: pre-wrap;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
+.output-text {
+  margin: 0 0 8px 0;
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+/* Botón limpiar output */
+#btn-clear-output {
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text-dim);
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 20;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+}
+#btn-clear-output:hover {
+  background: var(--bg-input);
+  border-color: var(--accent-dim);
+  color: var(--accent);
+}
+#btn-clear-output .material-symbols-outlined { font-size: 16px; }
+
+/* Ajuste: cuando el botón "Mostrar salida" está visible,
+   movemos el botón de limpiar a la izquierda */
+#btn-show-output.visible ~ #btn-clear-output {
+  right: auto;
+  left: 8px;
+}

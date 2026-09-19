@@ -1,16 +1,12 @@
 /* ============================================
    codemirror.js — Editores + autocompletado + linter
-   v3 - Fase 1 (hint auto, móvil+escritorio) + Fase 2 (linter Pyodide)
+   v4 - Linter amigable (no marca imports como error)
    ============================================ */
 
 (function () {
   'use strict';
 
-  // ============================================================
-  // FRAGMENTOS DE CÓDIGO PYTHON (autocompletado)
-  // ============================================================
   const PYTHON_SNIPPETS = [
-    // Estructuras de control
     { text: 'if condicion:\n    pass', displayText: 'if condicion:' },
     { text: 'if condicion:\n    pass\nelse:\n    pass', displayText: 'if/else' },
     { text: 'if condicion:\n    pass\nelif otra:\n    pass\nelse:\n    pass', displayText: 'if/elif/else' },
@@ -20,28 +16,20 @@
     { text: 'break', displayText: 'break' },
     { text: 'continue', displayText: 'continue' },
     { text: 'pass', displayText: 'pass' },
-
-    // Funciones y clases
     { text: 'def nombre(parametros):\n    return resultado', displayText: 'def nombre(...)' },
     { text: 'def __init__(self):\n    pass', displayText: 'def __init__(self)' },
     { text: 'lambda x: x', displayText: 'lambda x: x' },
     { text: 'class Nombre:\n    def __init__(self):\n        pass', displayText: 'class Nombre:' },
-
-    // Manejo de errores
     { text: 'try:\n    pass\nexcept Exception as e:\n    print(e)', displayText: 'try/except' },
     { text: 'try:\n    pass\nfinally:\n    pass', displayText: 'try/finally' },
     { text: 'raise ValueError("mensaje")', displayText: 'raise ValueError(...)' },
     { text: 'assert condicion, "mensaje"', displayText: 'assert condicion' },
-
-    // Imports comunes
     { text: 'import numpy as np', displayText: 'import numpy as np' },
     { text: 'import matplotlib.pyplot as plt', displayText: 'import matplotlib.pyplot as plt' },
     { text: 'import math', displayText: 'import math' },
     { text: 'from math import pi, e, sqrt', displayText: 'from math import ...' },
     { text: 'import random', displayText: 'import random' },
     { text: 'import time', displayText: 'import time' },
-
-    // Funciones built-in
     { text: 'print()', displayText: 'print(valor)' },
     { text: 'len(coleccion)', displayText: 'len(coleccion)' },
     { text: 'range(inicio, fin, paso)', displayText: 'range(...)' },
@@ -59,14 +47,10 @@
     { text: 'dict()', displayText: 'dict()' },
     { text: 'set()', displayText: 'set()' },
     { text: 'input("prompt: ")', displayText: 'input(prompt)' },
-
-    // Algoritmos numéricos comunes
     { text: 'def f(x):\n    return x**2 - 2', displayText: 'def f(x):' },
     { text: 'def df(x):\n    return 2*x', displayText: 'def df(x): (derivada)' },
     { text: 'abs(x - y) < 1e-9', displayText: 'abs(x - y) < tol' },
     { text: 'math.isclose(a, b, rel_tol=1e-9)', displayText: 'math.isclose(a, b)' },
-
-    // Palabras comunes
     { text: 'return', displayText: 'return' },
     { text: 'import', displayText: 'import' },
     { text: 'from', displayText: 'from' },
@@ -80,8 +64,6 @@
     { text: 'not', displayText: 'not' },
     { text: 'in', displayText: 'in' },
     { text: 'is', displayText: 'is' },
-
-    // Operadores y comodines
     { text: '==', displayText: '== (igual)' },
     { text: '!=', displayText: '!= (distinto)' },
     { text: '<=', displayText: '<= (menor o igual)' },
@@ -96,7 +78,7 @@
   ];
 
   // ============================================================
-  // AUTOCOMPLETADO PERSONALIZADO
+  // AUTOCOMPLETADO
   // ============================================================
   function pythonHint(editor) {
     const cur = editor.getCursor();
@@ -114,10 +96,7 @@
         const d = (s.displayText || s.text).toLowerCase();
         return t.startsWith(token) || d.startsWith(token) || t.includes(token);
       })
-      .map(s => ({
-        text: s.text,
-        displayText: s.displayText || s.text
-      }));
+      .map(s => ({ text: s.text, displayText: s.displayText || s.text }));
 
     if (list.length === 0) return null;
 
@@ -129,11 +108,11 @@
   }
 
   // ============================================================
-  // LINTER EN VIVO CON PYODIDE (Fase 2)
+  // LINTER
   // ============================================================
   const lintTimers = {};
   const lastLinted = {};
-  const LINT_DEBOUNCE_MS = 500;
+  const LINT_DEBOUNCE_MS = 700;
 
   function aplicarMarcasLint(editor, errors) {
     editor.clearGutter('CodeMirror-lint-markers');
@@ -146,7 +125,6 @@
 
     errors.forEach(err => {
       const line = Math.max(0, (err.line || 1) - 1);
-
       const marker = document.createElement('div');
       marker.className = 'cm-lint-marker';
       marker.title = err.message;
@@ -158,10 +136,7 @@
         const mark = editor.markText(
           CodeMirror.Pos(line, 0),
           CodeMirror.Pos(line, lineText.length),
-          {
-            className: 'cm-lint-underline',
-            title: err.message
-          }
+          { className: 'cm-lint-underline', title: err.message }
         );
         editor._lintMarks.push(mark);
       }
@@ -178,6 +153,8 @@
 
     try {
       pyodide.globals.set('__lint_code__', code);
+      // Solo verifica sintaxis con compile(). No importa módulos,
+      // por eso no marca "import pandas" como error aunque no esté instalado.
       const resultJson = await pyodide.runPythonAsync(`
 import json as __json__
 __lint_errors__ = []
@@ -218,7 +195,7 @@ __json__.dumps(__lint_errors__)
   }
 
   // ============================================================
-  // INICIALIZACIÓN DE EDITORES
+  // CREACIÓN DE EDITORES
   // ============================================================
   function createEditor(textarea) {
     const editor = CodeMirror.fromTextArea(textarea, {
@@ -245,10 +222,6 @@ __json__.dumps(__lint_errors__)
       }
     });
 
-    // --------------------------------------------------------
-    // DISPARO AUTOMÁTICO DEL AUTOCOMPLETADO
-    // Escritorio: inputRead. Móvil: beforeinput, keyup, compositionend.
-    // --------------------------------------------------------
     function triggerHint(cm) {
       if (cm.state.completionActive) return;
       clearTimeout(cm._hintTimer);
@@ -259,23 +232,17 @@ __json__.dumps(__lint_errors__)
             completeSingle: false,
             alignWithWord: true
           });
-        } catch (e) {
-          console.warn('[hint]', e);
-        }
+        } catch (e) { /* ignore */ }
       }, 60);
     }
 
-    // 1) Escritorio: inputRead
     editor.on('inputRead', (cm, change) => {
       if (change.origin !== '+input') return;
       const typed = change.text[0];
       if (!typed) return;
-      if (/[a-zA-Z0-9_.]/.test(typed)) {
-        triggerHint(cm);
-      }
+      if (/[a-zA-Z0-9_.]/.test(typed)) triggerHint(cm);
     });
 
-    // 2) Móvil / teclado virtual: beforeinput, keyup, compositionend
     const ta = editor.getInputField();
     if (ta) {
       ta.addEventListener('beforeinput', (e) => {
@@ -301,12 +268,8 @@ __json__.dumps(__lint_errors__)
       });
     }
 
-    // 3) Linter en vivo
-    editor.on('change', () => {
-      programarLint(editor, textarea.id);
-    });
-
-    setTimeout(() => programarLint(editor, textarea.id), 1200);
+    editor.on('change', () => programarLint(editor, textarea.id));
+    setTimeout(() => programarLint(editor, textarea.id), 1500);
 
     return editor;
   }
@@ -335,7 +298,6 @@ __json__.dumps(__lint_errors__)
     setTimeout(lintCuandoPyodideListo, 1500);
   }
 
-  // Exponer por si otro script quiere re-lintear
   window.reLintAll = () => {
     Object.entries(editorsMap).forEach(([id, ed]) => programarLint(ed, id));
   };
