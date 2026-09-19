@@ -1,5 +1,6 @@
 /* ============================================
    pyodide.js — Motor Python + ejecución de código
+   v2 - Emite evento 'pyodide-ready' al terminar la carga
    ============================================ */
 
 (function () {
@@ -17,6 +18,8 @@
         badge.innerText = "Entorno Python listo";
         badge.classList.add("status-ready");
       }
+      // Avisar al resto de scripts que Pyodide ya está disponible
+      window.dispatchEvent(new CustomEvent('pyodide-ready'));
     } catch (e) {
       if (badge) badge.innerText = "Error al cargar Python";
       console.error('[pyodide] Error:', e);

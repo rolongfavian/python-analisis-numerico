@@ -1,5 +1,6 @@
 /* ============================================
-   codemirror.js — Editores + autocompletado Python
+   codemirror.js — Editores + autocompletado + linter
+   v3 - Fase 1 (hint auto, móvil+escritorio) + Fase 2 (linter Pyodide)
    ============================================ */
 
 (function () {
@@ -97,10 +98,6 @@
   // ============================================================
   // AUTOCOMPLETADO PERSONALIZADO
   // ============================================================
-
-  /**
-   * Devuelve la lista de sugerencias que coincidan con el token actual.
-   */
   function pythonHint(editor) {
     const cur = editor.getCursor();
     const line = editor.getLine(cur.line);
@@ -109,7 +106,6 @@
     while (start && /[\w\.]/.test(line.charAt(start - 1))) start--;
     const token = line.slice(start, end).toLowerCase();
 
-    // Si no hay token, devolver lista vacía (para no molestar)
     if (!token || token.length < 1) return null;
 
     const list = PYTHON_SNIPPETS
@@ -133,12 +129,97 @@
   }
 
   // ============================================================
+  // LINTER EN VIVO CON PYODIDE (Fase 2)
+  // ============================================================
+  const lintTimers = {};
+  const lastLinted = {};
+  const LINT_DEBOUNCE_MS = 500;
+
+  function aplicarMarcasLint(editor, errors) {
+    editor.clearGutter('CodeMirror-lint-markers');
+    if (editor._lintMarks) {
+      editor._lintMarks.forEach(m => m.clear());
+    }
+    editor._lintMarks = [];
+
+    if (!errors || errors.length === 0) return;
+
+    errors.forEach(err => {
+      const line = Math.max(0, (err.line || 1) - 1);
+
+      const marker = document.createElement('div');
+      marker.className = 'cm-lint-marker';
+      marker.title = err.message;
+      marker.textContent = '⚠';
+      editor.setGutterMarker(line, 'CodeMirror-lint-markers', marker);
+
+      const lineText = editor.getLine(line) || '';
+      if (lineText.length > 0) {
+        const mark = editor.markText(
+          CodeMirror.Pos(line, 0),
+          CodeMirror.Pos(line, lineText.length),
+          {
+            className: 'cm-lint-underline',
+            title: err.message
+          }
+        );
+        editor._lintMarks.push(mark);
+      }
+    });
+  }
+
+  async function lintCode(code) {
+    if (typeof window.isPyodideReady !== 'function' || !window.isPyodideReady()) {
+      return null;
+    }
+    const pyodide = window.getPyodide();
+    if (!pyodide) return null;
+    if (!code || !code.trim()) return [];
+
+    try {
+      pyodide.globals.set('__lint_code__', code);
+      const resultJson = await pyodide.runPythonAsync(`
+import json as __json__
+__lint_errors__ = []
+try:
+    compile(__lint_code__, "<editor>", "exec")
+except SyntaxError as e:
+    __lint_errors__.append({
+        "line": e.lineno or 1,
+        "col": (e.offset or 1),
+        "message": str(e.msg or e)
+    })
+except Exception as e:
+    __lint_errors__.append({
+        "line": 1,
+        "col": 1,
+        "message": str(e)
+    })
+__json__.dumps(__lint_errors__)
+      `);
+      return JSON.parse(resultJson);
+    } catch (e) {
+      console.warn('[linter] Error inesperado:', e);
+      return [];
+    }
+  }
+
+  function programarLint(editor, editorId) {
+    clearTimeout(lintTimers[editorId]);
+    lintTimers[editorId] = setTimeout(async () => {
+      const code = editor.getValue();
+      if (lastLinted[editorId] === code) return;
+      lastLinted[editorId] = code;
+
+      const errors = await lintCode(code);
+      if (errors === null) return;
+      aplicarMarcasLint(editor, errors);
+    }, LINT_DEBOUNCE_MS);
+  }
+
+  // ============================================================
   // INICIALIZACIÓN DE EDITORES
   // ============================================================
-
-  /**
-   * Crea un editor CodeMirror a partir de un textarea.
-   */
   function createEditor(textarea) {
     const editor = CodeMirror.fromTextArea(textarea, {
       mode: 'python',
@@ -149,9 +230,9 @@
       lineWrapping: false,
       autoCloseBrackets: true,
       matchBrackets: true,
+      gutters: ['CodeMirror-linenumbers', 'CodeMirror-lint-markers'],
       extraKeys: {
         'Tab': (cm) => {
-          // Si hay sugerencias abiertas, Tab selecciona la actual
           if (cm.state.completionActive) {
             cm.state.completionActive.pick();
           } else {
@@ -164,38 +245,79 @@
       }
     });
 
-    // Mostrar sugerencias automáticamente al escribir ciertos caracteres
-    editor.on('inputRead', (cm, change) => {
-      if (change.origin !== '+input') return;
-      const typed = change.text[0];
-      // Disparar hint al escribir una letra o el punto
-      if (/[a-zA-Z_.]/.test(typed)) {
-        // Debounce: solo disparar si no estamos en medio de un hint
-        if (cm.state.completionActive) return;
-        clearTimeout(editor._hintTimer);
-        editor._hintTimer = setTimeout(() => {
+    // --------------------------------------------------------
+    // DISPARO AUTOMÁTICO DEL AUTOCOMPLETADO
+    // Escritorio: inputRead. Móvil: beforeinput, keyup, compositionend.
+    // --------------------------------------------------------
+    function triggerHint(cm) {
+      if (cm.state.completionActive) return;
+      clearTimeout(cm._hintTimer);
+      cm._hintTimer = setTimeout(() => {
+        try {
           cm.showHint({
             hint: pythonHint,
             completeSingle: false,
             alignWithWord: true
           });
-        }, 80);
+        } catch (e) {
+          console.warn('[hint]', e);
+        }
+      }, 60);
+    }
+
+    // 1) Escritorio: inputRead
+    editor.on('inputRead', (cm, change) => {
+      if (change.origin !== '+input') return;
+      const typed = change.text[0];
+      if (!typed) return;
+      if (/[a-zA-Z0-9_.]/.test(typed)) {
+        triggerHint(cm);
       }
     });
+
+    // 2) Móvil / teclado virtual: beforeinput, keyup, compositionend
+    const ta = editor.getInputField();
+    if (ta) {
+      ta.addEventListener('beforeinput', (e) => {
+        const data = e.data || '';
+        if (data && /[a-zA-Z0-9_.]/.test(data)) {
+          triggerHint(editor);
+        } else if (e.inputType === 'insertText' && !data) {
+          triggerHint(editor);
+        }
+      });
+
+      ta.addEventListener('keyup', (e) => {
+        if (e.key && e.key.length === 1 && /[a-zA-Z0-9_.]/.test(e.key)) {
+          triggerHint(editor);
+        }
+      });
+
+      ta.addEventListener('compositionend', (e) => {
+        const data = e.data || '';
+        if (data && /[a-zA-Z0-9_.]/.test(data.slice(-1))) {
+          triggerHint(editor);
+        }
+      });
+    }
+
+    // 3) Linter en vivo
+    editor.on('change', () => {
+      programarLint(editor, textarea.id);
+    });
+
+    setTimeout(() => programarLint(editor, textarea.id), 1200);
 
     return editor;
   }
 
-  /**
-   * Inicializa todos los editores de la página.
-   */
   function initEditors() {
     if (typeof editorsMap === 'undefined') {
       window.editorsMap = {};
     }
 
     document.querySelectorAll('textarea').forEach(textarea => {
-      if (editorsMap[textarea.id]) return; // ya inicializado
+      if (editorsMap[textarea.id]) return;
       const editor = createEditor(textarea);
       editorsMap[textarea.id] = editor;
     });
@@ -203,13 +325,29 @@
     console.log('[codemirror] Editores inicializados:', Object.keys(editorsMap).length);
   }
 
-  // Exponer globalmente el mapa de editores (para otros scripts)
   window.editorsMap = window.editorsMap || {};
 
-  // Inicializar cuando el DOM esté listo
+  function lintCuandoPyodideListo() {
+    if (typeof window.isPyodideReady === 'function' && window.isPyodideReady()) {
+      Object.entries(editorsMap).forEach(([id, ed]) => programarLint(ed, id));
+      return;
+    }
+    setTimeout(lintCuandoPyodideListo, 1500);
+  }
+
+  // Exponer por si otro script quiere re-lintear
+  window.reLintAll = () => {
+    Object.entries(editorsMap).forEach(([id, ed]) => programarLint(ed, id));
+  };
+  window.pythonHint = pythonHint;
+
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initEditors);
+    document.addEventListener('DOMContentLoaded', () => {
+      initEditors();
+      lintCuandoPyodideListo();
+    });
   } else {
     initEditors();
+    lintCuandoPyodideListo();
   }
 })();

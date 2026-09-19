@@ -1,6 +1,6 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v11 - Scroll solo bloqueado en vista Entorno
+   v12 - Autocompletado visible + linter en vivo
    ============================================ */
 
 .material-symbols-outlined {
@@ -613,6 +613,66 @@ li.CodeMirror-hint-active {
   background: var(--danger); color: white; border-color: var(--danger);
 }
 .modal-box .actions button.danger:hover { background: #d9694f; }
+
+/* ============================================================
+   AUTOCOMPLETADO (show-hint) — visibilidad garantizada
+   ============================================================ */
+.CodeMirror-hints {
+  position: absolute;
+  z-index: 9999 !important;
+  display: block;
+  max-height: 220px;
+  min-width: 180px;
+  overflow-y: auto;
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.45) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.82rem !important;
+  padding: 4px 0 !important;
+  list-style: none;
+  margin: 0;
+}
+.CodeMirror-hint {
+  padding: 6px 14px !important;
+  color: var(--text) !important;
+  white-space: pre;
+  cursor: pointer;
+}
+.CodeMirror-hint:hover {
+  background: var(--accent-soft) !important;
+}
+li.CodeMirror-hint-active {
+  background: var(--accent-dim) !important;
+  color: var(--bg) !important;
+}
+
+/* ============================================================
+   LINTER EN VIVO (Fase 2)
+   ============================================================ */
+.cm-lint-marker {
+  color: var(--danger);
+  font-family: var(--font-ui);
+  font-size: 14px;
+  line-height: 1;
+  text-align: center;
+  padding-top: 3px;
+  cursor: help;
+  user-select: none;
+}
+.CodeMirror-lint-markers {
+  width: 16px;
+}
+.cm-lint-underline {
+  text-decoration: underline wavy var(--danger);
+  text-decoration-skip-ink: none;
+  text-underline-offset: 3px;
+  background: rgba(244, 135, 113, 0.08);
+}
+[data-theme="light"] .cm-lint-underline {
+  background: rgba(199, 46, 15, 0.06);
+}
 
 /* ============================================================
    RESPONSIVE — Móvil
