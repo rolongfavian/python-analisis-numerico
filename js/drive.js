@@ -1,13 +1,13 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v6 - Toolbar colapsable + output redimensionable + reconexión mejorada
+   v7 - Sin reconexión automática (evita invalid_scope)
    ============================================ */
 
 (function () {
   'use strict';
 
   const CLIENT_ID = '420968434649-a5itml1n5ijtmin8fs1c5ug6bof0kv9o.apps.googleusercontent.com';
-  const SCOPES = 'https://www.googleapis.com/drive.file';
+  const SCOPES = 'https://www.googleapis.com/auth/drive.file';
   const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
   const MAX_IMPORT_MB = 5;
 
@@ -21,7 +21,6 @@
   let guestMode = false;
   let itemMenuTarget = null;
   let importacionPendiente = null;
-  let reconectando = false;
 
   // ============================================================
   // ICONOS
@@ -72,15 +71,12 @@
       scope: SCOPES,
       callback: async (response) => {
         if (response.error) {
-          if (!reconectando) showToast('Error: ' + response.error, true);
-          reconectando = false;
+          showToast('Error: ' + response.error, true);
           return;
         }
         driveToken = response.access_token;
         guestMode = false;
-        reconectando = false;
 
-        // Ocultar banner de reconexión
         const banner = document.getElementById('reconnect-banner');
         if (banner) banner.classList.remove('visible');
 
@@ -151,7 +147,7 @@
   }
 
   // ============================================================
-  // RECORDAR SESIÓN
+  // RECORDAR SESIÓN (solo bandera, sin reconexión automática)
   // ============================================================
 
   function marcarSesionConectada() {
@@ -161,62 +157,6 @@
 
   function haySesionGuardada() {
     return localStorage.getItem('drive_connected') === '1';
-  }
-
-  async function intentarReconectarSilencioso() {
-    if (!haySesionGuardada()) return;
-    if (typeof google === 'undefined' || !google.accounts) {
-      setTimeout(intentarReconectarSilencioso, 2000);
-      return;
-    }
-
-    try {
-      reconectando = true;
-      const client = google.accounts.oauth2.initTokenClient({
-        client_id: CLIENT_ID,
-        scope: SCOPES,
-        prompt: '',  // ← permite popup si es necesario, silencioso si no
-        callback: async (response) => {
-          if (response.error) {
-            console.log('[drive] Reconexión falló:', response.error);
-            reconectando = false;
-            // Mostrar banner para reconectar manualmente
-            mostrarBannerReconectar();
-            return;
-          }
-          driveToken = response.access_token;
-          guestMode = false;
-          reconectando = false;
-
-          const banner = document.getElementById('reconnect-banner');
-          if (banner) banner.classList.remove('visible');
-
-          try {
-            await ensureDriveFolder();
-            updateDriveStatus(true);
-
-            const gw = document.getElementById('guest-warning');
-            if (gw) gw.style.display = 'none';
-
-            const setup = document.getElementById('drive-setup');
-            const layout = document.getElementById('env-layout');
-            if (setup) setup.style.display = 'none';
-            if (layout) layout.style.display = 'grid';
-
-            await refreshFileList();
-            if (window.guardado) window.guardado.intentarSubirTodo();
-            marcarSesionConectada();
-            showToast('Sesión restaurada');
-          } catch (e) {
-            console.log('[drive] Error en reconexión:', e);
-          }
-        }
-      });
-      client.requestAccessToken();
-    } catch (e) {
-      reconectando = false;
-      console.log('[drive] No se pudo reconectar:', e);
-    }
   }
 
   function mostrarBannerReconectar() {
@@ -1250,7 +1190,6 @@
     icon.innerText = isCollapsed ? 'expand_more' : 'expand_less';
     localStorage.setItem('toolbar_collapsed', isCollapsed ? '1' : '0');
 
-    // Refrescar CodeMirror por si cambió el tamaño
     if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
       setTimeout(() => editorsMap['env-editor'].refresh(), 250);
     }
@@ -1275,7 +1214,6 @@
     const output = document.getElementById('env-output');
     if (!resizer || !output) return;
 
-    // Restaurar altura guardada
     const savedHeight = localStorage.getItem('output_height');
     if (savedHeight) {
       output.style.height = savedHeight + 'px';
@@ -1315,12 +1253,10 @@
       }
     }
 
-    // Ratón
     resizer.addEventListener('mousedown', (e) => { e.preventDefault(); onStart(e.clientY); });
     document.addEventListener('mousemove', (e) => onMove(e.clientY));
     document.addEventListener('mouseup', onEnd);
 
-    // Táctil
     resizer.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
       e.preventDefault();
@@ -1467,7 +1403,13 @@
     }, 1000);
   });
 
+  // Al cargar la página: mostrar banner si hay sesión guardada pero no token activo
+  // NO se intenta reconectar automáticamente (evita el error invalid_scope)
   window.addEventListener('load', () => {
-    setTimeout(intentarReconectarSilencioso, 3000);
+    setTimeout(() => {
+      if (haySesionGuardada() && !driveToken) {
+        mostrarBannerReconectar();
+      }
+    }, 2000);
   });
 })();
