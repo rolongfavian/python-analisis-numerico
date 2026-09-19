@@ -31,6 +31,20 @@
   }
 
   /**
+   * Fuerza a MathJax a procesar el LaTeX de un elemento.
+   */
+  function renderMath(element) {
+    if (!element) return;
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([element]).catch((err) => {
+        console.warn('[guia] MathJax error:', err);
+      });
+    } else if (window.MathJax && window.MathJax.typeset) {
+      window.MathJax.typeset([element]);
+    }
+  }
+
+  /**
    * Renderiza un nivel completo en el contenedor.
    */
   function renderLevel(container, data) {
@@ -48,7 +62,6 @@
         html += `<p class="level-desc">${nivel.descripcion}</p>`;
       }
 
-      // Renderizar cada comando
       (nivel.comandos || []).forEach((cmd, i) => {
         html += renderCommand(cmd, nivel.id, i);
       });
@@ -57,6 +70,9 @@
     });
 
     container.innerHTML = html;
+
+    // Renderizar LaTeX
+    renderMath(container);
 
     // Crear los editores CodeMirror después de insertar el HTML
     setTimeout(() => {
@@ -78,7 +94,6 @@
           });
           textarea._cmInitialized = true;
 
-          // Registrar en editorsMap global
           if (typeof editorsMap !== 'undefined') {
             editorsMap[textarea.id] = editor;
           }
@@ -94,7 +109,6 @@
     const id = `cmd-${levelId}-${index}`;
     let html = `<div class="cmd-card" id="${id}">`;
 
-    // Header (clickeable)
     html += `<div class="cmd-header" onclick="toggleCmd('${id}')">`;
     html += `<div class="cmd-title">`;
     if (cmd.nombre) {
@@ -105,7 +119,6 @@
     }
     html += `</div>`;
 
-    // Badges de capas
     html += `<div class="cmd-badges">`;
     if (cmd.basico) html += `<span class="cmd-badge badge-basic">Básico</span>`;
     if (cmd.intermedio) html += `<span class="cmd-badge badge-inter">+ Info</span>`;
@@ -115,10 +128,8 @@
     html += `<span class="cmd-chevron">▶</span>`;
     html += `</div>`;
 
-    // Body (oculto por defecto)
     html += `<div class="cmd-body">`;
 
-    // Capa 1: Básico
     if (cmd.basico) {
       html += `<div class="cmd-layer cmd-layer-basic">`;
       html += `<div class="cmd-layer-title">Qué es y cómo se usa</div>`;
@@ -126,7 +137,6 @@
       html += `</div>`;
     }
 
-    // Capa 2: Intermedio
     if (cmd.intermedio) {
       html += `<div class="cmd-layer cmd-layer-inter">`;
       html += `<div class="cmd-layer-title">Profundizando</div>`;
@@ -134,7 +144,6 @@
       html += `</div>`;
     }
 
-    // Capa 3: Avanzado
     if (cmd.avanzado) {
       html += `<div class="cmd-layer cmd-layer-advanced">`;
       html += `<div class="cmd-layer-title">Nivel técnico</div>`;
@@ -142,7 +151,6 @@
       html += `</div>`;
     }
 
-    // Editor opcional
     if (cmd.codigo) {
       const editorId = `ed-${id}`;
       const outId = `out-${id}`;
@@ -168,6 +176,11 @@
     const card = document.getElementById(id);
     if (!card) return;
     card.classList.toggle('expanded');
+
+    // Re-procesar MathJax si la tarjeta se acaba de expandir
+    if (card.classList.contains('expanded')) {
+      renderMath(card);
+    }
   }
 
   /**
