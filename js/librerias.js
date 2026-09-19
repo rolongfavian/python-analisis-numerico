@@ -1,6 +1,6 @@
 /* ============================================
    librerias.js — Tienda de librerías Python
-   v2 - Catálogo con API de PyScript + filtro + categorías
+   v3 - Integrada con Google Drive (sync entre dispositivos)
    ============================================ */
 
 (function () {
@@ -8,20 +8,14 @@
 
   const STORAGE_KEY = 'libs_instaladas';
   const CACHE_KEY = 'libs_catalogo_cache';
-  const CACHE_TTL = 24 * 60 * 60 * 1000; // 24h
+  const CACHE_TTL = 24 * 60 * 60 * 1000;
 
-  // ============================================================
-  // CATÁLOGO LOCAL (fallback si falla la API)
-  // ============================================================
   const CATALOGO_LOCAL = [
-    // Cálculo numérico
     { name: 'numpy',           summary: 'Álgebra lineal y arrays multidimensionales',                  category: 'Cálculo numérico' },
     { name: 'scipy',           summary: 'Métodos numéricos: integración, optimización, EDOs',         category: 'Cálculo numérico' },
     { name: 'sympy',           summary: 'Matemática simbólica: derivadas, integrales, ecuaciones',     category: 'Cálculo numérico' },
     { name: 'mpmath',          summary: 'Aritmética de precisión arbitraria',                        category: 'Cálculo numérico' },
     { name: 'numpy-financial', summary: 'Funciones financieras vectorizadas',                        category: 'Cálculo numérico' },
-
-    // Datos y gráficos
     { name: 'pandas',          summary: 'DataFrames y análisis de datos tabulares',                  category: 'Datos y gráficos' },
     { name: 'matplotlib',      summary: 'Gráficos 2D y 3D de calidad de publicación',                category: 'Datos y gráficos' },
     { name: 'plotly',          summary: 'Gráficos interactivos en el navegador',                     category: 'Datos y gráficos' },
@@ -29,14 +23,10 @@
     { name: 'altair',          summary: 'Gramática declarativa de gráficos',                         category: 'Datos y gráficos' },
     { name: 'seaborn',         summary: 'Gráficos estadísticos sobre matplotlib',                    category: 'Datos y gráficos' },
     { name: 'geopandas',       summary: 'Datos geoespaciales con pandas',                            category: 'Datos y gráficos' },
-
-    // Estadística y ML
     { name: 'scikit-learn',    summary: 'Machine learning clásico: clasificación, regresión, clustering', category: 'Estadística y ML' },
     { name: 'statsmodels',     summary: 'Modelos estadísticos y tests de hipótesis',                 category: 'Estadística y ML' },
     { name: 'networkx',        summary: 'Análisis de grafos y redes complejas',                      category: 'Estadística y ML' },
     { name: 'astropy',         summary: 'Astronomía y física de partículas',                         category: 'Estadística y ML' },
-
-    // Utilidades
     { name: 'regex',           summary: 'Expresiones regulares avanzadas',                           category: 'Utilidades' },
     { name: 'python-dateutil', summary: 'Fechas y horas con parsing avanzado',                       category: 'Utilidades' },
     { name: 'pytz',            summary: 'Zonas horarias del mundo',                                  category: 'Utilidades' },
@@ -51,16 +41,13 @@
     { name: 'micropip',        summary: 'Gestor de paquetes para Pyodide (ya incluido)',              category: 'Utilidades' }
   ];
 
-  // ============================================================
-  // ESTADO
-  // ============================================================
   let catalogoActual = [];
   let filtroTexto = '';
   let filtroCategoria = 'Todas';
   let cargando = false;
 
   // ============================================================
-  // PERSISTENCIA LOCAL
+  // PERSISTENCIA
   // ============================================================
   function leerInstaladas() {
     try {
@@ -70,20 +57,32 @@
     }
   }
 
-  function guardarInstaladas(lista) {
+  function guardarInstaladasLocal(lista) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(lista));
   }
 
-  function agregarInstalada(nombre) {
-    const lista = leerInstaladas();
-    if (!lista.includes(nombre)) {
-      lista.push(nombre);
-      guardarInstaladas(lista);
+  async function guardarInstaladas(lista) {
+    guardarInstaladasLocal(lista);
+    if (typeof window.guardarLibreriasDrive === 'function') {
+      try {
+        await window.guardarLibreriasDrive(lista);
+      } catch (e) {
+        console.warn('[tienda] No se pudo sincronizar con Drive:', e);
+      }
     }
   }
 
-  function quitarInstalada(nombre) {
-    guardarInstaladas(leerInstaladas().filter(x => x !== nombre));
+  async function agregarInstalada(nombre) {
+    const lista = leerInstaladas();
+    if (!lista.includes(nombre)) {
+      lista.push(nombre);
+      await guardarInstaladas(lista);
+    }
+  }
+
+  async function quitarInstalada(nombre) {
+    const lista = leerInstaladas().filter(x => x !== nombre);
+    await guardarInstaladas(lista);
   }
 
   // ============================================================
@@ -107,20 +106,17 @@
         ts: Date.now(),
         paquetes: paquetes
       }));
-    } catch (e) {
-      // localStorage lleno, ignorar
-    }
+    } catch (e) {}
   }
 
   // ============================================================
-  // CARGA DEL CATÁLOGO (API + fallback local)
+  // CARGA DEL CATÁLOGO
   // ============================================================
   async function cargarCatalogo(forzar) {
     if (cargando) return;
     cargando = true;
     renderCatalogo();
 
-    // 1) Intentar caché primero
     if (!forzar) {
       const cache = leerCacheCatalogo();
       if (cache && cache.length > 0) {
@@ -131,13 +127,11 @@
       }
     }
 
-    // 2) Intentar API
     try {
       const res = await fetch('https://packages.pyscript.net/api/top_100_pypi_packages.json');
       if (!res.ok) throw new Error('HTTP ' + res.status);
       const data = await res.json();
 
-      // Filtrar los soportados (status === "green")
       const paquetes = (data.packages || [])
         .filter(p => p.status === 'green')
         .map(p => ({
@@ -158,14 +152,13 @@
       console.warn('[tienda] API no disponible, uso catálogo local:', e.message);
     }
 
-    // 3) Fallback local
     catalogoActual = CATALOGO_LOCAL.slice();
     cargando = false;
     renderCatalogo();
   }
 
   // ============================================================
-  // RENDERIZADO DE LA TIENDA
+  // RENDERIZADO
   // ============================================================
   function getCategorias() {
     const set = new Set(['Todas']);
@@ -189,7 +182,6 @@
     const cont = document.getElementById('libs-catalogo');
     if (!cont) return;
 
-    // Renderizar chips de categorías
     renderCategorias();
 
     if (cargando) {
@@ -255,7 +247,7 @@
   }
 
   // ============================================================
-  // INSTALAR DESDE LA TIENDA
+  // INSTALAR
   // ============================================================
   async function instalarDesdeTienda(nombre, boton) {
     const result = document.getElementById('libs-result');
@@ -276,7 +268,7 @@
       boton.textContent = '✓ Instalado';
       boton.classList.remove('instalando');
       boton.classList.add('instalado');
-      agregarInstalada(nombre);
+      await agregarInstalada(nombre);
       renderInstaladas();
       window.dispatchEvent(new CustomEvent('libreria-instalada', { detail: { nombre } }));
     } else {
@@ -309,7 +301,6 @@
     renderInstaladas();
     modal.classList.add('open');
 
-    // Cargar catálogo (con caché si existe)
     if (catalogoActual.length === 0) {
       cargarCatalogo(false);
     } else {
@@ -348,9 +339,9 @@
       del.type = 'button';
       del.title = 'Quitar de la lista';
       del.textContent = '×';
-      del.addEventListener('click', (e) => {
+      del.addEventListener('click', async (e) => {
         e.stopPropagation();
-        quitarInstalada(nombre);
+        await quitarInstalada(nombre);
         renderInstaladas();
         renderCatalogo();
       });
@@ -381,6 +372,47 @@
       }
     }
     console.log('[tienda] Reinstalación terminada.');
+  }
+
+  // ============================================================
+  // SINCRONIZACIÓN CON DRIVE
+  // ============================================================
+  async function sincronizarLibreriasAlConectar() {
+    if (typeof window.leerLibreriasDrive !== 'function') return;
+
+    console.log('[tienda] Leyendo librerías del Drive…');
+    const listaDrive = await window.leerLibreriasDrive();
+
+    if (listaDrive === null) {
+      const listaLocal = leerInstaladas();
+      if (listaLocal.length > 0) {
+        console.log('[tienda] Subiendo lista local a Drive:', listaLocal);
+        await window.guardarLibreriasDrive(listaLocal);
+      }
+      return;
+    }
+
+    const listaLocal = leerInstaladas();
+    const fusion = Array.from(new Set([...listaLocal, ...listaDrive]));
+
+    if (fusion.length !== listaLocal.length) {
+      console.log('[tienda] Fusionando listas (local + Drive):', fusion);
+      guardarInstaladasLocal(fusion);
+      renderInstaladas();
+      renderCatalogo();
+
+      const esperarPyodide = () => new Promise(resolve => {
+        if (window.isPyodideReady && window.isPyodideReady()) return resolve();
+        window.addEventListener('pyodide-ready', resolve, { once: true });
+      });
+      await esperarPyodide();
+
+      for (const nombre of fusion) {
+        if (!listaLocal.includes(nombre)) {
+          await window.instalarPaquetePyodide(nombre);
+        }
+      }
+    }
   }
 
   // ============================================================
@@ -424,4 +456,5 @@
   window.abrirModalLibrerias = abrirModalLibrerias;
   window.cerrarModalLibrerias = cerrarModalLibrerias;
   window.cargarCatalogo = cargarCatalogo;
+  window.sincronizarLibreriasAlConectar = sincronizarLibreriasAlConectar;
 })();

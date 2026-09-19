@@ -1,6 +1,6 @@
 /* ============================================
-   drive.js — Google Drive + explorador de archivos
-   v11 - Editor min-height garantizado + output 180px
+   drive.js — Google Drive + explorador + sync librerías
+   v12 - Sincronización de librerías con Drive
    ============================================ */
 
 (function () {
@@ -12,6 +12,7 @@
   const MAX_IMPORT_MB = 5;
   const MIN_OUTPUT_HEIGHT = 180;
   const MIN_EDITOR_HEIGHT = 200;
+  const LIBS_FILE_NAME = '__librerias__.json';
 
   let driveToken = null;
   let driveFolderId = null;
@@ -23,6 +24,7 @@
   let guestMode = false;
   let itemMenuTarget = null;
   let importacionPendiente = null;
+  let libsFileId = null;
 
   // ============================================================
   // ICONOS
@@ -56,6 +58,10 @@
   function isEditableFile(name) {
     const n = (name || '').toLowerCase();
     return n.endsWith('.ipynb') || n.endsWith('.py');
+  }
+
+  function esArchivoOculto(nombre) {
+    return nombre === LIBS_FILE_NAME;
   }
 
   // ============================================================
@@ -96,6 +102,11 @@
 
           await refreshFileList();
           if (window.guardado) window.guardado.intentarSubirTodo();
+
+          // Sincronizar librerías con Drive
+          if (window.sincronizarLibreriasAlConectar) {
+            window.sincronizarLibreriasAlConectar();
+          }
 
           marcarSesionConectada();
           showToast('Conectado a Google Drive');
@@ -149,6 +160,111 @@
   }
 
   // ============================================================
+  // SINCRONIZACIÓN DE LIBRERÍAS CON DRIVE
+  // ============================================================
+
+  async function buscarArchivoLibrerias() {
+    if (!driveToken || !driveFolderId) return null;
+    const q = encodeURIComponent(
+      `name='${LIBS_FILE_NAME}' and '${driveFolderId}' in parents and trashed=false`
+    );
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
+        { headers: { 'Authorization': 'Bearer ' + driveToken } }
+      );
+      const data = await res.json();
+      return data.files && data.files.length > 0 ? data.files[0].id : null;
+    } catch (e) {
+      console.warn('[drive] Error buscando __librerias__.json:', e);
+      return null;
+    }
+  }
+
+  async function leerLibreriasDrive() {
+    if (!driveToken || !driveFolderId) return null;
+    try {
+      libsFileId = await buscarArchivoLibrerias();
+      if (!libsFileId) return null;
+
+      const res = await fetch(
+        `https://www.googleapis.com/drive/v3/files/${libsFileId}?alt=media`,
+        { headers: { 'Authorization': 'Bearer ' + driveToken } }
+      );
+      if (!res.ok) return null;
+      const data = await res.json();
+      return Array.isArray(data.instaladas) ? data.instaladas : [];
+    } catch (e) {
+      console.warn('[drive] Error leyendo __librerias__.json:', e);
+      return null;
+    }
+  }
+
+  async function guardarLibreriasDrive(lista) {
+    if (!driveToken || !driveFolderId) return false;
+    const contenido = JSON.stringify({
+      instaladas: lista,
+      fecha: new Date().toISOString()
+    });
+
+    try {
+      if (!libsFileId) {
+        libsFileId = await buscarArchivoLibrerias();
+      }
+
+      let res;
+      if (libsFileId) {
+        res = await fetch(
+          `https://www.googleapis.com/upload/drive/v3/files/${libsFileId}?uploadType=media`,
+          {
+            method: 'PATCH',
+            headers: {
+              'Authorization': 'Bearer ' + driveToken,
+              'Content-Type': 'application/json'
+            },
+            body: contenido
+          }
+        );
+      } else {
+        const boundary = 'foo_bar';
+        const metadata = {
+          name: LIBS_FILE_NAME,
+          mimeType: 'application/json',
+          parents: [driveFolderId]
+        };
+        const body =
+          `--${boundary}\r\n` +
+          `Content-Type: application/json\r\n\r\n` +
+          `${JSON.stringify(metadata)}\r\n` +
+          `--${boundary}\r\n` +
+          `Content-Type: application/json\r\n\r\n` +
+          `${contenido}\r\n` +
+          `--${boundary}--`;
+
+        res = await fetch(
+          'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+          {
+            method: 'POST',
+            headers: {
+              'Authorization': 'Bearer ' + driveToken,
+              'Content-Type': `multipart/related; boundary=${boundary}`
+            },
+            body
+          }
+        );
+        if (res.ok) {
+          const data = await res.json();
+          libsFileId = data.id;
+        }
+      }
+      return res.ok;
+    } catch (e) {
+      console.warn('[drive] Error guardando __librerias__.json:', e);
+      return false;
+    }
+  }
+
+  // ============================================================
   // SESIÓN
   // ============================================================
 
@@ -174,6 +290,7 @@
     guestMode = false;
     currentFileId = null;
     currentFileName = null;
+    libsFileId = null;
 
     localStorage.removeItem('drive_connected');
     localStorage.removeItem('drive_last_connect');
@@ -376,6 +493,9 @@
     if (!ul) return;
     ul.innerHTML = '';
 
+    // Filtrar archivos ocultos (__librerias__.json)
+    files = files.filter(f => !esArchivoOculto(f.name));
+
     if (files.length === 0) {
       ul.innerHTML = '<li class="empty">Carpeta vacía</li>';
       return;
@@ -432,12 +552,10 @@
     refreshFileList();
   }
 
-
-   function renderBreadcrumb() {
+  function renderBreadcrumb() {
     const bc = document.getElementById('env-breadcrumb');
     if (!bc) return;
 
-    // Construir el path (solo la parte izquierda)
     let pathHtml = `<a onclick="navigateTo('root')">🏠 Raíz</a>`;
     currentFolderPath.forEach((f, i) => {
       pathHtml += ` <span class="sep">/</span> `;
@@ -448,7 +566,6 @@
       }
     });
 
-    // Reconstruir TODO el breadcrumb, incluyendo el botón ampliar
     bc.innerHTML = `
       <div class="breadcrumb-path">${pathHtml}</div>
       <button class="btn-expand-sidebar" onclick="toggleExpandSidebar()" title="Ampliar explorador">
@@ -456,13 +573,13 @@
       </button>
     `;
 
-    // Si el explorador estaba ampliado, mantener el icono correcto
     const sidebar = document.getElementById('env-sidebar');
     const icon = document.getElementById('expand-icon');
     if (sidebar && icon && sidebar.classList.contains('expanded')) {
       icon.innerText = 'close';
     }
   }
+
   // ============================================================
   // CREAR
   // ============================================================
@@ -1195,7 +1312,7 @@
   }
 
   // ============================================================
-  // TOOLBAR COLAPSABLE (con protección de editor)
+  // TOOLBAR COLAPSABLE
   // ============================================================
 
   function toggleToolbar() {
@@ -1217,7 +1334,6 @@
       }
     }
 
-    // Refrescar CodeMirror después del cambio de layout
     if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
       setTimeout(() => {
         try { editorsMap['env-editor'].refresh(); } catch (e) {}
@@ -1280,16 +1396,14 @@
   }
 
   // ============================================================
-  // DIVISOR REDIMENSIONABLE (con límites)
+  // DIVISOR REDIMENSIONABLE
   // ============================================================
 
   function initResizer() {
     const resizer = document.getElementById('output-resizer');
     const output = document.getElementById('env-output');
-    const editorWrap = document.querySelector('.env-editor-wrap');
     if (!resizer || !output) return;
 
-    // Restaurar altura guardada, pero nunca menor al mínimo
     const savedHeight = parseInt(localStorage.getItem('output_height'), 10);
     if (savedHeight && savedHeight >= MIN_OUTPUT_HEIGHT) {
       output.style.height = savedHeight + 'px';
@@ -1314,7 +1428,6 @@
       const delta = startY - y;
       let newHeight = startHeight + delta;
 
-      // Calcular máximo permitido para no comerse el editor
       const mainRect = document.querySelector('.env-main').getBoundingClientRect();
       const toolbarRect = document.querySelector('.env-toolbar').getBoundingClientRect();
       const maxOutput = mainRect.height - toolbarRect.height - MIN_EDITOR_HEIGHT - 20;
@@ -1479,6 +1592,8 @@
   window.toggleOutput = toggleOutput;
   window.getDriveToken = () => driveToken;
   window.buildIpynb = buildIpynb;
+  window.leerLibreriasDrive = leerLibreriasDrive;
+  window.guardarLibreriasDrive = guardarLibreriasDrive;
 
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
