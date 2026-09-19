@@ -1,6 +1,6 @@
 /* ============================================
    buscador.js — Buscador global de la guía
-   Indexa los 12 niveles + glosario y filtra en vivo
+   v3 - Fix: extrae número del id antes de showLevel
    ============================================ */
 
 (function () {
@@ -29,6 +29,17 @@
     { id: 11, titulo: 'Entorno de programación' },
     { id: 99, titulo: 'Glosario completo' }
   ];
+
+  // ============================================================
+  // UTILIDAD: extraer número de un id tipo "nivel-1" → 1
+  // ============================================================
+  function extraerNumeroNivel(id) {
+    if (typeof id === 'number') return id;
+    const s = String(id || '');
+    // Casos: "1", "nivel-1", "nivel-99", "nivel-0"
+    const m = s.match(/(\d+)$/);
+    return m ? parseInt(m[1], 10) : null;
+  }
 
   // ============================================================
   // CONSTRUCCIÓN DEL ÍNDICE
@@ -79,6 +90,13 @@
         if (!data.niveles) continue;
 
         data.niveles.forEach(n => {
+          // Normalizar el id a número
+          const numNivel = extraerNumeroNivel(n.id);
+          if (numNivel === null) {
+            console.warn('[buscador] Nivel sin id numérico:', n.id);
+            return;
+          }
+
           (n.comandos || []).forEach((cmd, i) => {
             const titulo = cmd.nombre || cmd.titulo || '';
             const textoBasico = stripHtml(cmd.basico);
@@ -87,7 +105,7 @@
             const textoTodo = [textoBasico, textoInter, textoAvanz].join(' ');
 
             nuevo.push({
-              nivelId: n.id,
+              nivelId: numNivel,          // ← número, no string
               nivelNumero: n.numero,
               nivelTitulo: n.titulo,
               comandoIndex: i,
@@ -99,7 +117,7 @@
           });
 
           nuevo.push({
-            nivelId: n.id,
+            nivelId: numNivel,
             nivelNumero: n.numero,
             nivelTitulo: n.titulo,
             comandoIndex: -1,
@@ -258,20 +276,35 @@
   }
 
   // ============================================================
-  // NAVEGACIÓN AL RESULTADO
+  // NAVEGACIÓN AL RESULTADO (CORREGIDO)
   // ============================================================
   async function irAResultado(item) {
     cerrarBuscador();
 
-    if (typeof switchView === 'function') switchView('guide');
-
-    if (typeof showLevel === 'function') {
-      await showLevel(item.nivelId);
+    // Validar que tenemos un nivelId numérico válido
+    const nivelNum = extraerNumeroNivel(item.nivelId);
+    if (nivelNum === null) {
+      console.error('[buscador] No se pudo extraer el número de nivel de:', item.nivelId);
+      if (typeof showToast === 'function') {
+        showToast('Error: no se pudo determinar el nivel', true);
+      }
+      return;
     }
 
+    // Cambiar a la vista Guía
+    if (typeof switchView === 'function') switchView('guide');
+
+    // Cargar el nivel (pasando el NÚMERO, no el id completo)
+    if (typeof showLevel === 'function') {
+      await showLevel(nivelNum);
+    } else {
+      console.warn('[buscador] showLevel no está definido');
+    }
+
+    // Esperar a que el DOM se actualice y luego navegar al comando
     setTimeout(() => {
       if (item.comandoIndex >= 0) {
-        const cardId = `cmd-${item.nivelId}-${item.comandoIndex}`;
+        const cardId = `cmd-${nivelNum}-${item.comandoIndex}`;
         const card = document.getElementById(cardId);
         if (card) {
           card.classList.add('expanded');
@@ -281,12 +314,15 @@
           setTimeout(() => {
             card.style.boxShadow = '';
           }, 1500);
+        } else {
+          // Fallback: buscar por texto si el id no coincide
+          console.warn('[buscador] No se encontró la tarjeta:', cardId);
         }
       } else {
-        const sec = document.getElementById('nivel-' + item.nivelId);
+        const sec = document.getElementById('nivel-' + nivelNum);
         if (sec) sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
       }
-    }, 400);
+    }, 500);
   }
 
   // ============================================================
