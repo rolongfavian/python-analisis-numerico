@@ -1,0 +1,67 @@
+{
+  "nivel": 2,
+  "niveles": [
+    {
+      "id": "nivel-2",
+      "numero": "2",
+      "titulo": "Tipos de datos",
+      "descripcion": "En Python, cada valor tiene un tipo. Un número no es lo mismo que un texto, y un booleano no es lo mismo que un decimal. Conocer los tipos es fundamental para entender qué puedes hacer y qué no con cada valor.",
+      "comandos": [
+        {
+          "nombre": "int",
+          "alias": "Números enteros",
+          "basico": "<p>Un <strong>int</strong> (integer, entero) es un número <strong>sin decimales</strong>. Puede ser positivo, negativo o cero.</p><div class='cmd-sintaxis'>x = 5\ny = -10\nz = 0</div><p>Se usan para contar cosas: número de iteraciones, cantidad de elementos, edades, etc.</p><p>Python reconoce automáticamente que un número sin punto decimal es un <code>int</code>.</p>",
+          "intermedio": "<p><strong>Operaciones con int:</strong></p><ul><li>Suma: <code>5 + 3 = 8</code></li><li>Resta: <code>5 - 3 = 2</code></li><li>Multiplicación: <code>5 * 3 = 15</code></li><li>División (da float): <code>5 / 2 = 2.5</code></li><li>División entera: <code>5 // 2 = 2</code></li><li>Módulo (resto): <code>5 % 2 = 1</code></li><li>Potencia: <code>5 ** 2 = 25</code></li></ul>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Tipo:</strong> la categoría del valor. Se puede consultar con <code>type(x)</code>.</li><li><strong>Entero:</strong> número sin parte decimal.</li><li><strong>Precisión ilimitada:</strong> los enteros de Python pueden ser tan grandes como la memoria lo permita. No tienen el límite de 32 o 64 bits de otros lenguajes.</li></ul></div><p><strong>Relación con matemáticas:</strong> los <code>int</code> representan a los números enteros $\\mathbb{Z} = \\{..., -2, -1, 0, 1, 2, ...\\}$.</p>",
+          "codigo": "# Enteros\nx = 5\ny = -10\nz = 0\n\nprint(\"x =\", x, \"| type:\", type(x).__name__)\nprint(\"y =\", y)\nprint(\"z =\", z)\n\n# Operaciones\nprint(\"5 + 3 =\", 5 + 3)\nprint(\"5 // 2 =\", 5 // 2)   # división entera\nprint(\"5 % 2 =\", 5 % 2)     # resto\nprint(\"5 ** 2 =\", 5 ** 2)   # potencia\n\n# Enteros grandes\nprint(\"2**100 =\", 2**100)",
+          "etiquetaCodigo": "int - números enteros"
+        },
+        {
+          "nombre": "float",
+          "alias": "Números con decimales",
+          "basico": "<p>Un <strong>float</strong> (floating point, punto flotante) es un número <strong>con decimales</strong>.</p><div class='cmd-sintaxis'>x = 3.14\ny = -0.5\nz = 2.0</div><p>Se usan para representar medidas, resultados de divisiones, valores científicos, etc.</p><p>Cualquier número con un punto decimal es un <code>float</code>, aunque el decimal sea cero (<code>2.0</code>).</p>",
+          "intermedio": "<p><strong>El problema del punto flotante:</strong></p><p>Las computadoras no pueden representar todos los decimales con exactitud. Por ejemplo:</p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:#f48771; overflow-x:auto;'>0.1 + 0.2 = 0.30000000000000004</pre><p>Esto no es un error de Python, es cómo funciona la aritmética de punto flotante en <strong>todas</strong> las computadoras.</p><p><strong>Nunca compares floats con <code>==</code></strong>. Usa <code>math.isclose</code> o una tolerancia.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Punto flotante:</strong> forma de representar números reales en binario. Sigue el estándar IEEE 754.</li><li><strong>Precisión:</strong> cuántos dígitos significativos puede guardar. Un float de Python tiene ~15-17 dígitos.</li><li><strong>Error de redondeo:</strong> la diferencia entre el valor real y el valor que la computadora puede representar.</li></ul></div><p><strong>Relación con matemáticas:</strong> los <code>float</code> representan aproximadamente a los números reales $\\mathbb{R}$, pero con precisión finita.</p>",
+          "codigo": "import math\n\n# Floats\npi = 3.14159\nx = 2.5\ny = -0.001\n\nprint(\"pi =\", pi, \"| type:\", type(pi).__name__)\nprint(\"x =\", x)\nprint(\"y =\", y)\n\n# Error de punto flotante\nprint(\"\\n0.1 + 0.2 =\", 0.1 + 0.2)\nprint(\"¿Es igual a 0.3? ->\", (0.1 + 0.2) == 0.3)\n\n# Comparación correcta\nprint(\"¿Son cercanos? ->\", math.isclose(0.1 + 0.2, 0.3))",
+          "etiquetaCodigo": "float - números decimales"
+        },
+        {
+          "nombre": "str",
+          "alias": "Texto",
+          "basico": "<p>Un <strong>str</strong> (string, cadena) es un <strong>texto</strong>. Se escribe entre comillas, simples o dobles.</p><div class='cmd-sintaxis'>nombre = \"Ana\"\nmensaje = 'Hola mundo'</div><p>Las comillas no forman parte del texto, solo indican dónde empieza y dónde termina.</p><p>Se usan para nombres, mensajes, contraseñas, y cualquier cosa que sea texto.</p>",
+          "intermedio": "<p><strong>Operaciones con str:</strong></p><ul><li><strong>Concatenar (unir):</strong> <code>\"Hola\" + \" mundo\" = \"Hola mundo\"</code></li><li><strong>Repetir:</strong> <code>\"ab\" * 3 = \"ababab\"</code></li><li><strong>Longitud:</strong> <code>len(\"Hola\") = 4</code></li><li><strong>Acceder a una letra:</strong> <code>\"Hola\"[0] = \"H\"</code> (empieza en 0)</li></ul><p><strong>No se puede sumar texto y número:</strong> <code>\"Hola\" + 5</code> da error. Hay que convertir: <code>\"Hola\" + str(5)</code>.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>String:</strong> cadena de caracteres.</li><li><strong>Índice:</strong> la posición de un carácter. Empieza en 0.</li><li><strong>Inmutable:</strong> los strings no se pueden modificar después de creados. Si quieres cambiar uno, tienes que crear uno nuevo.</li><li><strong>f-string:</strong> forma moderna de insertar valores dentro de un texto.</li></ul></div><p><strong>Relación con matemáticas:</strong> los strings no son números, así que no se pueden usar directamente en cálculos. Si tienes <code>\"3.14\"</code> como texto, necesitas convertirlo con <code>float(\"3.14\")</code>.</p>",
+          "codigo": "# Strings\nnombre = \"Ana\"\nmensaje = 'Hola mundo'\n\nprint(\"nombre =\", nombre)\nprint(\"mensaje =\", mensaje)\n\n# Operaciones\nprint(\"\\nConcatenación:\", \"Hola\" + \" \" + \"mundo\")\nprint(\"Repetición:\", \"ab\" * 3)\nprint(\"Longitud:\", len(\"Python\"))\nprint(\"Primera letra:\", \"Python\"[0])\n\n# f-strings\nedad = 25\nprint(f\"\\n{nombre} tiene {edad} años\")",
+          "etiquetaCodigo": "str - texto"
+        },
+        {
+          "nombre": "bool",
+          "alias": "Verdadero o falso",
+          "basico": "<p>Un <strong>bool</strong> (boolean) solo puede tener <strong>dos valores</strong>: <code>True</code> (verdadero) o <code>False</code> (falso).</p><div class='cmd-sintaxis'>activo = True\nterminado = False</div><p>Se usan para representar condiciones: ¿el usuario está logueado?, ¿el bucle debe continuar?, ¿el método convergió?</p><p>Ojo: <code>True</code> y <code>False</code> van con mayúscula inicial.</p>",
+          "intermedio": "<p><strong>Se obtienen de comparaciones:</strong></p><ul><li><code>5 > 3</code> da <code>True</code></li><li><code>5 < 3</code> da <code>False</code></li><li><code>5 == 5</code> da <code>True</code></li><li><code>5 != 5</code> da <code>False</code></li></ul><p><strong>Se combinan con operadores lógicos:</strong></p><ul><li><code>True and False</code> = <code>False</code></li><li><code>True or False</code> = <code>True</code></li><li><code>not True</code> = <code>False</code></li></ul>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Booleano:</strong> tipo de dato con solo dos valores posibles.</li><li><strong>Álgebra de Boole:</strong> rama de las matemáticas que estudia los valores verdadero/falso. Es la base de toda la electrónica digital.</li><li><strong>Truthiness:</strong> en Python, otros valores pueden comportarse como True o False en un contexto booleano.</li></ul></div><p><strong>Relación con matemáticas:</strong> los booleanos representan proposiciones lógicas. <code>True</code> significa que la proposición es verdadera, <code>False</code> significa que es falsa. Los métodos numéricos usan booleanos para saber si convergieron o no.</p>",
+          "codigo": "# Booleanos\nactivo = True\nterminado = False\n\nprint(\"activo =\", activo, \"| type:\", type(activo).__name__)\nprint(\"terminado =\", terminado)\n\n# Comparaciones\nprint(\"\\n5 > 3:\", 5 > 3)\nprint(\"5 < 3:\", 5 < 3)\nprint(\"5 == 5:\", 5 == 5)\n\n# Operadores lógicos\nprint(\"\\nTrue and False:\", True and False)\nprint(\"True or False:\", True or False)\nprint(\"not True:\", not True)",
+          "etiquetaCodigo": "bool - verdadero/falso"
+        },
+        {
+          "nombre": "None",
+          "alias": "Ausencia de valor",
+          "basico": "<p><strong>None</strong> es un valor especial que significa <strong>\"nada\"</strong> o <strong>\"sin valor\"</strong>. Es diferente de 0, de <code>False</code> y de una cadena vacía.</p><div class='cmd-sintaxis'>resultado = None</div><p>Se usa cuando una variable aún no tiene un valor asignado, o cuando una función no devuelve nada.</p><p>Ojo: <code>None</code> va con mayúscula inicial.</p>",
+          "intermedio": "<p><strong>¿Para qué sirve?</strong></p><ul><li>Inicializar variables antes de tener el valor real.</li><li>Indicar que una función no devolvió nada.</li><li>Representar \"todavía no calculado\".</li></ul><p><strong>Cómo compararlo:</strong> siempre con <code>is</code>, nunca con <code>==</code>.</p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>if x is None:\n    print(\"no tiene valor\")</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>NoneType:</strong> el tipo de <code>None</code>. Es único: solo hay un valor de este tipo.</li><li><strong>Singleton:</strong> un objeto del que solo existe una instancia. <code>None</code> es uno.</li></ul></div><p><strong>¿Por qué usar <code>is</code> en lugar de <code>==</code>?</strong></p><p>Porque <code>is</code> compara identidad (¿es el mismo objeto en memoria?) y <code>==</code> compara valor. Como <code>None</code> es un singleton, siempre son el mismo objeto. Además, <code>is None</code> es más rápido.</p>",
+          "codigo": "# None\nresultado = None\n\nprint(\"resultado =\", resultado)\nprint(\"type =\", type(resultado).__name__)\n\n# Comprobar con is\nif resultado is None:\n    print(\"resultado aun no tiene valor\")\n\n# Cambiar el valor\nresultado = 42\nprint(\"\\nAhora resultado =\", resultado)\nprint(\"¿Es None?\", resultado is None)",
+          "etiquetaCodigo": "None - ausencia de valor"
+        },
+        {
+          "nombre": "type() y conversiones",
+          "alias": "Saber el tipo y cambiar entre tipos",
+          "basico": "<p><code>type(x)</code> te dice qué tipo tiene un valor. Es útil cuando no sabes si algo es un número, un texto, etc.</p><div class='cmd-sintaxis'>type(5)       # &lt;class 'int'&gt;\ntype(3.14)    # &lt;class 'float'&gt;\ntype(\"Hola\")  # &lt;class 'str'&gt;</div><p>También puedes <strong>convertir</strong> entre tipos con <code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>:</p><div class='cmd-sintaxis'>int(\"5\")     # 5\nfloat(\"3.14\") # 3.14\nstr(42)      # \"42\"</div>",
+          "intermedio": "<p><strong>Conversiones útiles:</strong></p><ul><li><code>int(\"5\")</code> convierte texto a entero. Falla si el texto no es un número válido.</li><li><code>int(3.7)</code> trunca el decimal, da <code>3</code>. No redondea.</li><li><code>float(\"3.14\")</code> convierte texto a decimal.</li><li><code>str(42)</code> convierte número a texto.</li><li><code>round(3.7)</code> redondea al entero más cercano, da <code>4</code>.</li></ul><p><strong>Cuidado con <code>int()</code>:</strong> no redondea, trunca. Si quieres redondear, usa <code>round()</code>.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Casting:</strong> conversión explícita de un tipo a otro.</li><li><strong>Truncamiento:</strong> cortar la parte decimal sin redondear.</li><li><strong>Redondeo:</strong> ajustar al valor más cercano. Puede ser hacia arriba, hacia abajo, o al más cercano.</li></ul></div><p><strong>Errores comunes:</strong></p><ul><li><code>int(\"3.14\")</code> da error porque <code>\"3.14\"</code> no es un entero válido. Hay que hacer <code>int(float(\"3.14\"))</code>.</li><li><code>int(\"abc\")</code> da error porque <code>\"abc\"</code> no es un número.</li><li><code>float(\"\")</code> da error porque la cadena vacía no es un número.</li></ul>",
+          "codigo": "# Ver el tipo\nprint(\"type(5) =\", type(5).__name__)\nprint(\"type(3.14) =\", type(3.14).__name__)\nprint(\"type('Hola') =\", type('Hola').__name__)\n\n# Conversiones\nprint(\"\\nint('5') =\", int(\"5\"))\nprint(\"float('3.14') =\", float(\"3.14\"))\nprint(\"str(42) =\", str(42))\n\n# int trunca, no redondea\nprint(\"\\nint(3.7) =\", int(3.7))     # 3\nprint(\"round(3.7) =\", round(3.7))   # 4\nprint(\"int(-3.7) =\", int(-3.7))     # -3",
+          "etiquetaCodigo": "type() y conversiones"
+        }
+      ]
+    }
+  ]
+}
