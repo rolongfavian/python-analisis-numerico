@@ -1,0 +1,49 @@
+{
+  "nivel": 5,
+  "niveles": [
+    {
+      "id": "nivel-5",
+      "numero": "5",
+      "titulo": "Colecciones",
+      "descripcion": "Una variable guarda un valor. Una colección guarda muchos valores juntos. Aquí aprendes listas, tuplas, diccionarios y conjuntos: las estructuras que permiten organizar datos.",
+      "comandos": [
+        {
+          "nombre": "Listas",
+          "alias": "[1, 2, 3]",
+          "basico": "<p>Una <strong>lista</strong> guarda varios valores en orden, dentro de corchetes.</p><div class='cmd-sintaxis'>numeros = [1, 2, 3, 4, 5]\nnombres = [\"Ana\", \"Luis\", \"Eva\"]</div><p>Se accede a cada elemento con su índice (empezando en 0):</p><div class='cmd-sintaxis'>numeros[0]   # 1\nnumeros[2]   # 3\nnumeros[-1]  # 5 (último)</div>",
+          "intermedio": "<p><strong>Operaciones comunes:</strong></p><ul><li><code>lista.append(x)</code>: agregar al final.</li><li><code>lista.insert(i, x)</code>: insertar en posición i.</li><li><code>lista.remove(x)</code>: eliminar la primera aparición de x.</li><li><code>lista.pop()</code>: eliminar y devolver el último.</li><li><code>len(lista)</code>: longitud.</li><li><code>lista.sort()</code>: ordenar.</li><li><code>x in lista</code>: verificar pertenencia.</li></ul><p><strong>Slicing:</strong> <code>lista[1:3]</code> devuelve una sublista.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Lista:</strong> colección ordenada y mutable.</li><li><strong>Índice:</strong> posición de un elemento, empieza en 0.</li><li><strong>Slicing:</strong> extraer una sublista.</li><li><strong>Mutable:</strong> se puede modificar después de creada.</li></ul></div><p><strong>Relación con matemáticas:</strong> una lista es como un vector $\\mathbf{x} = (x_1, x_2, ..., x_n)$. En análisis numérico, se usan listas para guardar aproximaciones sucesivas.</p>",
+          "codigo": "# Crear una lista\nnumeros = [10, 20, 30, 40, 50]\n\nprint(\"Lista:\", numeros)\nprint(\"Longitud:\", len(numeros))\nprint(\"Primero:\", numeros[0])\nprint(\"Último:\", numeros[-1])\nprint(\"Sublista [1:3]:\", numeros[1:3])\n\n# Modificar\nnumeros.append(60)\nprint(\"\\nDespués de append:\", numeros)\n\n# Pertenencia\nprint(\"¿30 está?\", 30 in numeros)\n\n# Ordenar (invertido)\nnumeros.sort(reverse=True)\nprint(\"Ordenado descendente:\", numeros)",
+          "etiquetaCodigo": "Listas"
+        },
+        {
+          "nombre": "Tuplas",
+          "alias": "(1, 2, 3)",
+          "basico": "<p>Una <strong>tupla</strong> es como una lista pero <strong>no se puede modificar</strong> después de creada. Se escribe con paréntesis.</p><div class='cmd-sintaxis'>punto = (3, 4)\ncolores = (\"rojo\", \"verde\", \"azul\")</div><p>Se usan para datos que no deben cambiar: coordenadas, constantes, configuraciones.</p>",
+          "intermedio": "<p><strong>Diferencia clave con listas:</strong></p><ul><li>Listas: mutables, con <code>[]</code>.</li><li>Tuplas: inmutables, con <code>()</code>.</li></ul><p><strong>Desempaquetar:</strong> puedes asignar cada valor a una variable:</p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>x, y = (3, 4)\n# x = 3, y = 4</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Tupla:</strong> colección ordenada e inmutable.</li><li><strong>Inmutable:</strong> no se puede modificar.</li><li><strong>Desempaquetar:</strong> asignar los elementos a variables individuales.</li><li><strong>Hashable:</strong> las tuplas pueden ser claves de diccionario porque son inmutables.</li></ul></div><p><strong>Relación con matemáticas:</strong> una tupla es como un punto o vector fijo. Por ejemplo, <code>(x, y)</code> es un punto en el plano.</p>",
+          "codigo": "# Crear tuplas\npunto = (3, 4)\ncolores = (\"rojo\", \"verde\", \"azul\")\n\nprint(\"Punto:\", punto)\nprint(\"Primer color:\", colores[0])\nprint(\"Longitud:\", len(colores))\n\n# Desempaquetar\nx, y = punto\nprint(f\"\\nx = {x}, y = {y}\")\n\n# No se puede modificar\ntry:\n    punto[0] = 10\nexcept TypeError as e:\n    print(f\"\\nError: {e}\")",
+          "etiquetaCodigo": "Tuplas"
+        },
+        {
+          "nombre": "Diccionarios",
+          "alias": "{clave: valor}",
+          "basico": "<p>Un <strong>diccionario</strong> guarda pares <strong>clave-valor</strong>. Se escribe con llaves <code>{}</code>.</p><div class='cmd-sintaxis'>persona = {\n    \"nombre\": \"Ana\",\n    \"edad\": 25,\n    \"ciudad\": \"Madrid\"\n}</div><p>Se accede por clave:</p><div class='cmd-sintaxis'>persona[\"nombre\"]   # \"Ana\"</div><p>Se usan para guardar datos etiquetados.</p>",
+          "intermedio": "<p><strong>Operaciones comunes:</strong></p><ul><li><code>dict[clave]</code>: acceder a un valor.</li><li><code>dict[clave] = valor</code>: agregar o modificar.</li><li><code>del dict[clave]</code>: eliminar.</li><li><code>clave in dict</code>: verificar si existe la clave.</li><li><code>dict.keys()</code>: todas las claves.</li><li><code>dict.values()</code>: todos los valores.</li><li><code>dict.items()</code>: pares (clave, valor).</li></ul>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Diccionario:</strong> colección de pares clave-valor.</li><li><strong>Clave:</strong> identificador único.</li><li><strong>Valor:</strong> el dato asociado.</li><li><strong>Hash table:</strong> la estructura interna que hace que buscar por clave sea muy rápido.</li></ul></div><p><strong>Relación con matemáticas:</strong> un diccionario es como una función matemática $f: K \\to V$. Cada clave tiene un único valor.</p>",
+          "codigo": "persona = {\n    \"nombre\": \"Ana\",\n    \"edad\": 25,\n    \"ciudad\": \"Madrid\"\n}\n\nprint(\"Nombre:\", persona[\"nombre\"])\nprint(\"Edad:\", persona[\"edad\"])\n\n# Agregar / modificar\npersona[\"profesion\"] = \"ingeniera\"\npersona[\"edad\"] = 26\n\nprint(\"\\nDiccionario actualizado:\")\nfor clave, valor in persona.items():\n    print(f\"  {clave}: {valor}\")\n\n# Verificar clave\nprint(\"\\n¿Tiene email?\", \"email\" in persona)",
+          "etiquetaCodigo": "Diccionarios"
+        },
+        {
+          "nombre": "Comprensiones",
+          "alias": "Crear listas en una línea",
+          "basico": "<p>Una <strong>comprensión de lista</strong> es una forma compacta de crear una lista a partir de otra.</p><div class='cmd-sintaxis'>cuadrados = [x**2 for x in range(5)]\n# [0, 1, 4, 9, 16]</div><p>Es equivalente a un for con append, pero más corto y muchas veces más rápido.</p>",
+          "intermedio": "<p><strong>Con condición:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>pares = [x for x in range(10) if x % 2 == 0]\n# [0, 2, 4, 6, 8]</pre><p><strong>Sobre strings:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>letras = [c for c in \"Hola\"]\n# ['H', 'o', 'l', 'a']</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Comprensión:</strong> sintaxis compacta para crear colecciones.</li><li><strong>Expresión generadora:</strong> como una comprensión pero sin crear la lista completa en memoria, se calcula al vuelo.</li><li><strong>Filtro:</strong> la parte <code>if</code> que selecciona elementos.</li></ul></div><p><strong>Relación con matemáticas:</strong> una comprensión es como la notación de conjuntos: $\\{x^2 : x \\in \\{0,1,2,3,4\\}\\}$.</p>",
+          "codigo": "# Comprensión básica\ncuadrados = [x**2 for x in range(6)]\nprint(\"Cuadrados:\", cuadrados)\n\n# Con condición\npares = [x for x in range(10) if x % 2 == 0]\nprint(\"Pares:\", pares)\n\n# Sobre strings\nletras = [c.upper() for c in \"hola\"]\nprint(\"Mayúsculas:\", letras)\n\n# Equivalente con for (más largo)\nresultado = []\nfor x in range(6):\n    resultado.append(x**2)\nprint(\"\\nMismo resultado:\", resultado)",
+          "etiquetaCodigo": "Comprensiones"
+        }
+      ]
+    }
+  ]
+}

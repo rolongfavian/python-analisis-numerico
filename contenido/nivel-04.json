@@ -1,0 +1,58 @@
+{
+  "nivel": 4,
+  "niveles": [
+    {
+      "id": "nivel-4",
+      "numero": "4",
+      "titulo": "Control de flujo",
+      "descripcion": "Los programas no solo ejecutan instrucciones en orden: también toman decisiones y repiten cosas. Aquí aprendes if, while, for y todas las formas de controlar el flujo de un programa.",
+      "comandos": [
+        {
+          "nombre": "if / elif / else",
+          "alias": "Tomar decisiones",
+          "basico": "<p>Con <code>if</code> puedes ejecutar código solo si una condición es verdadera.</p><div class='cmd-sintaxis'>if condicion:\n    # código si la condición es True</div><p><strong>Importante:</strong> después de los dos puntos <code>:</code> hay que <strong>indentar</strong> el código (4 espacios) para que Python sepa qué está dentro del if.</p>",
+          "intermedio": "<p><strong>elif</strong> (else if) permite probar varias condiciones seguidas:</p><div class='cmd-sintaxis'>if nota >= 90:\n    print(\"Excelente\")\nelif nota >= 70:\n    print(\"Bien\")\nelif nota >= 60:\n    print(\"Aprobado\")\nelse:\n    print(\"Reprobado\")</div><p>Python evalúa de arriba hacia abajo y ejecuta el primer bloque que sea verdadero. Si ninguno lo es, ejecuta el <code>else</code>.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Indentación:</strong> los espacios al inicio de línea. En Python definen bloques.</li><li><strong>Condición:</strong> expresión que se evalúa como True o False.</li><li><strong>Rama:</strong> cada uno de los caminos posibles del if/elif/else.</li></ul></div><p><strong>Valores truthy/falsy:</strong> en una condición, Python trata como falsos a <code>0</code>, <code>0.0</code>, <code>\"\"</code>, <code>[]</code>, <code>None</code>, <code>False</code>. Todo lo demás es verdadero.</p><p><strong>Relación con matemáticas:</strong> un if es una función por partes: según el valor de $x$, se ejecuta una cosa u otra.</p>",
+          "codigo": "nota = 85\n\nif nota >= 90:\n    print(\"Excelente\")\nelif nota >= 70:\n    print(\"Bien\")\nelif nota >= 60:\n    print(\"Aprobado\")\nelse:\n    print(\"Reprobado\")\n\n# Múltiples condiciones\nedad = 25\ntiene_licencia = True\n\nif edad >= 18 and tiene_licencia:\n    print(\"\\nPuede conducir\")\nelse:\n    print(\"\\nNo puede conducir\")",
+          "etiquetaCodigo": "if / elif / else"
+        },
+        {
+          "nombre": "while",
+          "alias": "Repetir mientras se cumpla algo",
+          "basico": "<p><code>while</code> repite un bloque de código <strong>mientras una condición sea verdadera</strong>. Cuando la condición se vuelve falsa, el bucle termina.</p><div class='cmd-sintaxis'>while condicion:\n    # código que se repite</div><p><strong>Cuidado:</strong> si la condición nunca se vuelve falsa, el bucle es infinito y el programa se cuelga.</p>",
+          "intermedio": "<p><strong>Ejemplo: contar del 1 al 5</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>i = 1\nwhile i <= 5:\n    print(i)\n    i += 1   # ¡importante actualizar i!</pre><p>Si te olvidas del <code>i += 1</code>, el bucle nunca termina porque <code>i</code> siempre vale 1.</p><p><strong>Uso típico en análisis numérico:</strong> repetir un cálculo hasta que el error sea menor que una tolerancia.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Bucle:</strong> estructura que repite código.</li><li><strong>Iteración:</strong> cada vuelta del bucle.</li><li><strong>Condición de parada:</strong> la condición del while.</li><li><strong>Bucle infinito:</strong> cuando la condición nunca se vuelve falsa.</li></ul></div><p><strong>En análisis numérico:</strong> los métodos iterativos usan while con doble criterio:</p><ul><li>Convergencia: <code>error < tol</code></li><li>Seguridad: <code>iter < max_iter</code></li></ul>",
+          "codigo": "# Contar del 1 al 5\ni = 1\nwhile i <= 5:\n    print(i)\n    i += 1\n\nprint(\"\\nFin del bucle\")\n\n# Ejemplo numérico: sumar hasta superar 100\nsuma = 0\nn = 0\nwhile suma < 100:\n    n += 1\n    suma += n\nprint(f\"\\nSuma = {suma} después de sumar 1..{n}\")",
+          "etiquetaCodigo": "while - bucle condicional"
+        },
+        {
+          "nombre": "for",
+          "alias": "Repetir sobre una colección",
+          "basico": "<p><code>for</code> repite un bloque <strong>para cada elemento</strong> de una colección (lista, string, rango, etc.).</p><div class='cmd-sintaxis'>for elemento in coleccion:\n    # hacer algo con elemento</div><p>Es la forma más común de iterar en Python.</p>",
+          "intermedio": "<p><strong>Ejemplos típicos:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'># Sobre una lista\nfor x in [1, 2, 3]:\n    print(x)\n\n# Sobre un rango\nfor i in range(5):\n    print(i)   # 0, 1, 2, 3, 4\n\n# Sobre un string\nfor letra in \"Hola\":\n    print(letra)</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Iterable:</strong> cualquier objeto que se puede recorrer con for.</li><li><strong>Variable de iteración:</strong> la variable que toma cada valor sucesivo.</li><li><strong>range(a, b, paso):</strong> genera una secuencia de números.</li></ul></div><p><strong>range en detalle:</strong></p><ul><li><code>range(5)</code> → 0, 1, 2, 3, 4</li><li><code>range(2, 5)</code> → 2, 3, 4</li><li><code>range(0, 10, 2)</code> → 0, 2, 4, 6, 8</li><li><code>range(5, 0, -1)</code> → 5, 4, 3, 2, 1</li></ul>",
+          "codigo": "# Sobre una lista\nprint(\"Lista:\")\nfor x in [10, 20, 30]:\n    print(\" \", x)\n\n# Sobre un rango\nprint(\"\\nrange(5):\")\nfor i in range(5):\n    print(\" \", i)\n\n# Con índice\nprint(\"\\nenumerate:\")\nfrutas = [\"manzana\", \"pera\", \"uva\"]\nfor i, fruta in enumerate(frutas):\n    print(f\"  {i}: {fruta}\")",
+          "etiquetaCodigo": "for - iteración"
+        },
+        {
+          "nombre": "range()",
+          "alias": "Generar secuencias de números",
+          "basico": "<p><code>range()</code> genera una secuencia de números. Se usa mucho con <code>for</code>.</p><div class='cmd-sintaxis'>range(5)          # 0, 1, 2, 3, 4\nrange(2, 5)       # 2, 3, 4\nrange(0, 10, 2)   # 0, 2, 4, 6, 8</div><p><strong>Atención:</strong> <code>range(5)</code> va del 0 al 4, <strong>no incluye el 5</strong>. Es el error más común de principiante.</p>",
+          "intermedio": "<p><strong>Los 3 argumentos:</strong></p><ul><li><code>range(inicio, fin)</code>: del inicio al fin-1.</li><li><code>range(inicio, fin, paso)</code>: con incrementos.</li><li><code>range(fin)</code>: equivale a <code>range(0, fin)</code>.</li></ul><p><strong>Paso negativo:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>for i in range(5, 0, -1):\n    print(i)   # 5, 4, 3, 2, 1</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Secuencia:</strong> serie ordenada de valores.</li><li><strong>Off-by-one:</strong> error por no tener en cuenta que range excluye el extremo final.</li><li><strong>Range object:</strong> range() devuelve un objeto perezoso, no una lista. Se genera al vuelo.</li></ul></div><p>Para ver todos los valores a la vez: <code>list(range(5))</code>.</p>",
+          "codigo": "# Diferentes rangos\nprint(\"range(5):\", list(range(5)))\nprint(\"range(2, 5):\", list(range(2, 5)))\nprint(\"range(0, 10, 2):\", list(range(0, 10, 2)))\nprint(\"range(5, 0, -1):\", list(range(5, 0, -1)))\n\n# Suma de los primeros 100 números\nsuma = sum(range(1, 101))\nprint(f\"\\nSuma 1..100 = {suma}\")",
+          "etiquetaCodigo": "range() - secuencias"
+        },
+        {
+          "nombre": "break / continue / pass",
+          "alias": "Control fino de bucles",
+          "basico": "<ul><li><code>break</code>: sale del bucle inmediatamente.</li><li><code>continue</code>: salta a la siguiente iteración sin ejecutar el resto.</li><li><code>pass</code>: no hace nada (marcador de posición).</li></ul>",
+          "intermedio": "<p><strong>Ejemplo con break:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>for i in range(10):\n    if i == 5:\n        break      # sale cuando i = 5\n    print(i)</pre><p><strong>Ejemplo con continue:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>for i in range(5):\n    if i == 2:\n        continue   # salta el 2\n    print(i)</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>break:</strong> interrumpe la ejecución del bucle.</li><li><strong>continue:</strong> salta a la siguiente iteración.</li><li><strong>pass:</strong> no hace nada, se usa como placeholder.</li><li><strong>else de un bucle:</strong> se ejecuta si el bucle terminó sin break.</li></ul></div><p><strong>En análisis numérico:</strong> <code>break</code> se usa para salir del bucle cuando se alcanza la convergencia. El <code>else</code> del bucle sirve para detectar que NO hubo convergencia:</p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>for k in range(max_iter):\n    if convergio:\n        break\nelse:\n    print(\"No convergio\")</pre>",
+          "codigo": "# break\nprint(\"break:\")\nfor i in range(10):\n    if i == 5:\n        break\n    print(\" \", i)\n\n# continue\nprint(\"\\ncontinue:\")\nfor i in range(5):\n    if i == 2:\n        continue\n    print(\" \", i)\n\n# else del for (no convergió)\nprint(\"\\nelse del for:\")\nfor i in range(3):\n    if i == 10:\n        break\nelse:\n    print(\"  No hubo break -> no convergio\")",
+          "etiquetaCodigo": "break / continue / pass"
+        }
+      ]
+    }
+  ]
+}
