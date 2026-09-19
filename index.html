@@ -394,5 +394,22 @@ window.MathJax = {
 <script src="js/ejemplos.js"></script>
 <script src="js/buscador.js"></script>
 
+<!-- Service Worker: cachea Pyodide y CDNs -->
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { scope: './' })
+      .then(reg => {
+        console.log('[SW] Registrado. Scope:', reg.scope);
+      })
+      .catch(err => {
+        console.warn('[SW] No se pudo registrar:', err);
+      });
+  });
+} else {
+  console.warn('[SW] Service Workers no soportados en este navegador');
+}
+</script>
+
 </body>
 </html>
