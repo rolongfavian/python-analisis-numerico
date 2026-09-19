@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador + sync librerías
-   v13 - Manejo correcto de 404 (archivo borrado)
+   v14 - Output puede subir hasta 90% + doble clic para alternar
    ============================================ */
 
 (function () {
@@ -11,7 +11,7 @@
   const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
   const MAX_IMPORT_MB = 5;
   const MIN_OUTPUT_HEIGHT = 180;
-  const MIN_EDITOR_HEIGHT = 200;
+  const MIN_EDITOR_HEIGHT = 80;
   const LIBS_FILE_NAME = '__librerias__.json';
 
   let driveToken = null;
@@ -228,7 +228,6 @@
             body: contenido
           }
         );
-        // Si el archivo fue borrado, recrear
         if (res.status === 404) {
           libsFileId = null;
         }
@@ -502,7 +501,6 @@
     if (!ul) return;
     ul.innerHTML = '';
 
-    // Filtrar archivos ocultos (__librerias__.json)
     files = files.filter(f => !esArchivoOculto(f.name));
 
     if (files.length === 0) {
@@ -1209,7 +1207,6 @@
         { headers: { 'Authorization': 'Bearer ' + driveToken } }
       );
 
-      // ⚠️ Comprobar el status ANTES de leer el cuerpo
       if (res.status === 404) {
         showToast('El archivo ya no existe en Drive. Se limpiará del editor.', true);
         currentFileId = null;
@@ -1432,7 +1429,7 @@
   }
 
   // ============================================================
-  // DIVISOR REDIMENSIONABLE
+  // DIVISOR REDIMENSIONABLE (mejorado)
   // ============================================================
 
   function initResizer() {
@@ -1440,6 +1437,7 @@
     const output = document.getElementById('env-output');
     if (!resizer || !output) return;
 
+    // Restaurar altura guardada
     const savedHeight = parseInt(localStorage.getItem('output_height'), 10);
     if (savedHeight && savedHeight >= MIN_OUTPUT_HEIGHT) {
       output.style.height = savedHeight + 'px';
@@ -1450,6 +1448,21 @@
     let startY = 0;
     let startHeight = 0;
     let dragging = false;
+
+    function calcularMaxOutput() {
+      const mainRect = document.querySelector('.env-main').getBoundingClientRect();
+      const toolbarRect = document.querySelector('.env-toolbar').getBoundingClientRect();
+      const alturaDisponible = mainRect.height - toolbarRect.height;
+
+      // Permitir que el output crezca hasta dejar solo MIN_EDITOR_HEIGHT al editor
+      let maxOutput = alturaDisponible - MIN_EDITOR_HEIGHT - 12;
+
+      // Tope absoluto: nunca más del 90% del panel
+      const maxAbsoluto = Math.round(alturaDisponible * 0.9);
+      if (maxOutput > maxAbsoluto) maxOutput = maxAbsoluto;
+
+      return maxOutput;
+    }
 
     function onStart(y) {
       dragging = true;
@@ -1464,10 +1477,7 @@
       const delta = startY - y;
       let newHeight = startHeight + delta;
 
-      const mainRect = document.querySelector('.env-main').getBoundingClientRect();
-      const toolbarRect = document.querySelector('.env-toolbar').getBoundingClientRect();
-      const maxOutput = mainRect.height - toolbarRect.height - MIN_EDITOR_HEIGHT - 20;
-
+      const maxOutput = calcularMaxOutput();
       if (newHeight < MIN_OUTPUT_HEIGHT) newHeight = MIN_OUTPUT_HEIGHT;
       if (newHeight > maxOutput) newHeight = maxOutput;
 
@@ -1486,10 +1496,12 @@
       }
     }
 
+    // Mouse
     resizer.addEventListener('mousedown', (e) => { e.preventDefault(); onStart(e.clientY); });
     document.addEventListener('mousemove', (e) => onMove(e.clientY));
     document.addEventListener('mouseup', onEnd);
 
+    // Touch
     resizer.addEventListener('touchstart', (e) => {
       if (e.touches.length !== 1) return;
       e.preventDefault();
@@ -1504,6 +1516,45 @@
 
     document.addEventListener('touchend', onEnd);
     document.addEventListener('touchcancel', onEnd);
+
+    // Doble clic (o doble toque): alternar editor grande / output grande
+    let lastClickTime = 0;
+    let modoAlternado = false;
+
+    function alternar() {
+      const maxOutput = calcularMaxOutput();
+      const alturaActual = output.getBoundingClientRect().height;
+
+      // Si el output está grande (>60% del máximo), volver a mínimo
+      if (alturaActual > maxOutput * 0.6) {
+        output.style.height = MIN_OUTPUT_HEIGHT + 'px';
+        modoAlternado = false;
+      } else {
+        output.style.height = maxOutput + 'px';
+        modoAlternado = true;
+      }
+      localStorage.setItem('output_height', Math.round(output.getBoundingClientRect().height));
+      if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+        setTimeout(() => editorsMap['env-editor'].refresh(), 250);
+      }
+    }
+
+    resizer.addEventListener('dblclick', (e) => {
+      e.preventDefault();
+      alternar();
+    });
+
+    // Detección de doble toque (móvil)
+    resizer.addEventListener('touchend', (e) => {
+      const ahora = Date.now();
+      if (ahora - lastClickTime < 350) {
+        e.preventDefault();
+        alternar();
+        lastClickTime = 0;
+      } else {
+        lastClickTime = ahora;
+      }
+    });
   }
 
   // ============================================================
