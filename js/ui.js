@@ -1,15 +1,16 @@
 /* ============================================
    ui.js — Menú, toasts, cambio de vista
+   v2 - Añade clase al body para bloquear scroll solo en Entorno
    ============================================ */
 
 (function () {
   'use strict';
 
+  let currentView = 'guide';
+
   // ============================================================
   // CAMBIO DE VISTA (Guía / Entorno)
   // ============================================================
-
-  let currentView = 'guide';
 
   function switchView(view) {
     currentView = view;
@@ -25,14 +26,20 @@
       if (el) el.classList.add('active');
       if (tabs[0]) tabs[0].classList.add('active');
       if (menuToggle) menuToggle.style.display = 'flex';
+
+      // La Guía necesita scroll normal
+      document.body.classList.remove('view-env-active');
     } else {
       const el = document.getElementById('view-env');
       if (el) el.classList.add('active');
       if (tabs[1]) tabs[1].classList.add('active');
       if (menuToggle) menuToggle.style.display = 'none';
+
+      // El Entorno bloquea el scroll general
+      document.body.classList.add('view-env-active');
     }
 
-    // Refrescar editores de CodeMirror al cambiar de vista
+    // Refrescar editores CodeMirror
     setTimeout(() => {
       if (typeof editorsMap !== 'undefined') {
         Object.values(editorsMap).forEach(ed => {
@@ -74,7 +81,7 @@
   }
 
   // ============================================================
-  // TOAST (notificaciones)
+  // TOAST
   // ============================================================
 
   let toastTimer = null;
@@ -94,28 +101,13 @@
   }
 
   // ============================================================
-  // CERRAR MENÚ AL TOCAR UN ENLACE
+  // BANNER DE CONEXIÓN
   // ============================================================
 
-  function initMenuLinks() {
-    document.querySelectorAll('.menu-group-content a').forEach(a => {
-      a.addEventListener('click', () => {
-        setTimeout(closeMenu, 100);
-      });
-    });
-  }
-
-  // ============================================================
-  // ATAJOS DE TECLADO
-  // ============================================================
-
-  function initKeyboardShortcuts() {
-    document.addEventListener('keydown', (e) => {
-      // Esc cierra el menú
-      if (e.key === 'Escape') {
-        closeMenu();
-      }
-    });
+  function actualizarBannerConexion() {
+    const banner = document.getElementById('offline-banner');
+    if (!banner) return;
+    banner.style.display = navigator.onLine ? 'none' : 'block';
   }
 
   // ============================================================
@@ -123,8 +115,25 @@
   // ============================================================
 
   function init() {
-    initMenuLinks();
-    initKeyboardShortcuts();
+    // Cerrar menú al tocar un enlace
+    document.querySelectorAll('.menu-group-content a').forEach(a => {
+      a.addEventListener('click', () => {
+        setTimeout(closeMenu, 100);
+      });
+    });
+
+    // Escape cierra el menú
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') closeMenu();
+    });
+
+    // Escuchar cambios de conexión
+    window.addEventListener('online', actualizarBannerConexion);
+    window.addEventListener('offline', actualizarBannerConexion);
+    actualizarBannerConexion();
+
+    // La vista inicial es Guía → sin bloqueo de scroll
+    document.body.classList.remove('view-env-active');
   }
 
   if (document.readyState === 'loading') {
@@ -134,7 +143,7 @@
   }
 
   // ============================================================
-  // EXPONER FUNCIONES GLOBALMENTE
+  // EXPOSICIÓN GLOBAL
   // ============================================================
   window.switchView = switchView;
   window.toggleMenu = toggleMenu;

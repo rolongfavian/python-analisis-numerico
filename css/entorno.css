@@ -1,6 +1,6 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v10 - Botón ampliar explorador + sin colapso toolbar
+   v11 - Scroll solo bloqueado en vista Entorno
    ============================================ */
 
 .material-symbols-outlined {
@@ -46,13 +46,17 @@
 #guest-warning strong { color: #ffd866; }
 
 /* ============================================================
-   BLOQUEO DEL SCROLL GENERAL
+   SCROLL: bloqueado SOLO cuando la vista Entorno está activa.
+   La Guía y todo lo demás tienen scroll normal.
    ============================================================ */
 html, body {
-  overflow: hidden;
-  height: 100%;
   margin: 0;
   padding: 0;
+}
+
+body.view-env-active {
+  overflow: hidden;
+  height: 100vh;
 }
 
 #view-env {
@@ -112,7 +116,6 @@ html, body {
 .env-breadcrumb a:hover { text-decoration: underline; }
 .env-breadcrumb .sep { margin: 0 6px; color: var(--text-dim); }
 
-/* Botón ampliar explorador */
 .btn-expand-sidebar {
   width: 28px;
   height: 28px;
