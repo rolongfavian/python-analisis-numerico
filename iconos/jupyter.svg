@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 256 256" width="32" height="32">
+  <circle cx="128" cy="128" r="30" fill="#F37726"/>
+  <circle cx="128" cy="60" r="14" fill="#F37726"/>
+  <circle cx="128" cy="196" r="14" fill="#F37726"/>
+  <circle cx="68" cy="94" r="14" fill="#F37726"/>
+  <circle cx="188" cy="94" r="14" fill="#F37726"/>
+  <circle cx="68" cy="162" r="14" fill="#F37726"/>
+  <circle cx="188" cy="162" r="14" fill="#F37726"/>
+</svg>
