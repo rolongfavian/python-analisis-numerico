@@ -1,5 +1,6 @@
 /* ============================================
    base.css — Variables, tema claro/oscuro, reset
+   v2 - Fix: .view sin .active oculto siempre
    ============================================ */
 
 :root {
@@ -76,6 +77,19 @@ body {
   transition: background 0.2s, color 0.2s;
 }
 
+/* ============================================================
+   VISTAS: una sola activa, las demás OCULTAS siempre
+   ============================================================ */
+.view {
+  display: none !important;
+}
+.view.active {
+  display: block !important;
+}
+
+/* ============================================================
+   BARRA SUPERIOR
+   ============================================================ */
 #view-bar {
   position: sticky;
   top: 0;
@@ -137,9 +151,9 @@ body {
 #drive-status:hover { border-color: var(--border-strong); }
 #drive-status.connected { color: var(--accent); border-color: var(--accent-dim); }
 
-.view { display: none; }
-.view.active { display: block; }
-
+/* ============================================================
+   MENÚ HAMBURGUESA
+   ============================================================ */
 #menu-toggle {
   position: fixed;
   top: 68px;
@@ -171,6 +185,9 @@ body {
 #menu-toggle.open span:nth-child(2) { opacity: 0; }
 #menu-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(4px,-4px); }
 
+/* ============================================================
+   SIDEBAR DE NAVEGACIÓN
+   ============================================================ */
 #sidebar {
   position: fixed;
   top: 0;
@@ -233,6 +250,9 @@ body {
 }
 .menu-group-content a:hover { color: var(--text); background: var(--bg-elevated); }
 
+/* ============================================================
+   OVERLAY
+   ============================================================ */
 #overlay {
   position: fixed;
   inset: 0;
@@ -242,8 +262,18 @@ body {
 }
 #overlay.open { display: block; }
 
-.container { max-width: 1080px; margin: 1.5rem auto; padding: 0 1.5rem; }
+/* ============================================================
+   CONTENEDOR DE LA GUÍA
+   ============================================================ */
+.container {
+  max-width: 1080px;
+  margin: 1.5rem auto;
+  padding: 0 1.5rem;
+}
 
+/* ============================================================
+   TOAST
+   ============================================================ */
 #toast {
   position: fixed;
   bottom: 24px;
@@ -258,7 +288,7 @@ body {
   font-weight: 500;
   border: 1px solid var(--border-strong);
   box-shadow: 0 6px 24px rgba(0,0,0,0.35);
-  z-index: 3000;
+  z-index: 6000;
   transition: transform 0.3s ease;
   max-width: 90vw;
 }
@@ -269,6 +299,9 @@ body {
   border-color: var(--danger);
 }
 
+/* ============================================================
+   RESPONSIVE BASE
+   ============================================================ */
 @media (max-width: 768px) {
   body { font-size: 14px; }
   #sidebar { width: 300px; left: -310px; }

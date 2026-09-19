@@ -1,6 +1,6 @@
 /* ============================================
    ui.js — Menú, toasts, cambio de vista
-   v2 - Añade clase al body para bloquear scroll solo en Entorno
+   v3 - Fix: al cambiar a Guía, asegurar que Entorno esté oculto
    ============================================ */
 
 (function () {
@@ -15,6 +15,7 @@
   function switchView(view) {
     currentView = view;
 
+    // Quitar .active de TODAS las vistas y tabs
     document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
     document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
 
@@ -23,19 +24,24 @@
 
     if (view === 'guide') {
       const el = document.getElementById('view-guide');
+      const envEl = document.getElementById('view-env');
       if (el) el.classList.add('active');
+      if (envEl) envEl.classList.remove('active');  // doble seguridad
       if (tabs[0]) tabs[0].classList.add('active');
       if (menuToggle) menuToggle.style.display = 'flex';
 
-      // La Guía necesita scroll normal
       document.body.classList.remove('view-env-active');
+
+      // Hacer scroll al top de la Guía
+      window.scrollTo({ top: 0, behavior: 'instant' });
     } else {
       const el = document.getElementById('view-env');
+      const guideEl = document.getElementById('view-guide');
       if (el) el.classList.add('active');
+      if (guideEl) guideEl.classList.remove('active');  // doble seguridad
       if (tabs[1]) tabs[1].classList.add('active');
       if (menuToggle) menuToggle.style.display = 'none';
 
-      // El Entorno bloquea el scroll general
       document.body.classList.add('view-env-active');
     }
 
@@ -115,6 +121,15 @@
   // ============================================================
 
   function init() {
+    // Al cargar, asegurarse de que solo la Guía esté activa
+    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+    const guideEl = document.getElementById('view-guide');
+    const envEl = document.getElementById('view-env');
+    if (guideEl) guideEl.classList.add('active');
+    if (envEl) envEl.classList.remove('active');
+
+    document.body.classList.remove('view-env-active');
+
     // Cerrar menú al tocar un enlace
     document.querySelectorAll('.menu-group-content a').forEach(a => {
       a.addEventListener('click', () => {
@@ -131,9 +146,6 @@
     window.addEventListener('online', actualizarBannerConexion);
     window.addEventListener('offline', actualizarBannerConexion);
     actualizarBannerConexion();
-
-    // La vista inicial es Guía → sin bloqueo de scroll
-    document.body.classList.remove('view-env-active');
   }
 
   if (document.readyState === 'loading') {
