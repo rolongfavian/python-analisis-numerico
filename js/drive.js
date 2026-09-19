@@ -432,21 +432,37 @@
     refreshFileList();
   }
 
-  function renderBreadcrumb() {
+
+   function renderBreadcrumb() {
     const bc = document.getElementById('env-breadcrumb');
     if (!bc) return;
-    let html = `<a onclick="navigateTo('root')">🏠 Raíz</a>`;
+
+    // Construir el path (solo la parte izquierda)
+    let pathHtml = `<a onclick="navigateTo('root')">🏠 Raíz</a>`;
     currentFolderPath.forEach((f, i) => {
-      html += ` <span class="sep">/</span> `;
+      pathHtml += ` <span class="sep">/</span> `;
       if (i === currentFolderPath.length - 1) {
-        html += `<span>📁 ${escapeHtml(f.name)}</span>`;
+        pathHtml += `<span>📁 ${escapeHtml(f.name)}</span>`;
       } else {
-        html += `<a onclick="navigateToPath(${i})">📁 ${escapeHtml(f.name)}</a>`;
+        pathHtml += `<a onclick="navigateToPath(${i})">📁 ${escapeHtml(f.name)}</a>`;
       }
     });
-    bc.innerHTML = html;
-  }
 
+    // Reconstruir TODO el breadcrumb, incluyendo el botón ampliar
+    bc.innerHTML = `
+      <div class="breadcrumb-path">${pathHtml}</div>
+      <button class="btn-expand-sidebar" onclick="toggleExpandSidebar()" title="Ampliar explorador">
+        <span class="material-symbols-outlined" id="expand-icon">expand_content</span>
+      </button>
+    `;
+
+    // Si el explorador estaba ampliado, mantener el icono correcto
+    const sidebar = document.getElementById('env-sidebar');
+    const icon = document.getElementById('expand-icon');
+    if (sidebar && icon && sidebar.classList.contains('expanded')) {
+      icon.innerText = 'close';
+    }
+  }
   // ============================================================
   // CREAR
   // ============================================================

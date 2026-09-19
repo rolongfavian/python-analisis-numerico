@@ -261,29 +261,6 @@ body.view-env-active {
   font-size: 20px;
 }
 
-#btn-close-expanded {
-  display: none;
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 4600;
-  padding: 12px 20px;
-  border-radius: 8px;
-  border: none;
-  background: var(--accent);
-  color: var(--bg);
-  font-family: var(--font-ui);
-  font-size: 0.9rem;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
-  align-items: center;
-  gap: 8px;
-}
-#btn-close-expanded.visible { display: inline-flex; }
-#btn-close-expanded:hover { background: var(--accent-dim); }
-#btn-close-expanded .material-symbols-outlined { font-size: 20px; }
-
 /* ============================================================
    MENÚ FLOTANTE
    ============================================================ */
