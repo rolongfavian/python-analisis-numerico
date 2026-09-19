@@ -101,7 +101,14 @@ window.MathJax = {
     </ul>
   </div>
   <div class="env-main">
-    <div class="env-toolbar">
+    <div id="reconnect-banner">
+      <span>⚠️ La sesión de Google expiró. Vuelve a conectar para guardar en Drive.</span>
+      <button onclick="connectDrive()">Reconectar</button>
+    </div>
+    <div class="env-toolbar" id="env-toolbar">
+      <button class="btn-toggle-toolbar" onclick="toggleToolbar()" title="Ocultar barra">
+        <span class="material-symbols-outlined" id="toggle-icon">expand_less</span>
+      </button>
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
       <button class="primary" onclick="runEnvCode()">
         <span class="material-symbols-outlined">play_arrow</span> Ejecutar
@@ -120,6 +127,7 @@ window.MathJax = {
     <div class="env-editor-wrap">
       <textarea id="env-editor"></textarea>
     </div>
+    <div class="output-resizer" id="output-resizer"></div>
     <div class="env-output" id="env-output">Presiona Ejecutar para ver el resultado...</div>
   </div>
 </div>

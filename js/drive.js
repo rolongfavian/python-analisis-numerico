@@ -1,13 +1,13 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v5 - Layout fijo, salir, enlace público, recordar sesión
+   v6 - Toolbar colapsable + output redimensionable + reconexión mejorada
    ============================================ */
 
 (function () {
   'use strict';
 
   const CLIENT_ID = '420968434649-a5itml1n5ijtmin8fs1c5ug6bof0kv9o.apps.googleusercontent.com';
-  const SCOPES = 'https://www.googleapis.com/auth/drive.file';
+  const SCOPES = 'https://www.googleapis.com/drive.file';
   const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
   const MAX_IMPORT_MB = 5;
 
@@ -21,6 +21,7 @@
   let guestMode = false;
   let itemMenuTarget = null;
   let importacionPendiente = null;
+  let reconectando = false;
 
   // ============================================================
   // ICONOS
@@ -71,11 +72,17 @@
       scope: SCOPES,
       callback: async (response) => {
         if (response.error) {
-          showToast('Error: ' + response.error, true);
+          if (!reconectando) showToast('Error: ' + response.error, true);
+          reconectando = false;
           return;
         }
         driveToken = response.access_token;
         guestMode = false;
+        reconectando = false;
+
+        // Ocultar banner de reconexión
+        const banner = document.getElementById('reconnect-banner');
+        if (banner) banner.classList.remove('visible');
 
         try {
           await ensureDriveFolder();
@@ -92,7 +99,6 @@
           await refreshFileList();
           if (window.guardado) window.guardado.intentarSubirTodo();
 
-          // Guardar sesión
           marcarSesionConectada();
           showToast('Conectado a Google Drive');
         } catch (e) {
@@ -165,17 +171,25 @@
     }
 
     try {
+      reconectando = true;
       const client = google.accounts.oauth2.initTokenClient({
         client_id: CLIENT_ID,
         scope: SCOPES,
-        prompt: 'none',
+        prompt: '',  // ← permite popup si es necesario, silencioso si no
         callback: async (response) => {
           if (response.error) {
-            console.log('[drive] Reconexión silenciosa falló');
+            console.log('[drive] Reconexión falló:', response.error);
+            reconectando = false;
+            // Mostrar banner para reconectar manualmente
+            mostrarBannerReconectar();
             return;
           }
           driveToken = response.access_token;
           guestMode = false;
+          reconectando = false;
+
+          const banner = document.getElementById('reconnect-banner');
+          if (banner) banner.classList.remove('visible');
 
           try {
             await ensureDriveFolder();
@@ -191,6 +205,7 @@
 
             await refreshFileList();
             if (window.guardado) window.guardado.intentarSubirTodo();
+            marcarSesionConectada();
             showToast('Sesión restaurada');
           } catch (e) {
             console.log('[drive] Error en reconexión:', e);
@@ -199,8 +214,14 @@
       });
       client.requestAccessToken();
     } catch (e) {
-      console.log('[drive] No se pudo reconectar silenciosamente:', e);
+      reconectando = false;
+      console.log('[drive] No se pudo reconectar:', e);
     }
+  }
+
+  function mostrarBannerReconectar() {
+    const banner = document.getElementById('reconnect-banner');
+    if (banner) banner.classList.add('visible');
   }
 
   function salirDrive() {
@@ -225,6 +246,9 @@
     }
     const fnInput = document.getElementById('env-filename');
     if (fnInput) fnInput.value = 'nuevo.ipynb';
+
+    const banner = document.getElementById('reconnect-banner');
+    if (banner) banner.classList.remove('visible');
 
     updateDriveStatus(false);
     showToast('Sesión cerrada');
@@ -517,24 +541,16 @@
   }
 
   async function createNotebook() {
-    if (guestMode) {
-      crearArchivoInvitado('ipynb');
-      return;
-    }
+    if (guestMode) { crearArchivoInvitado('ipynb'); return; }
     if (!driveToken) { showToast('Conecta Drive primero', true); return; }
-
     const name = prompt('Nombre del notebook (sin .ipynb):', 'nuevo');
     if (!name) return;
     await crearArchivoDrive(name.endsWith('.ipynb') ? name : name + '.ipynb', 'ipynb');
   }
 
   async function createPythonFile() {
-    if (guestMode) {
-      crearArchivoInvitado('py');
-      return;
-    }
+    if (guestMode) { crearArchivoInvitado('py'); return; }
     if (!driveToken) { showToast('Conecta Drive primero', true); return; }
-
     const name = prompt('Nombre del archivo Python (sin .py):', 'script');
     if (!name) return;
     await crearArchivoDrive(name.endsWith('.py') ? name : name + '.py', 'py');
@@ -601,10 +617,7 @@
 
   function abrirSelectorImportar() {
     const input = document.getElementById('import-input');
-    if (input) {
-      input.value = '';
-      input.click();
-    }
+    if (input) { input.value = ''; input.click(); }
   }
 
   async function importarArchivo(event) {
@@ -613,51 +626,32 @@
 
     const nombre = file.name;
     const esValido = nombre.endsWith('.ipynb') || nombre.endsWith('.py');
-    if (!esValido) {
-      showToast('Solo se pueden importar archivos .ipynb y .py', true);
-      return;
-    }
-
+    if (!esValido) { showToast('Solo se pueden importar archivos .ipynb y .py', true); return; }
     if (file.size > MAX_IMPORT_MB * 1024 * 1024) {
-      showToast(`El archivo supera los ${MAX_IMPORT_MB} MB`, true);
-      return;
+      showToast(`El archivo supera los ${MAX_IMPORT_MB} MB`, true); return;
     }
 
     const contenido = await leerArchivoComoTexto(file);
 
-    if (guestMode) {
-      importarAInvitado(nombre, contenido);
-      return;
-    }
-
-    if (!driveToken) {
-      showToast('Conecta Drive primero o usa modo invitado', true);
-      return;
-    }
+    if (guestMode) { importarAInvitado(nombre, contenido); return; }
+    if (!driveToken) { showToast('Conecta Drive primero o usa modo invitado', true); return; }
 
     const parent = currentFolderId || driveFolderId;
     const existeId = await buscarArchivoPorNombre(nombre, parent);
 
     if (existeId) {
-      importacionPendiente = {
-        nombre: nombre,
-        contenido: contenido,
-        parent: parent,
-        existeId: existeId
-      };
+      importacionPendiente = { nombre, contenido, parent, existeId };
       document.getElementById('import-text').innerHTML =
         `Ya tienes <strong>${escapeHtml(nombre)}</strong> en esta carpeta. ¿Qué quieres hacer?`;
       abrirModal('modal-import');
       return;
     }
-
     await subirArchivoImportado(nombre, contenido, parent);
   }
 
   async function confirmarImportar(accion) {
     cerrarModal('modal-import');
     if (!importacionPendiente) return;
-
     const info = importacionPendiente;
     importacionPendiente = null;
 
@@ -700,13 +694,7 @@
   async function subirArchivoImportado(nombre, contenido, parent) {
     const ext = nombre.substring(nombre.lastIndexOf('.') + 1);
     const mime = ext === 'ipynb' ? 'application/json' : 'text/x-python';
-
-    const metadata = {
-      name: nombre,
-      mimeType: mime,
-      parents: [parent]
-    };
-
+    const metadata = { name: nombre, mimeType: mime, parents: [parent] };
     const boundary = 'foo_bar';
     const body =
       `--${boundary}\r\n` +
@@ -729,42 +717,26 @@
           body
         }
       );
-      if (res.ok) {
-        showToast('Importado: ' + nombre);
-        refreshFileList();
-      } else {
-        showToast('Error al importar', true);
-      }
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+      if (res.ok) { showToast('Importado: ' + nombre); refreshFileList(); }
+      else { showToast('Error al importar', true); }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   async function actualizarArchivoImportado(fileId, contenido, nombre) {
     const ext = nombre.substring(nombre.lastIndexOf('.') + 1);
     const mime = ext === 'ipynb' ? 'application/json' : 'text/x-python';
-
     try {
       const res = await fetch(
         `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
         {
           method: 'PATCH',
-          headers: {
-            'Authorization': 'Bearer ' + driveToken,
-            'Content-Type': mime
-          },
+          headers: { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': mime },
           body: contenido
         }
       );
-      if (res.ok) {
-        showToast('Reemplazado: ' + nombre);
-        refreshFileList();
-      } else {
-        showToast('Error al reemplazar', true);
-      }
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+      if (res.ok) { showToast('Reemplazado: ' + nombre); refreshFileList(); }
+      else { showToast('Error al reemplazar', true); }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   function importarAInvitado(nombre, contenido) {
@@ -796,40 +768,11 @@
 
   function abrirMenuArchivo(anchor, file, isFolder) {
     const opciones = [];
-
-    opciones.push({
-      icon: 'share',
-      label: 'Compartir',
-      fn: () => abrirModalCompartir(file.id, file.name)
-    });
-    opciones.push({
-      icon: 'drive_file_rename_outline',
-      label: 'Renombrar',
-      fn: () => abrirModalRenombrar(file.name, async (nuevo) => {
-        await renombrarItemDrive(file.id, nuevo);
-      })
-    });
-    opciones.push({
-      icon: 'content_copy',
-      label: 'Copiar',
-      fn: () => abrirModalCopiar(file.name, async (nuevo) => {
-        await copiarItemDrive(file.id, nuevo);
-      })
-    });
-    opciones.push({
-      icon: 'drive_file_move',
-      label: 'Mover',
-      fn: () => abrirModalMover(file.id, file.name)
-    });
-    opciones.push({
-      icon: 'delete',
-      label: 'Eliminar',
-      danger: true,
-      fn: () => abrirModalEliminar(file.name, isFolder, async () => {
-        await eliminarItemDrive(file.id, file.name);
-      })
-    });
-
+    opciones.push({ icon: 'share', label: 'Compartir', fn: () => abrirModalCompartir(file.id, file.name) });
+    opciones.push({ icon: 'drive_file_rename_outline', label: 'Renombrar', fn: () => abrirModalRenombrar(file.name, async (nuevo) => { await renombrarItemDrive(file.id, nuevo); }) });
+    opciones.push({ icon: 'content_copy', label: 'Copiar', fn: () => abrirModalCopiar(file.name, async (nuevo) => { await copiarItemDrive(file.id, nuevo); }) });
+    opciones.push({ icon: 'drive_file_move', label: 'Mover', fn: () => abrirModalMover(file.id, file.name) });
+    opciones.push({ icon: 'delete', label: 'Eliminar', danger: true, fn: () => abrirModalEliminar(file.name, isFolder, async () => { await eliminarItemDrive(file.id, file.name); }) });
     abrirMenuFlotante(anchor, opciones);
   }
 
@@ -889,19 +832,9 @@
   // MODALES
   // ============================================================
 
-  function abrirModal(id) {
-    const m = document.getElementById(id);
-    if (m) m.classList.add('open');
-  }
-
-  function cerrarModal(id) {
-    const m = document.getElementById(id);
-    if (m) m.classList.remove('open');
-  }
-
-  function cerrarTodosLosModales() {
-    document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open'));
-  }
+  function abrirModal(id) { const m = document.getElementById(id); if (m) m.classList.add('open'); }
+  function cerrarModal(id) { const m = document.getElementById(id); if (m) m.classList.remove('open'); }
+  function cerrarTodosLosModales() { document.querySelectorAll('.modal-overlay').forEach(m => m.classList.remove('open')); }
 
   function abrirModalRenombrar(nombreActual, callback) {
     const input = document.getElementById('rename-input');
@@ -1001,23 +934,12 @@
             'Authorization': 'Bearer ' + driveToken,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            type: 'user',
-            role: role,
-            emailAddress: email
-          })
+          body: JSON.stringify({ type: 'user', role: role, emailAddress: email })
         }
       );
-
-      if (res.ok) {
-        showToast('Compartido con ' + email);
-      } else {
-        const err = await res.json();
-        showToast('Error: ' + (err.error?.message || 'no se pudo compartir'), true);
-      }
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+      if (res.ok) { showToast('Compartido con ' + email); }
+      else { const err = await res.json(); showToast('Error: ' + (err.error?.message || 'no se pudo compartir'), true); }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   async function generarEnlaceCompartido() {
@@ -1026,7 +948,6 @@
     const fileId = box.dataset.fileId;
     const rolSelected = document.querySelector('#modal-share .radio-option.selected');
     if (!fileId || !rolSelected) { showToast('Error: no hay archivo seleccionado', true); return; }
-
     const role = rolSelected.dataset.role;
 
     try {
@@ -1038,36 +959,25 @@
             'Authorization': 'Bearer ' + driveToken,
             'Content-Type': 'application/json'
           },
-          body: JSON.stringify({
-            type: 'anyone',
-            role: role
-          })
+          body: JSON.stringify({ type: 'anyone', role: role })
         }
       );
-
       if (!res.ok) {
         const err = await res.json();
         showToast('Error: ' + (err.error?.message || 'no se pudo generar el enlace'), true);
         return;
       }
-
       const infoRes = await fetch(
         `https://www.googleapis.com/drive/v3/files/${fileId}?fields=webViewLink`,
         { headers: { 'Authorization': 'Bearer ' + driveToken } }
       );
       const info = await infoRes.json();
       const link = info.webViewLink || '';
-
       const resultDiv = document.getElementById('share-link-result');
       const input = document.getElementById('share-link-input');
-      if (resultDiv && input) {
-        input.value = link;
-        resultDiv.style.display = 'block';
-      }
+      if (resultDiv && input) { input.value = link; resultDiv.style.display = 'block'; }
       showToast('Enlace generado (' + (role === 'reader' ? 'solo lectura' : 'puede editar') + ')');
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   function copiarEnlaceAlPortapapeles() {
@@ -1078,27 +988,18 @@
     try {
       navigator.clipboard.writeText(input.value).then(() => {
         showToast('Enlace copiado al portapapeles');
-      }).catch(() => {
-        document.execCommand('copy');
-        showToast('Enlace copiado');
-      });
-    } catch (e) {
-      document.execCommand('copy');
-      showToast('Enlace copiado');
-    }
+      }).catch(() => { document.execCommand('copy'); showToast('Enlace copiado'); });
+    } catch (e) { document.execCommand('copy'); showToast('Enlace copiado'); }
   }
 
   async function abrirModalMover(fileId, nombre) {
     const box = document.getElementById('modal-move');
     const list = document.getElementById('move-folder-list');
     if (!box || !list) return;
-
     box.dataset.fileId = fileId;
     document.getElementById('move-name').innerText = nombre;
     list.innerHTML = '<div style="padding:1rem;text-align:center;color:var(--text-dim);font-size:0.8rem">Cargando carpetas...</div>';
-
     abrirModal('modal-move');
-
     try {
       const q = encodeURIComponent(
         `mimeType='application/vnd.google-apps.folder' and trashed=false and '${driveFolderId}' in parents`
@@ -1108,7 +1009,6 @@
         { headers: { 'Authorization': 'Bearer ' + driveToken } }
       );
       const data = await res.json();
-
       list.innerHTML = '';
       const rootBtn = document.createElement('button');
       rootBtn.innerHTML = '<span class="material-symbols-outlined" style="color:#f4b942">folder</span> 🏠 Raíz';
@@ -1118,7 +1018,6 @@
         rootBtn.classList.add('selected');
       });
       list.appendChild(rootBtn);
-
       (data.files || []).forEach(f => {
         const btn = document.createElement('button');
         btn.innerHTML = `<span class="material-symbols-outlined" style="color:#f4b942">folder</span> ${escapeHtml(f.name)}`;
@@ -1140,32 +1039,21 @@
     const fileId = box.dataset.fileId;
     const selected = document.querySelector('#move-folder-list button.selected');
     if (!selected) { showToast('Selecciona una carpeta destino', true); return; }
-
     const newParent = selected.dataset.folderId;
     const oldParent = currentFolderId || driveFolderId;
     cerrarModal('modal-move');
-
     try {
       const res = await fetch(
         `https://www.googleapis.com/drive/v3/files/${fileId}?addParents=${newParent}&removeParents=${oldParent}`,
         {
           method: 'PATCH',
-          headers: {
-            'Authorization': 'Bearer ' + driveToken,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' },
           body: JSON.stringify({})
         }
       );
-      if (res.ok) {
-        showToast('Movido correctamente');
-        refreshFileList();
-      } else {
-        showToast('Error al mover', true);
-      }
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+      if (res.ok) { showToast('Movido correctamente'); refreshFileList(); }
+      else { showToast('Error al mover', true); }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   // ============================================================
@@ -1178,10 +1066,7 @@
         `https://www.googleapis.com/drive/v3/files/${fileId}`,
         {
           method: 'PATCH',
-          headers: {
-            'Authorization': 'Bearer ' + driveToken,
-            'Content-Type': 'application/json'
-          },
+          headers: { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: nuevoNombre })
         }
       );
@@ -1193,12 +1078,8 @@
           if (fnInput) fnInput.value = nuevoNombre;
         }
         refreshFileList();
-      } else {
-        showToast('Error al renombrar', true);
-      }
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+      } else { showToast('Error al renombrar', true); }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   async function copiarItemDrive(fileId, nuevoNombre) {
@@ -1207,49 +1088,27 @@
         `https://www.googleapis.com/drive/v3/files/${fileId}/copy`,
         {
           method: 'POST',
-          headers: {
-            'Authorization': 'Bearer ' + driveToken,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            name: nuevoNombre,
-            parents: [currentFolderId || driveFolderId]
-          })
+          headers: { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: nuevoNombre, parents: [currentFolderId || driveFolderId] })
         }
       );
-      if (res.ok) {
-        showToast('Copiado: ' + nuevoNombre);
-        refreshFileList();
-      } else {
-        showToast('Error al copiar', true);
-      }
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+      if (res.ok) { showToast('Copiado: ' + nuevoNombre); refreshFileList(); }
+      else { showToast('Error al copiar', true); }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   async function eliminarItemDrive(fileId, nombre) {
     try {
       const res = await fetch(
         `https://www.googleapis.com/drive/v3/files/${fileId}`,
-        {
-          method: 'DELETE',
-          headers: { 'Authorization': 'Bearer ' + driveToken }
-        }
+        { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + driveToken } }
       );
       if (res.ok) {
         showToast('Eliminado: ' + nombre);
-        if (fileId === currentFileId) {
-          currentFileId = null;
-          currentFileName = null;
-        }
+        if (fileId === currentFileId) { currentFileId = null; currentFileName = null; }
         refreshFileList();
-      } else {
-        showToast('Error al eliminar', true);
-      }
-    } catch (e) {
-      showToast('Error: ' + e.message, true);
-    }
+      } else { showToast('Error al eliminar', true); }
+    } catch (e) { showToast('Error: ' + e.message, true); }
   }
 
   // ============================================================
@@ -1258,17 +1117,13 @@
 
   async function openFile(fileId, fileName) {
     if (guestMode) return;
-    if (!isEditableFile(fileName)) {
-      showToast('Solo se abren archivos .ipynb y .py', true);
-      return;
-    }
+    if (!isEditableFile(fileName)) { showToast('Solo se abren archivos .ipynb y .py', true); return; }
 
     try {
       const res = await fetch(
         `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
         { headers: { 'Authorization': 'Bearer ' + driveToken } }
       );
-
       let code = '';
       if (fileName.endsWith('.ipynb')) {
         const ipynb = await res.json();
@@ -1276,7 +1131,6 @@
       } else {
         code = await res.text();
       }
-
       currentFileId = fileId;
       currentFileName = fileName;
       currentFileExt = fileName.split('.').pop();
@@ -1292,26 +1146,19 @@
       if (out) out.innerText = 'Abierto: ' + fileName;
 
       showToast('Abierto: ' + fileName);
-
       document.querySelectorAll('#env-file-list li').forEach(li => {
         li.classList.toggle('active', li.dataset.id === fileId);
       });
-    } catch (e) {
-      showToast('Error al abrir: ' + e.message, true);
-    }
+    } catch (e) { showToast('Error al abrir: ' + e.message, true); }
   }
 
   async function saveEnvToDrive() {
-    if (guestMode) {
-      guardarArchivoInvitado();
-      return;
-    }
+    if (guestMode) { guardarArchivoInvitado(); return; }
     if (!driveToken) { showToast('Conecta Drive primero', true); return; }
 
     const filenameInput = document.getElementById('env-filename');
     const filename = (filenameInput ? filenameInput.value.trim() : '') || 'nuevo.ipynb';
     const ext = filename.split('.').pop();
-
     const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
       ? editorsMap['env-editor'].getValue()
       : '';
@@ -1333,14 +1180,9 @@
       if (!silent) showToast('Modo invitado: usa Descargar para guardar el archivo', true);
       return;
     }
-    if (!driveToken) {
-      if (!silent) showToast('Conecta Drive primero', true);
-      return;
-    }
+    if (!driveToken) { if (!silent) showToast('Conecta Drive primero', true); return; }
     if (typeof editorsMap === 'undefined' || !editorsMap[editorId]) return;
-
     const code = editorsMap[editorId].getValue();
-
     if (window.guardado) {
       window.guardado.guardarCambio({
         fileId: null,
@@ -1358,15 +1200,11 @@
 
   function marcarCambio() {
     const status = document.getElementById('autosave-status');
-    if (status) {
-      status.innerText = '● Sin guardar';
-      status.classList.remove('saved');
-    }
+    if (status) { status.innerText = '● Sin guardar'; status.classList.remove('saved'); }
 
     if (guestMode) {
       const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
-        ? editorsMap['env-editor'].getValue()
-        : '';
+        ? editorsMap['env-editor'].getValue() : '';
       localStorage.setItem('guest_code', code);
       localStorage.setItem('guest_filename',
         document.getElementById('env-filename')?.value || 'invitado.ipynb');
@@ -1375,11 +1213,9 @@
     }
 
     if (!currentFileName) return;
-
     const ext = currentFileName.split('.').pop();
     const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
-      ? editorsMap['env-editor'].getValue()
-      : '';
+      ? editorsMap['env-editor'].getValue() : '';
 
     if (window.guardado) {
       window.guardado.guardarCambio({
@@ -1393,13 +1229,112 @@
   }
 
   function actualizarFileIdActual(nombre, nuevoFileId) {
-    if (currentFileName === nombre) {
-      currentFileId = nuevoFileId;
-    }
+    if (currentFileName === nombre) { currentFileId = nuevoFileId; }
   }
 
   function marcarGuardado() {
     if (window.guardado) window.guardado.actualizarEstadoUI('ok');
+  }
+
+  // ============================================================
+  // TOOLBAR COLAPSABLE
+  // ============================================================
+
+  function toggleToolbar() {
+    const toolbar = document.getElementById('env-toolbar');
+    const icon = document.getElementById('toggle-icon');
+    if (!toolbar || !icon) return;
+
+    toolbar.classList.toggle('collapsed');
+    const isCollapsed = toolbar.classList.contains('collapsed');
+    icon.innerText = isCollapsed ? 'expand_more' : 'expand_less';
+    localStorage.setItem('toolbar_collapsed', isCollapsed ? '1' : '0');
+
+    // Refrescar CodeMirror por si cambió el tamaño
+    if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+      setTimeout(() => editorsMap['env-editor'].refresh(), 250);
+    }
+  }
+
+  function restaurarToolbar() {
+    const collapsed = localStorage.getItem('toolbar_collapsed') === '1';
+    if (collapsed) {
+      const toolbar = document.getElementById('env-toolbar');
+      const icon = document.getElementById('toggle-icon');
+      if (toolbar) toolbar.classList.add('collapsed');
+      if (icon) icon.innerText = 'expand_more';
+    }
+  }
+
+  // ============================================================
+  // DIVISOR REDIMENSIONABLE
+  // ============================================================
+
+  function initResizer() {
+    const resizer = document.getElementById('output-resizer');
+    const output = document.getElementById('env-output');
+    if (!resizer || !output) return;
+
+    // Restaurar altura guardada
+    const savedHeight = localStorage.getItem('output_height');
+    if (savedHeight) {
+      output.style.height = savedHeight + 'px';
+    }
+
+    let startY = 0;
+    let startHeight = 0;
+    let dragging = false;
+
+    function onStart(y) {
+      dragging = true;
+      startY = y;
+      startHeight = output.getBoundingClientRect().height;
+      resizer.classList.add('dragging');
+      document.body.style.userSelect = 'none';
+    }
+
+    function onMove(y) {
+      if (!dragging) return;
+      const delta = startY - y;
+      let newHeight = startHeight + delta;
+      const maxH = window.innerHeight * 0.6;
+      if (newHeight < 60) newHeight = 60;
+      if (newHeight > maxH) newHeight = maxH;
+      output.style.height = newHeight + 'px';
+    }
+
+    function onEnd() {
+      if (!dragging) return;
+      dragging = false;
+      resizer.classList.remove('dragging');
+      document.body.style.userSelect = '';
+      const h = output.getBoundingClientRect().height;
+      localStorage.setItem('output_height', Math.round(h));
+      if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+        editorsMap['env-editor'].refresh();
+      }
+    }
+
+    // Ratón
+    resizer.addEventListener('mousedown', (e) => { e.preventDefault(); onStart(e.clientY); });
+    document.addEventListener('mousemove', (e) => onMove(e.clientY));
+    document.addEventListener('mouseup', onEnd);
+
+    // Táctil
+    resizer.addEventListener('touchstart', (e) => {
+      if (e.touches.length !== 1) return;
+      e.preventDefault();
+      onStart(e.touches[0].clientY);
+    }, { passive: false });
+
+    document.addEventListener('touchmove', (e) => {
+      if (!dragging || e.touches.length !== 1) return;
+      e.preventDefault();
+      onMove(e.touches[0].clientY);
+    }, { passive: false });
+
+    document.addEventListener('touchend', onEnd);
+    document.addEventListener('touchcancel', onEnd);
   }
 
   // ============================================================
@@ -1413,9 +1348,7 @@
     const blob = new Blob([JSON.stringify(ipynb, null, 1)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
-    a.href = url;
-    a.download = nombre + '.ipynb';
-    a.click();
+    a.href = url; a.download = nombre + '.ipynb'; a.click();
     URL.revokeObjectURL(url);
     showToast('Descargado: ' + nombre + '.ipynb');
   }
@@ -1423,9 +1356,7 @@
   function descargarActual() {
     const filename = document.getElementById('env-filename')?.value || 'archivo.ipynb';
     const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
-      ? editorsMap['env-editor'].getValue()
-      : '';
-
+      ? editorsMap['env-editor'].getValue() : '';
     if (filename.endsWith('.ipynb')) {
       const ipynb = buildIpynb(code, filename);
       descargarTexto(JSON.stringify(ipynb, null, 1), filename);
@@ -1436,12 +1367,8 @@
   }
 
   async function openInColab() {
-    if (guestMode) {
-      showToast('Modo invitado: conecta con Google para usar Colab', true);
-      return;
-    }
+    if (guestMode) { showToast('Modo invitado: conecta con Google para usar Colab', true); return; }
     if (!driveToken) { showToast('Conecta Drive primero', true); return; }
-
     let fileId = currentFileId;
     if (!fileId) {
       await saveEnvToDrive();
@@ -1464,43 +1391,27 @@
   function buildIpynb(code, nombre) {
     return {
       cells: [
-        {
-          cell_type: 'markdown',
-          metadata: {},
-          source: [`# ${nombre}\n`, '\n', 'Generado desde la guía de Python para Análisis Numérico.\n']
-        },
-        {
-          cell_type: 'code',
-          execution_count: null,
-          metadata: {},
-          outputs: [],
-          source: code.split('\n').map((l, i, a) => i < a.length - 1 ? l + '\n' : l)
-        }
+        { cell_type: 'markdown', metadata: {}, source: [`# ${nombre}\n`, '\n', 'Generado desde la guía de Python para Análisis Numérico.\n'] },
+        { cell_type: 'code', execution_count: null, metadata: {}, outputs: [], source: code.split('\n').map((l, i, a) => i < a.length - 1 ? l + '\n' : l) }
       ],
       metadata: {
         kernelspec: { display_name: 'Python 3', language: 'python', name: 'python3' },
         language_info: { name: 'python', version: '3.11' }
       },
-      nbformat: 4,
-      nbformat_minor: 5
+      nbformat: 4, nbformat_minor: 5
     };
   }
 
   function extractCodeFromIpynb(ipynb) {
     if (!ipynb.cells) return '';
-    return ipynb.cells
-      .filter(c => c.cell_type === 'code')
+    return ipynb.cells.filter(c => c.cell_type === 'code')
       .map(c => Array.isArray(c.source) ? c.source.join('') : (c.source || ''))
       .join('\n\n');
   }
 
   function escapeHtml(str) {
-    return String(str)
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;')
-      .replace(/"/g, '&quot;')
-      .replace(/'/g, '&#039;');
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
 
   // ============================================================
@@ -1542,6 +1453,7 @@
   window.abrirSelectorImportar = abrirSelectorImportar;
   window.importarArchivo = importarArchivo;
   window.confirmarImportar = confirmarImportar;
+  window.toggleToolbar = toggleToolbar;
   window.getDriveToken = () => driveToken;
   window.buildIpynb = buildIpynb;
 
@@ -1550,10 +1462,11 @@
       if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
         editorsMap['env-editor'].on('change', marcarCambio);
       }
+      restaurarToolbar();
+      initResizer();
     }, 1000);
   });
 
-  // Intentar reconectar al cargar
   window.addEventListener('load', () => {
     setTimeout(intentarReconectarSilencioso, 3000);
   });
