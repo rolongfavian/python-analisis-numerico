@@ -1,0 +1,41 @@
+{
+  "nivel": 11,
+  "niveles": [
+    {
+      "id": "nivel-11",
+      "numero": "11",
+      "titulo": "Entorno de programación",
+      "descripcion": "Esta guía incluye un entorno de programación integrado con Google Drive. Aquí puedes crear carpetas, escribir notebooks, guardarlos en tu Drive y abrirlos en Google Colab. Todo desde el navegador.",
+      "comandos": [
+        {
+          "nombre": "Cómo usar el Entorno",
+          "alias": "Editor con Google Drive",
+          "basico": "<p>La pestaña <strong>Entorno</strong> (arriba de la página) abre un editor de código avanzado con estas capacidades:</p><ul><li>Crear y organizar carpetas.</li><li>Crear notebooks (archivos <code>.ipynb</code>).</li><li>Guardar todo en tu Google Drive.</li><li>Abrir archivos en Google Colab.</li></ul><p>Para usarlo, primero conecta tu cuenta de Google haciendo clic en <strong>Drive: no conectado</strong> en la barra superior.</p>",
+          "intermedio": "<p><strong>Pasos para empezar:</strong></p><ol><li>Toca <strong>Drive: no conectado</strong> arriba a la derecha.</li><li>Inicia sesión con tu cuenta de Google.</li><li>Acepta los permisos (solo se accede a la carpeta <code>Python_Análisis_Numérico</code>).</li><li>Se creará automáticamente la carpeta en tu Drive.</li><li>Ya puedes crear notebooks y guardarlos.</li></ol><p><strong>La primera vez</strong>, Google te mostrará un aviso de \"app no verificada\". Es normal porque la app está en modo test. Solo toca <em>Avanzado</em> y luego <em>Ir a la app</em>.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>OAuth:</strong> protocolo de autenticación de Google.</li><li><strong>Scope:</strong> permiso específico que le pides al usuario. Aquí solo pedimos acceso a los archivos que la app crea.</li><li><strong>Drive.file scope:</strong> permite solo acceder a archivos creados por la app.</li><li><strong>.ipynb:</strong> formato de notebook Jupyter/Colab. Es un JSON que contiene celdas de código y markdown.</li></ul></div><p><strong>Privacidad:</strong> tu código nunca sale de tu dispositivo, excepto cuando lo guardas explícitamente en tu Drive. La autenticación se hace directamente con Google.</p>"
+        },
+        {
+          "nombre": "Crear carpetas y notebooks",
+          "alias": "Organiza tu trabajo",
+          "basico": "<p>En el Entorno, la barra lateral izquierda muestra tus archivos de Drive. Los botones de arriba permiten crear:</p><ul><li><strong>+ Carpeta:</strong> crea una subcarpeta dentro de la carpeta actual.</li><li><strong>+ Notebook:</strong> crea un archivo <code>.ipynb</code> vacío.</li><li><strong>Recargar:</strong> refresca la lista de archivos.</li></ul><p>Al tocar una carpeta, entras en ella. Al tocar un archivo, se abre en el editor.</p>",
+          "intermedio": "<p><strong>Estructura recomendada:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>Python_Análisis_Numérico/\n├── Ejercicios/\n│   ├── practica_1.ipynb\n│   └── practica_2.ipynb\n├── Algoritmos/\n│   ├── biseccion.ipynb\n│   ├── newton.ipynb\n│   └── punto_fijo.ipynb\n└── playground.ipynb</pre><p><strong>Breadcrumb:</strong> arriba del explorador ves la ruta actual. Toca cualquier nivel para volver.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Breadcrumb:</strong> la ruta de navegación.</li><li><strong>Subcarpeta:</strong> carpeta dentro de otra.</li><li><strong>Path:</strong> la ruta completa a un archivo.</li></ul></div><p><strong>Cómo se sincroniza:</strong> cuando creas un archivo o carpeta, la llamada va directo a la API de Google Drive. La carpeta raíz <code>Python_Análisis_Numérico</code> se crea la primera vez que conectas y se reutiliza en conexiones posteriores.</p>"
+        },
+        {
+          "nombre": "Guardar y abrir archivos",
+          "alias": "Trabaja sin perder progreso",
+          "basico": "<p>En el editor del Entorno:</p><ul><li><strong>Escribir código:</strong> en el área central.</li><li><strong>Ejecutar:</strong> botón <em>Ejecutar</em> para probar.</li><li><strong>Guardar:</strong> botón <em>Guardar</em> para subir a Drive.</li><li><strong>Borrar:</strong> botón <em>Borrar</em> para eliminar el archivo actual.</li></ul><p><strong>Importante:</strong> los cambios no se guardan solos. Toca <em>Guardar</em> antes de cerrar.</p>",
+          "intermedio": "<p><strong>Flujo típico:</strong></p><ol><li>Crear un notebook nuevo (botón <em>+ Notebook</em>).</li><li>Escribir código.</li><li>Ejecutar para verificar.</li><li>Guardar cuando esté listo.</li></ol><p><strong>Para continuar después:</strong> abre el Entorno, espera a que cargue la lista, y toca el archivo para abrirlo. El código se carga automáticamente en el editor.</p><p><strong>El archivo se sobrescribe:</strong> si guardas con el mismo nombre, se actualiza el archivo existente en lugar de crear uno nuevo.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Multipart upload:</strong> técnica para subir metadatos y contenido en una sola petición.</li><li><strong>PATCH:</strong> método HTTP para actualizar parcialmente un recurso.</li><li><strong>Overwrite:</strong> sobrescribir. El archivo nuevo reemplaza al viejo.</li></ul></div><p><strong>Internamente:</strong> cada archivo se guarda como un JSON que sigue el formato <code>.ipynb</code>. Dentro hay celdas con su código, metadatos y configuración de kernel.</p>"
+        },
+        {
+          "nombre": "Abrir en Google Colab",
+          "alias": "Lleva tu notebook a Colab",
+          "basico": "<p>El botón <strong>Colab</strong> abre el archivo actual en Google Colab. Colab es la versión en la nube de Jupyter, con más potencia y acceso a GPUs.</p><p><strong>Requisito:</strong> el archivo debe estar guardado en tu Drive. Si no lo está, se guarda automáticamente antes de abrir Colab.</p>",
+          "intermedio": "<p><strong>Ventajas de Colab:</strong></p><ul><li>Más memoria y velocidad.</li><li>Acceso a GPU/TPU para Machine Learning.</li><li>Compartir el notebook con un enlace.</li><li>Instalar paquetes con <code>!pip install</code>.</li></ul><p><strong>Formato compartido:</strong> los archivos <code>.ipynb</code> son el mismo formato que Colab usa. Por eso funciona sin conversión.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Colab:</strong> Google Colaboratory, Jupyter en la nube de Google.</li><li><strong>GPU:</strong> unidad de procesamiento gráfico, para cálculos paralelos.</li><li><strong>TPU:</strong> unidad de procesamiento tensorial, de Google.</li><li><strong>Kernel:</strong> el proceso que ejecuta el código en un notebook.</li></ul></div><p><strong>Cómo funciona la URL de Colab:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>https://colab.research.google.com/drive/{FILE_ID}</pre><p>El <code>FILE_ID</code> es el identificador del archivo en Drive. Google lo resuelve automáticamente y abre el notebook.</p>"
+        }
+      ]
+    }
+  ]
+}
