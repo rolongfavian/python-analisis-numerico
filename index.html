@@ -5,10 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Python para Análisis Numérico · Guía Completa</title>
 
-<!-- Material Symbols (iconos) -->
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
-<!-- CodeMirror -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
@@ -17,13 +15,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
 
-<!-- Pyodide -->
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
-
-<!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-<!-- MathJax -->
 <script>
 window.MathJax = {
   tex: {
@@ -54,7 +48,6 @@ window.MathJax = {
   <div id="drive-status" onclick="connectDrive()">Drive: no conectado</div>
 </div>
 
-<!-- ============ VISTA GUÍA ============ -->
 <div id="view-guide" class="view active">
 <header class="guide-header">
   <h1>Python para Análisis Numérico</h1>
@@ -68,7 +61,6 @@ window.MathJax = {
 </div>
 </div>
 
-<!-- ============ VISTA ENTORNO ============ -->
 <div id="view-env" class="view">
 <div id="drive-setup">
   <h2>Entorno de Programación</h2>
@@ -148,7 +140,6 @@ print(f"Iteraciones: {iters}")</textarea>
 </div>
 </div>
 
-<!-- ============ MENÚ Y OVERLAY ============ -->
 <div id="overlay" onclick="toggleMenu()"></div>
 <button id="menu-toggle" onclick="toggleMenu()" aria-label="Menú">
   <span></span><span></span><span></span>
@@ -223,10 +214,8 @@ print(f"Iteraciones: {iters}")</textarea>
   </div>
 </nav>
 
-<!-- ============ MENÚ FLOTANTE DE OPCIONES ============ -->
 <div id="item-menu"></div>
 
-<!-- ============ MODAL: RENOMBRAR ============ -->
 <div class="modal-overlay" id="modal-rename" onclick="if(event.target===this) cerrarModal('modal-rename')">
   <div class="modal-box">
     <h3>Renombrar</h3>
@@ -239,7 +228,6 @@ print(f"Iteraciones: {iters}")</textarea>
   </div>
 </div>
 
-<!-- ============ MODAL: COPIAR ============ -->
 <div class="modal-overlay" id="modal-copy" onclick="if(event.target===this) cerrarModal('modal-copy')">
   <div class="modal-box">
     <h3>Copiar</h3>
@@ -252,7 +240,6 @@ print(f"Iteraciones: {iters}")</textarea>
   </div>
 </div>
 
-<!-- ============ MODAL: ELIMINAR ============ -->
 <div class="modal-overlay" id="modal-delete" onclick="if(event.target===this) cerrarModal('modal-delete')">
   <div class="modal-box">
     <h3 style="color:var(--danger)">Eliminar</h3>
@@ -264,7 +251,6 @@ print(f"Iteraciones: {iters}")</textarea>
   </div>
 </div>
 
-<!-- ============ MODAL: COMPARTIR ============ -->
 <div class="modal-overlay" id="modal-share" onclick="if(event.target===this) cerrarModal('modal-share')">
   <div class="modal-box">
     <h3>Compartir</h3>
@@ -289,7 +275,6 @@ print(f"Iteraciones: {iters}")</textarea>
   </div>
 </div>
 
-<!-- ============ MODAL: MOVER ============ -->
 <div class="modal-overlay" id="modal-move" onclick="if(event.target===this) cerrarModal('modal-move')">
   <div class="modal-box">
     <h3>Mover</h3>
@@ -303,11 +288,15 @@ print(f"Iteraciones: {iters}")</textarea>
   </div>
 </div>
 
+<div id="offline-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:#b91c1c; color:white; padding:8px; text-align:center; font-size:0.8rem; z-index:9999;">
+  ⚠️ Sin conexión · Los cambios se guardan localmente y se subirán al volver
+</div>
+
 <div id="toast"></div>
 
-<!-- Scripts -->
 <script src="js/tema.js"></script>
 <script src="js/pyodide.js"></script>
+<script src="js/guardado.js"></script>
 <script src="js/drive.js"></script>
 <script src="js/codemirror.js"></script>
 <script src="js/ui.js"></script>

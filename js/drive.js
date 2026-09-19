@@ -1,7 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v2 - Iconos, menú ⋯, compartir, mover, copiar,
-        autoguardado y modo invitado
+   v3 - Con sistema de guardado en 3 capas
    ============================================ */
 
 (function () {
@@ -13,7 +12,6 @@
   const CLIENT_ID = '420968434649-a5itml1n5ijtmin8fs1c5ug6bof0kv9o.apps.googleusercontent.com';
   const SCOPES = 'https://www.googleapis.com/auth/drive.file';
   const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
-  const AUTOSAVE_INTERVAL = 30000; // 30 segundos
 
   // ============================================================
   // ESTADO
@@ -26,12 +24,10 @@
   let currentFileName = null;
   let currentFileExt = 'ipynb';
   let guestMode = false;
-  let autosaveTimer = null;
-  let dirty = false;
   let itemMenuTarget = null;
 
   // ============================================================
-  // ICONOS POR TIPO DE ARCHIVO
+  // ICONOS
   // ============================================================
 
   function getIconHtml(file) {
@@ -64,14 +60,8 @@
     return n.endsWith('.ipynb') || n.endsWith('.py');
   }
 
-  function getEditorLanguage(name) {
-    if (name.endsWith('.py')) return 'python';
-    if (name.endsWith('.ipynb')) return 'python';
-    return 'python';
-  }
-
   // ============================================================
-  // CONEXIÓN CON GOOGLE DRIVE
+  // CONEXIÓN CON DRIVE
   // ============================================================
 
   function connectDrive() {
@@ -90,14 +80,11 @@
         }
         driveToken = response.access_token;
         guestMode = false;
-        localStorage.setItem('drive_token', driveToken);
-        localStorage.setItem('drive_token_time', Date.now());
 
         try {
           await ensureDriveFolder();
           updateDriveStatus(true);
 
-          // Ocultar aviso de invitado
           const gw = document.getElementById('guest-warning');
           if (gw) gw.style.display = 'none';
 
@@ -107,7 +94,10 @@
           if (layout) layout.style.display = 'grid';
 
           await refreshFileList();
-          iniciarAutosave();
+
+          // Al conectar, intentar subir pendientes
+          if (window.guardado) window.guardado.intentarSubirTodo();
+
           showToast('Conectado a Google Drive');
         } catch (e) {
           showToast('Error al preparar carpeta: ' + e.message, true);
@@ -172,7 +162,6 @@
     if (setup) setup.style.display = 'none';
     if (layout) layout.style.display = 'grid';
 
-    // Mostrar advertencia
     let gw = document.getElementById('guest-warning');
     if (!gw) {
       gw = document.createElement('div');
@@ -183,7 +172,6 @@
     gw.style.display = 'block';
     gw.innerHTML = '<strong>Modo invitado:</strong> puedes escribir y ejecutar código, pero no guardar en la nube. Descarga tus archivos antes de cerrar la página o perderás el trabajo.';
 
-    // Cargar desde localStorage
     const savedCode = localStorage.getItem('guest_code') || '';
     const savedName = localStorage.getItem('guest_filename') || 'invitado.ipynb';
     if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
@@ -192,7 +180,6 @@
     const fnInput = document.getElementById('env-filename');
     if (fnInput) fnInput.value = savedName;
 
-    iniciarAutosaveLocal();
     refreshGuestFileList();
     showToast('Modo invitado activado');
   }
@@ -219,10 +206,9 @@
       li.addEventListener('click', (e) => {
         if (e.target.closest('.menu-btn')) {
           e.stopPropagation();
-          abrirMenuInvitado(e.currentTarget || e.target.closest('.menu-btn'), i, f.name);
+          abrirMenuInvitado(e.target.closest('.menu-btn'), i, f.name);
           return;
         }
-        // Cargar archivo
         if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
           editorsMap['env-editor'].setValue(f.content || '');
         }
@@ -411,7 +397,7 @@
   }
 
   // ============================================================
-  // CREAR CARPETAS Y ARCHIVOS
+  // CREAR
   // ============================================================
 
   async function createFolder() {
@@ -482,7 +468,7 @@
 
   async function crearArchivoDrive(filename, tipo) {
     const parent = currentFolderId || driveFolderId;
-    const contenidoInicial = tipo === 'py' ? '# ' + filename + '\n\n' : '# ' + filename + '\n\n';
+    const contenidoInicial = '# ' + filename + '\n\n';
     const blob = tipo === 'ipynb'
       ? JSON.stringify(buildIpynb(contenidoInicial, filename))
       : contenidoInicial;
@@ -525,7 +511,7 @@
   }
 
   // ============================================================
-  // MENÚ FLOTANTE DE OPCIONES
+  // MENÚ FLOTANTE
   // ============================================================
 
   function abrirMenuArchivo(anchor, file, isFolder) {
@@ -585,13 +571,11 @@
       menu.appendChild(btn);
     });
 
-    // Posicionar bajo el botón
     const rect = anchor.getBoundingClientRect();
     const menuWidth = 180;
     let left = rect.right - menuWidth;
     if (left < 8) left = 8;
     let top = rect.bottom + 4;
-    // Si no cabe abajo, mostrar arriba
     if (top + 220 > window.innerHeight) {
       top = rect.top - 8;
       menu.style.transform = 'translateY(-100%)';
@@ -603,7 +587,6 @@
     menu.classList.add('open');
     itemMenuTarget = anchor;
 
-    // Cerrar al tocar fuera
     setTimeout(() => {
       document.addEventListener('click', cerrarMenuFuera, { once: true });
     }, 10);
@@ -645,7 +628,6 @@
     const box = document.getElementById('modal-rename');
     if (!input || !box) return;
     input.value = nombreActual;
-    box.dataset.callback = '';
     box._callback = callback;
     abrirModal('modal-rename');
     setTimeout(() => { input.focus(); input.select(); }, 100);
@@ -707,7 +689,6 @@
     document.getElementById('share-email').value = '';
     document.getElementById('share-name').innerText = nombre;
     box.dataset.fileId = fileId;
-    // Reset selector
     document.querySelectorAll('#modal-share .radio-option').forEach(o => o.classList.remove('selected'));
     document.querySelector('#modal-share .radio-option[data-role="reader"]').classList.add('selected');
     abrirModal('modal-share');
@@ -779,7 +760,6 @@
       const data = await res.json();
 
       list.innerHTML = '';
-      // Opción raíz
       const rootBtn = document.createElement('button');
       rootBtn.innerHTML = '<span class="material-symbols-outlined" style="color:#f4b942">folder</span> 🏠 Raíz';
       rootBtn.dataset.folderId = driveFolderId;
@@ -839,7 +819,7 @@
   }
 
   // ============================================================
-  // OPERACIONES DE DRIVE
+  // OPERACIONES DRIVE
   // ============================================================
 
   async function renombrarItemDrive(fileId, nuevoNombre) {
@@ -923,7 +903,7 @@
   }
 
   // ============================================================
-  // ABRIR / GUARDAR ARCHIVOS
+  // ABRIR / GUARDAR
   // ============================================================
 
   async function openFile(fileId, fileName) {
@@ -955,7 +935,6 @@
       if (filenameInput) filenameInput.value = fileName;
 
       if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
-        editorsMap['env-editor'].setOption('mode', 'python');
         editorsMap['env-editor'].setValue(code);
       }
 
@@ -987,58 +966,15 @@
       ? editorsMap['env-editor'].getValue()
       : '';
 
-    const isIpynb = ext === 'ipynb';
-    const content = isIpynb ? JSON.stringify(buildIpynb(code, filename)) : code;
-    const mime = isIpynb ? 'application/json' : 'text/x-python';
-
-    const parent = currentFolderId || driveFolderId;
-    let fileId = currentFileId;
-
-    if (!fileId) {
-      const q = encodeURIComponent(
-        `name='${filename}' and '${parent}' in parents and trashed=false`
-      );
-      const search = await fetch(
-        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
-        { headers: { 'Authorization': 'Bearer ' + driveToken } }
-      );
-      const searchData = await search.json();
-      if (searchData.files && searchData.files.length > 0) {
-        fileId = searchData.files[0].id;
-      }
-    }
-
-    let url, method;
-    if (fileId) {
-      url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`;
-      method = 'PATCH';
-    } else {
-      url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id';
-      method = 'POST';
-    }
-
-    const boundary = 'foo_bar';
-    const metadata = { name: filename, mimeType: mime, parents: [parent] };
-    const body = method === 'POST'
-      ? `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: ${mime}\r\n\r\n${content}\r\n--${boundary}--`
-      : content;
-
-    const headers = method === 'POST'
-      ? { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': `multipart/related; boundary=${boundary}` }
-      : { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': mime };
-
-    try {
-      const res = await fetch(url, { method, headers, body });
-      const data = await res.json();
-      if (method === 'POST' && data.id) {
-        currentFileId = data.id;
-      }
-      currentFileName = filename;
-      marcarGuardado();
-      showToast('Guardado: ' + filename);
-      refreshFileList();
-    } catch (e) {
-      showToast('Error al guardar: ' + e.message, true);
+    if (window.guardado) {
+      window.guardado.guardarCambio({
+        fileId: currentFileId,
+        nombre: filename,
+        ext: ext,
+        contenido: code,
+        parentId: currentFolderId || driveFolderId
+      });
+      showToast('Guardando...');
     }
   }
 
@@ -1054,42 +990,15 @@
     if (typeof editorsMap === 'undefined' || !editorsMap[editorId]) return;
 
     const code = editorsMap[editorId].getValue();
-    const ipynb = buildIpynb(code, nombre);
-    const q = encodeURIComponent(
-      `name='${nombre}.ipynb' and '${driveFolderId}' in parents and trashed=false`
-    );
-    const search = await fetch(
-      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
-      { headers: { 'Authorization': 'Bearer ' + driveToken } }
-    );
-    const searchData = await search.json();
 
-    let url, method;
-    if (searchData.files && searchData.files.length > 0) {
-      url = `https://www.googleapis.com/upload/drive/v3/files/${searchData.files[0].id}?uploadType=media`;
-      method = 'PATCH';
-    } else {
-      url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-      method = 'POST';
-    }
-
-    const boundary = 'foo_bar';
-    const metadata = { name: nombre + '.ipynb', mimeType: 'application/json', parents: [driveFolderId] };
-    const body = method === 'POST'
-      ? `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(ipynb)}\r\n--${boundary}--`
-      : JSON.stringify(ipynb);
-
-    const headers = method === 'POST'
-      ? { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': `multipart/related; boundary=${boundary}` }
-      : { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' };
-
-    try {
-      const res = await fetch(url, { method, headers, body });
-      if (res.ok && !silent) {
-        showToast('Guardado: ' + nombre + '.ipynb');
-      }
-    } catch (e) {
-      if (!silent) showToast('Error: ' + e.message, true);
+    if (window.guardado) {
+      window.guardado.guardarCambio({
+        fileId: null,
+        nombre: nombre + '.ipynb',
+        ext: 'ipynb',
+        contenido: code,
+        parentId: driveFolderId
+      });
     }
   }
 
@@ -1097,89 +1006,50 @@
   // AUTOGUARDADO
   // ============================================================
 
-  function iniciarAutosave() {
-    if (autosaveTimer) clearInterval(autosaveTimer);
-    autosaveTimer = setInterval(() => {
-      if (dirty && driveToken && !guestMode && currentFileName) {
-        autoguardar();
-      }
-    }, AUTOSAVE_INTERVAL);
-
-    // Guardar al cerrar la pestaña
-    window.addEventListener('beforeunload', (e) => {
-      if (dirty && driveToken && !guestMode && currentFileName) {
-        // Guardado final (puede no completarse por el cierre)
-        autoguardar();
-      }
-    });
-  }
-
-  function iniciarAutosaveLocal() {
-    if (autosaveTimer) clearInterval(autosaveTimer);
-    autosaveTimer = setInterval(() => {
-      if (dirty && guestMode) {
-        const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
-          ? editorsMap['env-editor'].getValue()
-          : '';
-        localStorage.setItem('guest_code', code);
-        localStorage.setItem('guest_filename', document.getElementById('env-filename')?.value || 'invitado.ipynb');
-        marcarGuardado();
-      }
-    }, AUTOSAVE_INTERVAL);
-  }
-
-  async function autoguardar() {
-    if (!currentFileName) return;
-    const filename = currentFileName;
-    const ext = filename.split('.').pop();
-
-    const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
-      ? editorsMap['env-editor'].getValue()
-      : '';
-
-    const isIpynb = ext === 'ipynb';
-    const content = isIpynb ? JSON.stringify(buildIpynb(code, filename)) : code;
-    const mime = isIpynb ? 'application/json' : 'text/x-python';
-
-    try {
-      const url = `https://www.googleapis.com/upload/drive/v3/files/${currentFileId}?uploadType=media`;
-      const res = await fetch(url, {
-        method: 'PATCH',
-        headers: {
-          'Authorization': 'Bearer ' + driveToken,
-          'Content-Type': mime
-        },
-        body: content
-      });
-      if (res.ok) {
-        marcarGuardado();
-        console.log('[autosave] Guardado automático:', filename);
-      }
-    } catch (e) {
-      console.warn('[autosave] Error:', e);
-    }
-  }
-
   function marcarCambio() {
-    dirty = true;
     const status = document.getElementById('autosave-status');
     if (status) {
       status.innerText = '● Sin guardar';
       status.classList.remove('saved');
     }
+
+    if (guestMode) {
+      const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
+        ? editorsMap['env-editor'].getValue()
+        : '';
+      localStorage.setItem('guest_code', code);
+      localStorage.setItem('guest_filename',
+        document.getElementById('env-filename')?.value || 'invitado.ipynb');
+      if (window.guardado) window.guardado.actualizarEstadoUI('ok');
+      return;
+    }
+
+    if (!currentFileName) return;
+
+    const ext = currentFileName.split('.').pop();
+    const code = (typeof editorsMap !== 'undefined' && editorsMap['env-editor'])
+      ? editorsMap['env-editor'].getValue()
+      : '';
+
+    if (window.guardado) {
+      window.guardado.guardarCambio({
+        fileId: currentFileId,
+        nombre: currentFileName,
+        ext: ext,
+        contenido: code,
+        parentId: currentFolderId || driveFolderId
+      });
+    }
+  }
+
+  function actualizarFileIdActual(nombre, nuevoFileId) {
+    if (currentFileName === nombre) {
+      currentFileId = nuevoFileId;
+    }
   }
 
   function marcarGuardado() {
-    dirty = false;
-    const status = document.getElementById('autosave-status');
-    if (status) {
-      status.innerText = '✓ Guardado';
-      status.classList.add('saved');
-      setTimeout(() => {
-        status.innerText = '';
-        status.classList.remove('saved');
-      }, 2000);
-    }
+    if (window.guardado) window.guardado.actualizarEstadoUI('ok');
   }
 
   // ============================================================
@@ -1225,8 +1095,14 @@
     let fileId = currentFileId;
     if (!fileId) {
       await saveEnvToDrive();
-      fileId = currentFileId;
-      if (!fileId) { showToast('No se pudo guardar', true); return; }
+      setTimeout(() => {
+        if (currentFileId) {
+          window.open(`https://colab.research.google.com/drive/${currentFileId}`, '_blank');
+        } else {
+          showToast('Espera a que se guarde el archivo', true);
+        }
+      }, 2000);
+      return;
     }
     window.open(`https://colab.research.google.com/drive/${fileId}`, '_blank');
   }
@@ -1278,7 +1154,7 @@
   }
 
   // ============================================================
-  // EXPONER GLOBALMENTE
+  // EXPOSICIÓN GLOBAL
   // ============================================================
   window.connectDrive = connectDrive;
   window.activarModoInvitado = activarModoInvitado;
@@ -1308,8 +1184,12 @@
   window.cerrarModal = cerrarModal;
   window.cerrarTodosLosModales = cerrarTodosLosModales;
   window.marcarCambio = marcarCambio;
+  window.marcarGuardado = marcarGuardado;
+  window.actualizarFileIdActual = actualizarFileIdActual;
+  window.getDriveToken = () => driveToken;
+  window.buildIpynb = buildIpynb;
 
-  // Detectar cambios en el editor para autosave
+  // Detectar cambios en el editor
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
