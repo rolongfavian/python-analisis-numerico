@@ -346,8 +346,13 @@
       if (main) main.insertBefore(gw, main.firstChild);
     }
     gw.style.display = 'block';
-    gw.innerHTML = '<strong>Modo invitado:</strong> puedes escribir y ejecutar código, pero no guardar en la nube. Descarga tus archivos antes de cerrar la página o perderás el trabajo.';
 
+    gw.innerHTML = `
+      <strong>Modo invitado:</strong> puedes ejecutar <strong>comandos básicos de Python</strong>
+      (print, variables, bucles, funciones, listas, etc.) directamente en tu navegador.<br><br>
+      <strong>Para usar NumPy, Matplotlib o Colab</strong>, conecta tu cuenta de Google con el botón
+      <strong>"Drive: no conectado"</strong> de arriba.
+    `;
     const savedCode = localStorage.getItem('guest_code') || '';
     const savedName = localStorage.getItem('guest_filename') || 'invitado.ipynb';
     if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
@@ -1682,6 +1687,8 @@
   window.leerLibreriasDrive = leerLibreriasDrive;
   window.guardarLibreriasDrive = guardarLibreriasDrive;
   window.mostrarBannerReconectar = mostrarBannerReconectar;
+  window.getDriveFolderId = () => driveFolderId;
+  window.isGuestMode = () => guestMode;
 
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {

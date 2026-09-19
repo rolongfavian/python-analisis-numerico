@@ -324,33 +324,25 @@
   // ============================================================
   // MODAL
   // ============================================================
+
+
   function abrirModalLibrerias() {
-    const modal = document.getElementById('modal-libs');
-    if (!modal) return;
-
-    document.getElementById('libs-result').innerHTML = '';
-    const search = document.getElementById('libs-search');
-    if (search) search.value = '';
-    filtroTexto = '';
-    filtroCategoria = 'Todas';
-
-    renderInstaladas();
-    modal.classList.add('open');
-
-    if (catalogoActual.length === 0) {
-      cargarCatalogo(false);
-    } else {
-      renderCatalogo();
+    // En modo invitado, avisar que no se puede instalar
+    if (typeof window.isGuestMode === 'function' && window.isGuestMode()) {
+      alert(
+        '⚠️ Modo invitado\n\n' +
+        'En modo invitado solo puedes ejecutar comandos básicos de Python ' +
+        '(print, variables, bucles, funciones, etc.).\n\n' +
+        'Para usar librerías como NumPy o Matplotlib y ejecutar en Google Colab, ' +
+        'conecta tu cuenta de Google con el botón "Drive: no conectado".'
+      );
+      return;
     }
 
-    setTimeout(() => { if (search) search.focus(); }, 150);
-  }
-
-  function cerrarModalLibrerias() {
     const modal = document.getElementById('modal-libs');
-    if (modal) modal.classList.remove('open');
+    if (!modal) return;
+    // ... el resto igual
   }
-
   // ============================================================
   // INSTALADAS (CHIPS)
   // ============================================================

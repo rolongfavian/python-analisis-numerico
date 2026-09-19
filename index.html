@@ -15,7 +15,6 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
 
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <script>
@@ -123,8 +122,10 @@ window.MathJax = {
         <span class="material-symbols-outlined">menu_book</span> Ejemplos
       </button>
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-      <button class="primary" onclick="runEnvCode()">
+      
+      <button class="primary" onclick="runEnvCode()" title="Ejecutar">
         <span class="material-symbols-outlined">play_arrow</span> Ejecutar
+      </button>
       </button>
       <button onclick="saveEnvToDrive()">
         <span class="material-symbols-outlined">save</span> Guardar
@@ -383,7 +384,8 @@ window.MathJax = {
 <div id="toast"></div>
 
 <script src="js/tema.js"></script>
-<script src="js/pyodide.js"></script>
+<script src="js/skulpt-runner.js"></script>
+<script src="js/ejecutor.js"></script>
 <script src="js/guardado.js"></script>
 <script src="js/drive.js"></script>
 <script src="js/explorador.js"></script>

@@ -1292,3 +1292,26 @@ li.CodeMirror-hint-active {
   border-radius: 3px;
   font-weight: 600;
 }
+
+/* ============================================================
+   OUTPUT: estilos para Skulpt
+   ============================================================ */
+.output-text {
+  margin: 0 0 8px 0;
+  white-space: pre-wrap;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  line-height: 1.5;
+  color: var(--text);
+}
+.output-error {
+  color: var(--danger);
+  background: var(--danger-soft);
+  padding: 10px 12px;
+  border-radius: 5px;
+  border-left: 3px solid var(--danger);
+  margin: 0 0 8px 0;
+  white-space: pre-wrap;
+  font-size: 0.78rem;
+  line-height: 1.5;
+}
