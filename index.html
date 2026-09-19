@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Python para Análisis Numérico · Guía Completa</title>
 
+<!-- Material Symbols (iconos) -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
 <!-- CodeMirror -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
@@ -71,6 +74,8 @@ window.MathJax = {
   <h2>Entorno de Programación</h2>
   <p>Conecta tu cuenta de Google para guardar tus notebooks en tu Drive. Los archivos se organizan en la carpeta <code>Python_Análisis_Numérico</code>.</p>
   <button onclick="connectDrive()">Conectar con Google Drive</button>
+  <button class="secondary" onclick="activarModoInvitado()">Continuar como invitado</button>
+  <p style="margin-top:1rem;font-size:0.72rem;">Como invitado puedes escribir y ejecutar código, pero <strong>no se guardará en la nube</strong>. Descarga tus archivos antes de cerrar.</p>
 </div>
 
 <div class="env-layout" id="env-layout" style="display:none;">
@@ -79,9 +84,18 @@ window.MathJax = {
       <a onclick="navigateTo('root')">🏠 Raíz</a>
     </div>
     <div class="env-actions">
-      <button class="primary" onclick="createFolder()">+ Carpeta</button>
-      <button class="primary" onclick="createNotebook()">+ Notebook</button>
-      <button onclick="refreshFileList()">Recargar</button>
+      <button class="primary" onclick="createFolder()">
+        <span class="material-symbols-outlined">create_new_folder</span> Carpeta
+      </button>
+      <button class="primary" onclick="createNotebook()">
+        <span class="material-symbols-outlined">note_add</span> Notebook
+      </button>
+      <button class="primary" onclick="createPythonFile()">
+        <span class="material-symbols-outlined">code</span> .py
+      </button>
+      <button onclick="refreshFileList()" title="Recargar">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
     </div>
     <ul class="env-files" id="env-file-list">
       <li class="empty">Conecta tu Drive para ver tus archivos</li>
@@ -90,10 +104,19 @@ window.MathJax = {
   <div class="env-main">
     <div class="env-toolbar">
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-      <button class="primary" onclick="runEnvCode()">Ejecutar</button>
-      <button onclick="saveEnvToDrive()">Guardar</button>
-      <button onclick="openInColab()">Colab</button>
-      <button onclick="deleteCurrentFile()" style="color:var(--danger); border-color:var(--danger);">Borrar</button>
+      <button class="primary" onclick="runEnvCode()">
+        <span class="material-symbols-outlined">play_arrow</span> Ejecutar
+      </button>
+      <button onclick="saveEnvToDrive()">
+        <span class="material-symbols-outlined">save</span> Guardar
+      </button>
+      <button onclick="descargarActual()">
+        <span class="material-symbols-outlined">download</span> Descargar
+      </button>
+      <button onclick="openInColab()">
+        <span class="material-symbols-outlined">open_in_new</span> Colab
+      </button>
+      <span id="autosave-status"></span>
     </div>
     <div class="env-editor-wrap">
       <textarea id="env-editor"># Escribe tu código Python aquí
@@ -133,85 +156,152 @@ print(f"Iteraciones: {iters}")</textarea>
 
 <nav id="sidebar">
   <div class="sidebar-title">Niveles de la Guía</div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(0); closeMenu();">
       <span>Nivel 0 · Antes de empezar</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(1); closeMenu();">
       <span>Nivel 1 · Lo más básico</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(2); closeMenu();">
       <span>Nivel 2 · Tipos de datos</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(3); closeMenu();">
       <span>Nivel 3 · Operaciones</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(4); closeMenu();">
       <span>Nivel 4 · Control de flujo</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(5); closeMenu();">
       <span>Nivel 5 · Colecciones</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(6); closeMenu();">
       <span>Nivel 6 · Funciones</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(7); closeMenu();">
       <span>Nivel 7 · Módulos</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(8); closeMenu();">
       <span>Nivel 8 · Errores</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(9); closeMenu();">
       <span>Nivel 9 · Clases y objetos</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(10); closeMenu();">
       <span>Nivel 10 · Análisis numérico</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(11); closeMenu();">
       <span>Nivel 11 · Entorno de trabajo</span>
     </button>
   </div>
-
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(99); closeMenu();">
       <span>Glosario</span>
     </button>
   </div>
 </nav>
+
+<!-- ============ MENÚ FLOTANTE DE OPCIONES ============ -->
+<div id="item-menu"></div>
+
+<!-- ============ MODAL: RENOMBRAR ============ -->
+<div class="modal-overlay" id="modal-rename" onclick="if(event.target===this) cerrarModal('modal-rename')">
+  <div class="modal-box">
+    <h3>Renombrar</h3>
+    <label for="rename-input">Nuevo nombre</label>
+    <input type="text" id="rename-input" placeholder="nuevo_nombre">
+    <div class="actions">
+      <button onclick="cerrarModal('modal-rename')">Cancelar</button>
+      <button class="primary" onclick="confirmarRenombrar()">Renombrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: COPIAR ============ -->
+<div class="modal-overlay" id="modal-copy" onclick="if(event.target===this) cerrarModal('modal-copy')">
+  <div class="modal-box">
+    <h3>Copiar</h3>
+    <label for="copy-input">Nombre de la copia</label>
+    <input type="text" id="copy-input" placeholder="copia">
+    <div class="actions">
+      <button onclick="cerrarModal('modal-copy')">Cancelar</button>
+      <button class="primary" onclick="confirmarCopiar()">Copiar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: ELIMINAR ============ -->
+<div class="modal-overlay" id="modal-delete" onclick="if(event.target===this) cerrarModal('modal-delete')">
+  <div class="modal-box">
+    <h3 style="color:var(--danger)">Eliminar</h3>
+    <p id="delete-text">¿Estás seguro?</p>
+    <div class="actions">
+      <button onclick="cerrarModal('modal-delete')">Cancelar</button>
+      <button class="danger" onclick="confirmarEliminar()">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: COMPARTIR ============ -->
+<div class="modal-overlay" id="modal-share" onclick="if(event.target===this) cerrarModal('modal-share')">
+  <div class="modal-box">
+    <h3>Compartir</h3>
+    <p>Comparte <strong id="share-name">archivo</strong> con otra persona. Necesita una cuenta de Google.</p>
+    <label for="share-email">Correo electrónico</label>
+    <input type="email" id="share-email" placeholder="correo@gmail.com">
+    <label>Permisos</label>
+    <div class="radio-group">
+      <div class="radio-option selected" data-role="reader" onclick="seleccionarRolShare(this)">
+        <span class="material-symbols-outlined">visibility</span>
+        Solo lectura
+      </div>
+      <div class="radio-option" data-role="writer" onclick="seleccionarRolShare(this)">
+        <span class="material-symbols-outlined">edit</span>
+        Puede editar
+      </div>
+    </div>
+    <div class="actions">
+      <button onclick="cerrarModal('modal-share')">Cancelar</button>
+      <button class="primary" onclick="confirmarCompartir()">Compartir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ MODAL: MOVER ============ -->
+<div class="modal-overlay" id="modal-move" onclick="if(event.target===this) cerrarModal('modal-move')">
+  <div class="modal-box">
+    <h3>Mover</h3>
+    <p>Mueve <strong id="move-name">archivo</strong> a otra carpeta de tu Drive.</p>
+    <label>Carpeta destino</label>
+    <div class="folder-list" id="move-folder-list"></div>
+    <div class="actions">
+      <button onclick="cerrarModal('modal-move')">Cancelar</button>
+      <button class="primary" onclick="confirmarMover()">Mover</button>
+    </div>
+  </div>
+</div>
 
 <div id="toast"></div>
 
