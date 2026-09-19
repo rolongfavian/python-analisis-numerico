@@ -1,15 +1,13 @@
 /* ============================================
    guardado.js — Sistema de guardado en 3 capas
-   Capa 1: localStorage (instantáneo)
-   Capa 2: Google Drive (cada 5s)
-   Capa 3: Reintento al volver online
+   v2 - Manejo de 404 (archivo borrado) y 401/403 (token)
    ============================================ */
 
 (function () {
   'use strict';
 
   const COLA_KEY = 'cola_pendientes';
-  const INTERVALO_SUBIDA = 5000; // 5 segundos
+  const INTERVALO_SUBIDA = 5000;
 
   let colaTimer = null;
   let subiendo = false;
@@ -31,7 +29,6 @@
       localStorage.setItem(COLA_KEY, JSON.stringify(cola));
     } catch (e) {
       console.warn('[guardado] localStorage lleno o bloqueado:', e);
-      // Si se llena, quitamos los más viejos
       if (cola.length > 5) {
         cola.splice(0, cola.length - 5);
         try {
@@ -43,10 +40,6 @@
     }
   }
 
-  /**
-   * Añade o actualiza un pendiente en la cola.
-   * Si ya existe uno con el mismo fileId o nombre, lo sobrescribe.
-   */
   function encolar(item) {
     const cola = leerCola();
     const idx = cola.findIndex(p =>
@@ -74,9 +67,6 @@
     return entrada;
   }
 
-  /**
-   * Elimina un pendiente cuando ya se subió bien a Drive.
-   */
   function desencolar(fileId, nombre) {
     let cola = leerCola();
     cola = cola.filter(p => {
@@ -101,12 +91,8 @@
   // SERIALIZACIÓN SEGÚN TIPO
   // ============================================================
 
-  /**
-   * Prepara el contenido y MIME correctos según el tipo de archivo.
-   */
   function prepararContenido(item) {
     if (item.ext === 'ipynb') {
-      // Necesitamos buildIpynb de drive.js
       const nombre = item.nombre.replace('.ipynb', '');
       const ipynb = window.buildIpynb
         ? window.buildIpynb(item.contenido, nombre)
@@ -128,6 +114,14 @@
   // SUBIDA A DRIVE
   // ============================================================
 
+  /**
+   * Sube un pendiente.
+   * Devuelve:
+   *   true       → subida exitosa (nuevo)
+   *   string     → fileId del archivo nuevo
+   *   'recrear'  → el archivo fue borrado, hay que crearlo de nuevo
+   *   false      → error de red o token, reintentar después
+   */
   async function subirPendiente(item, token) {
     if (!token) return false;
 
@@ -138,7 +132,6 @@
     let url, method, headers, body;
 
     if (item.fileId) {
-      // Ya existe: PATCH
       url = `https://www.googleapis.com/upload/drive/v3/files/${item.fileId}?uploadType=media`;
       method = 'PATCH';
       headers = {
@@ -147,7 +140,6 @@
       };
       body = contenido;
     } else {
-      // Nuevo: POST con multipart
       url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id';
       method = 'POST';
       const boundary = 'foo_bar';
@@ -168,13 +160,29 @@
 
     try {
       const res = await fetch(url, { method, headers, body });
+
       if (res.ok) {
         const data = method === 'POST' ? await res.json() : null;
         return data && data.id ? data.id : true;
-      } else {
-        console.warn('[guardado] Error al subir:', res.status, await res.text());
+      }
+
+      // 404 = archivo borrado
+      if (res.status === 404) {
+        console.warn('[guardado] Archivo no existe, se recreará:', item.nombre);
+        return 'recrear';
+      }
+
+      // 401/403 = token expirado o sin permisos
+      if (res.status === 401 || res.status === 403) {
+        console.warn('[guardado] Token inválido o sin permisos');
+        if (typeof window.mostrarBannerReconectar === 'function') {
+          window.mostrarBannerReconectar();
+        }
         return false;
       }
+
+      console.warn('[guardado] Error al subir:', res.status, await res.text());
+      return false;
     } catch (e) {
       console.warn('[guardado] Error de red:', e.message);
       return false;
@@ -198,16 +206,39 @@
 
     for (const item of cola) {
       const resultado = await subirPendiente(item, token);
+
       if (resultado === false) {
-        // Error: dejarlo en cola, salir del bucle para reintentar después
+        // Error de red o token: dejar en cola y salir
         subiendo = false;
         actualizarEstadoUI('error');
         return;
       }
-      // Subida exitosa: eliminar de la cola
+
+      if (resultado === 'recrear') {
+        // El archivo fue borrado. Quitarlo de la cola con fileId
+        // y volver a encolarlo sin fileId para que se cree de nuevo.
+        const colaActual = leerCola().filter(p => {
+          if (item.fileId) return p.fileId !== item.fileId;
+          return !(p.nombre === item.nombre && !p.fileId);
+        });
+        colaActual.push({
+          fileId: null,
+          nombre: item.nombre,
+          ext: item.ext,
+          contenido: item.contenido,
+          mime: item.mime,
+          parentId: item.parentId,
+          ts: Date.now()
+        });
+        guardarCola(colaActual);
+        subiendo = false;
+        actualizarEstadoUI('ok');
+        return;
+      }
+
+      // Subida exitosa
       desencolar(item.fileId, item.nombre);
 
-      // Si era un archivo nuevo, actualizar el fileId en el editor
       if (resultado !== true && typeof window.actualizarFileIdActual === 'function') {
         window.actualizarFileIdActual(item.nombre, resultado);
       }
@@ -221,7 +252,6 @@
     if (colaTimer) clearInterval(colaTimer);
     colaTimer = setInterval(intentarSubirTodo, INTERVALO_SUBIDA);
 
-    // Reintentar al volver online
     window.addEventListener('online', () => {
       console.log('[guardado] Conexión recuperada, subiendo pendientes...');
       intentarSubirTodo();
@@ -278,25 +308,19 @@
   // API PÚBLICA
   // ============================================================
 
-  /**
-   * Guarda un cambio: encola + actualiza UI + intenta subir ya.
-   */
   function guardarCambio(datos) {
     encolar(datos);
     intentarSubirTodo();
   }
 
-  // Al abrir la página, si hay cola, intentar subir
   window.addEventListener('load', () => {
     actualizarEstadoUI();
     setTimeout(intentarSubirTodo, 2000);
   });
 
-  // Escuchar cambios de conexión
   window.addEventListener('online', () => actualizarEstadoUI());
   window.addEventListener('offline', () => actualizarEstadoUI());
 
-  // Exponer API pública
   window.guardado = {
     guardarCambio,
     intentarSubirTodo,

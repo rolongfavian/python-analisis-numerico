@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador + sync librerías
-   v12 - Sincronización de librerías con Drive
+   v13 - Manejo correcto de 404 (archivo borrado)
    ============================================ */
 
 (function () {
@@ -191,7 +191,10 @@
         `https://www.googleapis.com/drive/v3/files/${libsFileId}?alt=media`,
         { headers: { 'Authorization': 'Bearer ' + driveToken } }
       );
-      if (!res.ok) return null;
+      if (!res.ok) {
+        if (res.status === 404) libsFileId = null;
+        return null;
+      }
       const data = await res.json();
       return Array.isArray(data.instaladas) ? data.instaladas : [];
     } catch (e) {
@@ -225,7 +228,13 @@
             body: contenido
           }
         );
-      } else {
+        // Si el archivo fue borrado, recrear
+        if (res.status === 404) {
+          libsFileId = null;
+        }
+      }
+
+      if (!libsFileId) {
         const boundary = 'foo_bar';
         const metadata = {
           name: LIBS_FILE_NAME,
@@ -1199,6 +1208,30 @@
         `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`,
         { headers: { 'Authorization': 'Bearer ' + driveToken } }
       );
+
+      // ⚠️ Comprobar el status ANTES de leer el cuerpo
+      if (res.status === 404) {
+        showToast('El archivo ya no existe en Drive. Se limpiará del editor.', true);
+        currentFileId = null;
+        currentFileName = null;
+        if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+          editorsMap['env-editor'].setValue('');
+        }
+        refreshFileList();
+        return;
+      }
+
+      if (!res.ok) {
+        const errorText = await res.text();
+        console.warn('[drive] Error al abrir:', res.status, errorText);
+        showToast(`Error al abrir (${res.status}). Intenta de nuevo.`, true);
+        if (res.status === 401 || res.status === 403) {
+          currentFileId = null;
+          currentFileName = null;
+        }
+        return;
+      }
+
       let code = '';
       if (fileName.endsWith('.ipynb')) {
         const ipynb = await res.json();
@@ -1206,6 +1239,7 @@
       } else {
         code = await res.text();
       }
+
       currentFileId = fileId;
       currentFileName = fileName;
       currentFileExt = fileName.split('.').pop();
@@ -1224,7 +1258,9 @@
       document.querySelectorAll('#env-file-list li').forEach(li => {
         li.classList.toggle('active', li.dataset.id === fileId);
       });
-    } catch (e) { showToast('Error al abrir: ' + e.message, true); }
+    } catch (e) {
+      showToast('Error al abrir: ' + e.message, true);
+    }
   }
 
   async function saveEnvToDrive() {
@@ -1594,6 +1630,7 @@
   window.buildIpynb = buildIpynb;
   window.leerLibreriasDrive = leerLibreriasDrive;
   window.guardarLibreriasDrive = guardarLibreriasDrive;
+  window.mostrarBannerReconectar = mostrarBannerReconectar;
 
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
