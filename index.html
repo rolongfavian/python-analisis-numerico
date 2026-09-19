@@ -40,6 +40,10 @@ window.MathJax = {
     <button class="view-tab active" onclick="switchView('guide')">Guía</button>
     <button class="view-tab" onclick="switchView('env')">Entorno</button>
   </div>
+  <button id="btn-buscar" onclick="abrirBuscador()" title="Buscar en la guía (Ctrl+K)">
+    <span class="material-symbols-outlined">search</span>
+    <span class="btn-buscar-label">Buscar</span>
+  </button>
   <select id="theme-select" title="Tema">
     <option value="dark">Oscuro</option>
     <option value="light">Claro</option>
@@ -115,6 +119,9 @@ window.MathJax = {
       <span class="btn-libs-label">Tienda</span>
     </button>
     <div class="env-toolbar" id="env-toolbar">
+      <button onclick="abrirMenuEjemplos()" title="Cargar ejemplo">
+        <span class="material-symbols-outlined">menu_book</span> Ejemplos
+      </button>
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
       <button class="primary" onclick="runEnvCode()">
         <span class="material-symbols-outlined">play_arrow</span> Ejecutar
@@ -358,6 +365,17 @@ window.MathJax = {
   </div>
 </div>
 
+<!-- Modal del buscador -->
+<div class="modal-overlay" id="modal-buscador" onclick="if(event.target===this) cerrarBuscador()">
+  <div class="modal-box">
+    <input type="text" id="buscador-input" placeholder="Buscar en la guía… (Ctrl+K)" autocomplete="off" spellcheck="false">
+    <div id="buscador-resultados"></div>
+  </div>
+</div>
+
+<!-- Menú de ejemplos -->
+<div id="ejemplos-menu" class="ejemplos-menu"></div>
+
 <div id="offline-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:#b91c1c; color:white; padding:8px; text-align:center; font-size:0.8rem; z-index:9999;">
   ⚠️ Sin conexión · Los cambios se guardan localmente y se subirán al volver
 </div>
@@ -373,6 +391,8 @@ window.MathJax = {
 <script src="js/ui.js"></script>
 <script src="js/guia.js"></script>
 <script src="js/librerias.js"></script>
+<script src="js/ejemplos.js"></script>
+<script src="js/buscador.js"></script>
 
 </body>
 </html>
