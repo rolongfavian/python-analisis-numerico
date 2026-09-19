@@ -1,6 +1,6 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v8 - Editor con min-height 200px garantizado
+   v9 - Editor absorbe el espacio ganado al colapsar
    ============================================ */
 
 .material-symbols-outlined {
@@ -61,6 +61,8 @@ html, body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  margin: 0;
+  padding: 0;
 }
 
 /* ============================================================
@@ -73,7 +75,9 @@ html, body {
   max-height: 100%;
   min-height: 0;
   overflow: hidden;
-  flex: 1 1 auto;
+  flex: 1;
+  margin: 0;
+  padding: 0;
 }
 
 .env-sidebar {
@@ -172,7 +176,7 @@ html, body {
 #item-menu button .material-symbols-outlined { font-size: 18px; }
 
 /* ============================================================
-   PANEL PRINCIPAL
+   PANEL PRINCIPAL — el editor absorbe espacio libre
    ============================================================ */
 .env-main {
   display: flex;
@@ -182,6 +186,8 @@ html, body {
   overflow: hidden;
   position: relative;
   background: var(--bg-editor);
+  margin: 0;
+  padding: 0;
 }
 
 .env-toolbar {
@@ -262,10 +268,10 @@ html, body {
 #autosave-status.saved { color: var(--accent); }
 
 /* ============================================================
-   EDITOR: SIEMPRE VISIBLE, min-height garantizado 200px
+   EDITOR: flex: 1 1 0 → absorbe TODO el espacio sobrante
    ============================================================ */
 .env-editor-wrap {
-  flex: 1 1 auto;
+  flex: 1 1 0;
   min-height: 200px;
   overflow: hidden;
   position: relative;
@@ -307,7 +313,7 @@ html, body {
 .output-resizer.dragging::after { background: var(--bg); }
 .output-resizer.hidden { display: none; }
 
-/* Output */
+/* Output: altura fija */
 .env-output {
   flex: 0 0 auto;
   background: var(--bg-code);
@@ -574,6 +580,8 @@ li.CodeMirror-hint-active {
     height: 100%;
     min-height: 0;
     max-height: 100%;
+    display: flex;
+    flex-direction: column;
   }
 
   .env-toolbar {
@@ -592,13 +600,12 @@ li.CodeMirror-hint-active {
   .env-toolbar button .material-symbols-outlined { font-size: 16px; }
   #autosave-status { display: none; }
 
-  /* Editor: mínimo 200px garantizado en móvil también */
   .env-editor-wrap {
     min-height: 200px;
+    flex: 1 1 0;
   }
   .env-editor-wrap .CodeMirror { font-size: 0.78rem; }
 
-  /* Output: mínimo 180px garantizado */
   .env-output {
     height: 180px;
     min-height: 180px;
