@@ -1,6 +1,7 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v6 - Optimizado para móvil: paneles ocultables
+   v7 - Colapso oculta solo toolbar/explorador (no editor)
+        Output con altura mínima = 180px
    ============================================ */
 
 .material-symbols-outlined {
@@ -261,6 +262,7 @@ html, body {
 .env-toolbar.collapsed #autosave-status { display: none; }
 #autosave-status.saved { color: var(--accent); }
 
+/* Editor: SIEMPRE VISIBLE, se estira o encoge automáticamente */
 .env-editor-wrap {
   flex: 1 1 0;
   min-height: 0;
@@ -310,7 +312,7 @@ html, body {
   padding: 10px 12px;
   font-family: var(--font-mono); font-size: 0.78rem;
   height: 180px;
-  min-height: 60px;
+  min-height: 180px;   /* ← altura mínima = la de por defecto */
   max-height: 60vh;
   overflow-y: auto;
   white-space: pre-wrap;
@@ -589,9 +591,10 @@ li.CodeMirror-hint-active {
 
   .env-editor-wrap .CodeMirror { font-size: 0.78rem; }
 
+  /* En móvil, el output mantiene mínimo 180px */
   .env-output {
-    height: 120px;
-    min-height: 50px;
+    height: 180px;
+    min-height: 180px;
     max-height: 40vh;
     font-size: 0.72rem;
     padding: 8px 10px;
@@ -602,7 +605,6 @@ li.CodeMirror-hint-active {
 
 @media (max-width: 400px) {
   .env-sidebar { max-height: 110px; }
-  .env-output { height: 100px; }
   .env-toolbar button span:not(.material-symbols-outlined) {
     display: none;
   }

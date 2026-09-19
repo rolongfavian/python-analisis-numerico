@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v9 - Paneles ocultables optimizados para móvil
+   v10 - Colapso NO oculta editor. Output mínimo 180px.
    ============================================ */
 
 (function () {
@@ -10,6 +10,7 @@
   const SCOPES = 'https://www.googleapis.com/auth/drive.file';
   const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
   const MAX_IMPORT_MB = 5;
+  const MIN_OUTPUT_HEIGHT = 180;
 
   let driveToken = null;
   let driveFolderId = null;
@@ -1177,7 +1178,7 @@
   }
 
   // ============================================================
-  // TOOLBAR + SIDEBAR COLAPSABLES
+  // TOOLBAR COLAPSABLE (NO oculta el editor)
   // ============================================================
 
   function toggleToolbar() {
@@ -1191,7 +1192,7 @@
     icon.innerText = isCollapsed ? 'expand_more' : 'expand_less';
     localStorage.setItem('toolbar_collapsed', isCollapsed ? '1' : '0');
 
-    // En móvil, colapsar también el sidebar
+    // En móvil, colapsar también el sidebar (pero NO el editor)
     if (window.innerWidth <= 768 && sidebar) {
       if (isCollapsed) {
         sidebar.style.display = 'none';
@@ -1200,6 +1201,7 @@
       }
     }
 
+    // Refrescar CodeMirror después del cambio de layout
     if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
       setTimeout(() => {
         try { editorsMap['env-editor'].refresh(); } catch (e) {}
@@ -1262,7 +1264,7 @@
   }
 
   // ============================================================
-  // DIVISOR REDIMENSIONABLE
+  // DIVISOR REDIMENSIONABLE (mínimo 180px)
   // ============================================================
 
   function initResizer() {
@@ -1270,9 +1272,12 @@
     const output = document.getElementById('env-output');
     if (!resizer || !output) return;
 
-    const savedHeight = localStorage.getItem('output_height');
-    if (savedHeight) {
+    // Restaurar altura guardada, pero nunca menor al mínimo
+    const savedHeight = parseInt(localStorage.getItem('output_height'), 10);
+    if (savedHeight && savedHeight >= MIN_OUTPUT_HEIGHT) {
       output.style.height = savedHeight + 'px';
+    } else {
+      output.style.height = MIN_OUTPUT_HEIGHT + 'px';
     }
 
     let startY = 0;
@@ -1292,7 +1297,7 @@
       const delta = startY - y;
       let newHeight = startHeight + delta;
       const maxH = window.innerHeight * 0.6;
-      if (newHeight < 60) newHeight = 60;
+      if (newHeight < MIN_OUTPUT_HEIGHT) newHeight = MIN_OUTPUT_HEIGHT;
       if (newHeight > maxH) newHeight = maxH;
       output.style.height = newHeight + 'px';
     }
