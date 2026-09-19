@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Python para Análisis Numérico</title>
+<title>Python para Análisis Numérico · Guía Completa</title>
 
 <!-- CodeMirror -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
@@ -31,16 +31,14 @@ window.MathJax = {
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
-<!-- Estilos propios (orden importante) -->
 <link rel="stylesheet" href="css/base.css">
 <link rel="stylesheet" href="css/guia.css">
 <link rel="stylesheet" href="css/entorno.css">
 </head>
 <body>
 
-<!-- ============ BARRA SUPERIOR ============ -->
 <div id="view-bar">
-  <div class="title">Python Análisis Numérico</div>
+  <div class="title">Python para Análisis Numérico</div>
   <div id="view-tabs">
     <button class="view-tab active" onclick="switchView('guide')">Guía</button>
     <button class="view-tab" onclick="switchView('env')">Entorno</button>
@@ -57,417 +55,13 @@ window.MathJax = {
 <div id="view-guide" class="view active">
 <header class="guide-header">
   <h1>Python para Análisis Numérico</h1>
-  <p>Guía interactiva con Bisección, Newton-Raphson y Punto Fijo. Ejecuta el código en tu navegador y guarda tus notebooks en Google Drive.</p>
+  <p>Guía interactiva desde cero. Aprende Python paso a paso hasta resolver ecuaciones con métodos numéricos. Ejecuta el código directamente en tu navegador.</p>
   <div id="status-badge">Cargando Python...</div>
 </header>
 <div class="container">
-
-<section id="sec-1">
-  <h2>1.1 Salida, Variables y Tipos Numéricos</h2>
-  <div class="concept-block">
-    <div class="cmd-note">
-      <h4>Comandos</h4>
-      <ul>
-        <li><code>print(valor, ..., sep=' ', end='\n')</code> — imprime en pantalla.</li>
-        <li><code>type(x)</code> — devuelve la clase del objeto.</li>
-        <li><code>x = valor</code> — asignación. Python infiere el tipo.</li>
-        <li><code>None</code> — objeto único que representa "sin valor".</li>
-        <li><code>x is None</code> — forma canónica de comparar contra <code>None</code>.</li>
-      </ul>
-    </div>
-    <div class="math-note">
-      <h4>Coma flotante IEEE 754</h4>
-      <div class="math-block">$$x = (-1)^{s} \cdot (1.m)_{2} \cdot 2^{\,e-1023}$$</div>
-      <p>Épsilon de la máquina: $\varepsilon_{\text{máq}} = 2^{-52} \approx 2.22 \times 10^{-16}$</p>
-    </div>
-    <div class="warning-note">
-      <h4>Errores típicos</h4>
-      <ul>
-        <li>Comparar floats con <code>==</code>. Usa <code>math.isclose</code>.</li>
-        <li>Usar <code>== None</code> en lugar de <code>is None</code>.</li>
-      </ul>
-    </div>
+  <div id="guide-content">
+    <div id="loading-guide">Cargando contenido...</div>
   </div>
-  <div class="editor-container">
-    <div class="controls">
-      <span>variables · tipos · error de redondeo</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw1','01_variables')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw1','01_variables')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kw1','out1')">Ejecutar</button>
-    </div>
-    <textarea id="kw1">iteraciones = 10
-tolerancia  = 1e-5
-convergio   = False
-raiz        = None
-
-print("iteraciones =", iteraciones, "| type:", type(iteraciones).__name__)
-print("tolerancia  =", tolerancia,  "| type:", type(tolerancia).__name__)
-print("convergio   =", convergio,   "| type:", type(convergio).__name__)
-print("raiz        =", raiz,        "| type:", type(raiz).__name__)
-
-print("\n0.1 + 0.2 =", 0.1 + 0.2)
-print("¿Es igual a 0.3? ->", (0.1 + 0.2) == 0.3)
-
-if raiz is None:
-    print("\nEstado: el metodo aun no ha calculado la raiz.")</textarea>
-    <div id="out1" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-2">
-  <h2>2.1 Operadores Lógicos y Teorema de Bolzano</h2>
-  <div class="concept-block">
-    <div class="cmd-note">
-      <h4>Comandos</h4>
-      <ul>
-        <li><code>A and B</code>, <code>A or B</code>, <code>not A</code> — operadores lógicos.</li>
-        <li><code>x in coleccion</code> — pertenencia exacta.</li>
-        <li><code>a &lt;= x &lt;= b</code> — comparación encadenada.</li>
-      </ul>
-    </div>
-    <div class="math-note">
-      <h4>Teorema de Bolzano</h4>
-      <p>Si $f$ es continua en $[a,b]$ y $f(a) \cdot f(b) < 0$, existe al menos un $c \in (a,b)$ con $f(c) = 0$.</p>
-    </div>
-  </div>
-  <div class="editor-container">
-    <div class="controls">
-      <span>lógica · Bolzano · cortocircuito</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw2','02_bolzano')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw2','02_bolzano')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kw2','out2')">Ejecutar</button>
-    </div>
-    <textarea id="kw2">a, b = 1.0, 2.0
-fa = a**2 - 2
-fb = b**2 - 2
-
-print(f"f({a}) = {fa}, f({b}) = {fb}")
-print("Bolzano se cumple:", fa * fb < 0)
-
-malla = [0.0, 0.5, 1.0, 1.5, 2.0]
-print(f"\n1.5 in malla -> {1.5 in malla}")
-print(f"1.25 en [0,2] -> {0 <= 1.25 <= 2}")</textarea>
-    <div id="out2" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-3">
-  <h2>3.1 Bucles y Criterios de Parada</h2>
-  <div class="concept-block">
-    <div class="math-note">
-      <h4>Error absoluto y relativo</h4>
-      <div class="math-block">$$\hat{E}_{\text{abs}}^{(k)} = |x_{k+1} - x_k|, \quad \hat{E}_{\text{rel}}^{(k)} = \frac{|x_{k+1} - x_k|}{|x_{k+1}|}$$</div>
-    </div>
-  </div>
-  <div class="editor-container">
-    <div class="controls">
-      <span>bucle for · bisección básica</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw3','03_biseccion_for')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw3','03_biseccion_for')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kw3','out3')">Ejecutar</button>
-    </div>
-    <textarea id="kw3">a, b = 1.0, 2.0
-tol = 1e-4
-max_iter = 20
-
-for k in range(1, max_iter + 1):
-    c = (a + b) / 2.0
-    fc = c**2 - 2
-    fa = a**2 - 2
-    err = (b - a) / 2.0
-    print(f"Iter {k:02d}: c = {c:.6f} | f(c) = {fc:+.6f} | err = {err:.6f}")
-    if err < tol or abs(fc) < 1e-12:
-        print(f"\nConvergencia en iteracion {k}")
-        print(f"Raiz aproximada = {c:.6f}")
-        break
-    if fa * fc < 0:
-        b = c
-    else:
-        a = c
-else:
-    print("\nNo convergio")</textarea>
-    <div id="out3" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-4">
-  <h2>4.1 Funciones: def, lambda, yield</h2>
-  <div class="concept-block">
-    <div class="math-note">
-      <h4>Diferenciación numérica</h4>
-      <div class="math-block">$$f'(x) \approx \frac{f(x+h) - f(x-h)}{2h} + O(h^2)$$</div>
-    </div>
-  </div>
-  <div class="editor-container">
-    <div class="controls">
-      <span>def · lambda · yield</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw4','04_funciones')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw4','04_funciones')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kw4','out4')">Ejecutar</button>
-    </div>
-    <textarea id="kw4">f = lambda x: x**3 - x - 1
-
-def derivada(f, x, h=1e-5):
-    return (f(x + h) - f(x - h)) / (2 * h)
-
-def sucesion_pf(x0, n):
-    x = x0
-    for _ in range(n):
-        x = (x + 1) ** (1/3)
-        yield x
-
-print("f(2.0) =", f(2.0))
-print("f'(2.0) aprox =", derivada(f, 2.0))
-print("\nSucesion de punto fijo:")
-for k, x in enumerate(sucesion_pf(1.0, 6), 1):
-    print(f"  x_{k} = {x:.8f}")</textarea>
-    <div id="out4" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-5">
-  <h2>5.1 Módulo math y Trascendentes</h2>
-  <div class="editor-container">
-    <div class="controls">
-      <span>math · trigonométricas · radianes</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw5','05_math')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw5','05_math')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kw5','out5')">Ejecutar</button>
-    </div>
-    <textarea id="kw5">import math as m
-from math import pi, e
-
-print("pi =", pi)
-print("e  =", e)
-print(f"f(pi/3) = {m.exp(-pi/3) - m.cos(pi/3):.8f}")
-print("factorial(10) =", m.factorial(10))
-print("gcd(48,18)   =", m.gcd(48, 18))
-
-print("\nangulo | sin      | cos      | tan")
-for g in [0, 30, 45, 60, 89]:
-    r = m.radians(g)
-    print(f"{g:5d}° | {m.sin(r):+.6f} | {m.cos(r):+.6f} | {m.tan(r):+.6f}")</textarea>
-    <div id="out5" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-6">
-  <h2>6.1 Manejo de Errores</h2>
-  <div class="editor-container">
-    <div class="controls">
-      <span>try · except · finally · raise</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw6','06_errores')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw6','06_errores')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kw6','out6')">Ejecutar</button>
-    </div>
-    <textarea id="kw6">def paso_newton(fx, dfx):
-    assert isinstance(fx, (int, float))
-    assert isinstance(dfx, (int, float))
-    if abs(dfx) < 1e-12:
-        raise ZeroDivisionError("derivada casi nula")
-    return fx / dfx
-
-for i, (fx, dfx) in enumerate([(2.0, 4.0), (1.0, 0.0)], 1):
-    print(f"\n--- Caso {i}: f={fx}, f'={dfx} ---")
-    try:
-        print("  paso =", paso_newton(fx, dfx))
-    except ZeroDivisionError as e:
-        print(f"  capturado: {e}")
-    finally:
-        print("  fin del chequeo")</textarea>
-    <div id="out6" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-7">
-  <h2>7.1 Clases y Estado del Solver</h2>
-  <div class="editor-container">
-    <div class="controls">
-      <span>class · __init__ · self</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw7','07_clases')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw7','07_clases')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kw7','out7')">Ejecutar</button>
-    </div>
-    <textarea id="kw7">class SolverBiseccion:
-    version = "1.0"
-
-    def __init__(self, f, tol=1e-6, max_iter=50):
-        self.f = f
-        self.tol = tol
-        self.max_iter = max_iter
-        self.historial = []
-
-    def resolver(self, a, b):
-        for k in range(1, self.max_iter + 1):
-            c = (a + b) / 2.0
-            fc = self.f(c)
-            self.historial.append((k, c, fc))
-            if abs(fc) < self.tol or (b - a) / 2 < self.tol:
-                return c
-            if self.f(a) * fc < 0:
-                b = c
-            else:
-                a = c
-        raise RuntimeError("No convergio")
-
-s1 = SolverBiseccion(lambda x: x**2 - 2, tol=1e-4)
-s2 = SolverBiseccion(lambda x: x**3 - 5, tol=1e-4)
-
-r1 = s1.resolver(1.0, 2.0)
-r2 = s2.resolver(1.0, 3.0)
-print(f"raiz x^2-2 ~ {r1:.6f} en {len(s1.historial)} pasos")
-print(f"raiz x^3-5 ~ {r2:.6f} en {len(s2.historial)} pasos")</textarea>
-    <div id="out7" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-alg-biseccion">
-  <h2>A · Algoritmo de Bisección</h2>
-  <div class="math-note">
-    <h4>Definición formal</h4>
-    <div class="math-block">
-      $$c_k = \frac{a_k + b_k}{2}, \quad |c_k - x^*| \leq \frac{b_0 - a_0}{2^{k+1}}$$
-    </div>
-    <p>Convergencia lineal (factor 1/2). Robustez garantizada por Bolzano.</p>
-  </div>
-  <div class="editor-container">
-    <div class="controls">
-      <span>algoritmo completo con criterio doble</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgB','A_biseccion')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kwAlgB','A_biseccion')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kwAlgB','outAlgB')">Ejecutar</button>
-    </div>
-    <textarea id="kwAlgB">def biseccion(f, a, b, tol=1e-8, max_iter=100):
-    fa, fb = f(a), f(b)
-    if fa * fb >= 0:
-        raise ValueError("Bolzano no se cumple")
-    for k in range(1, max_iter + 1):
-        c = (a + b) / 2
-        fc = f(c)
-        err = (b - a) / 2
-        print(f"Iter {k:3d}: c = {c:.8f}  f(c) = {fc:+.3e}  err = {err:.3e}")
-        if err < tol or abs(fc) < 1e-14:
-            return c, k
-        if fa * fc < 0:
-            b, fb = c, fc
-        else:
-            a, fa = c, fc
-    raise RuntimeError("max_iter alcanzado")
-
-f = lambda x: x**3 - x - 2
-raiz, iters = biseccion(f, 1.0, 2.0, tol=1e-8)
-print(f"\nRaiz: {raiz:.10f}")
-print(f"Iteraciones: {iters}")</textarea>
-    <div id="outAlgB" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-alg-newton">
-  <h2>B · Algoritmo de Newton-Raphson</h2>
-  <div class="math-note">
-    <h4>Definición formal</h4>
-    <div class="math-block">$$x_{k+1} = x_k - \frac{f(x_k)}{f'(x_k)}$$</div>
-    <p>Convergencia cuadrática: $|x_{k+1} - x^*| \leq C|x_k - x^*|^2$</p>
-  </div>
-  <div class="editor-container">
-    <div class="controls">
-      <span>Newton-Raphson completo</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgN','B_newton_raphson')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kwAlgN','B_newton_raphson')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kwAlgN','outAlgN')">Ejecutar</button>
-    </div>
-    <textarea id="kwAlgN">def newton_raphson(f, df, x0, tol=1e-10, max_iter=50):
-    x = x0
-    for k in range(max_iter):
-        fx, dfx = f(x), df(x)
-        if abs(dfx) < 1e-14:
-            raise ZeroDivisionError(f"f'~0 en x={x:.6f}")
-        xn = x - fx / dfx
-        err = abs(xn - x)
-        print(f"Iter {k+1:3d}: x = {xn:.12f}  err = {err:.3e}")
-        if err < tol:
-            return xn, k + 1
-        x = xn
-    raise RuntimeError("max_iter alcanzado")
-
-f  = lambda x: x**3 - x - 2
-df = lambda x: 3*x**2 - 1
-
-raiz, iters = newton_raphson(f, df, 1.5)
-print(f"\nRaiz: {raiz:.12f}")
-print(f"Iteraciones: {iters}")</textarea>
-    <div id="outAlgN" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-alg-puntofijo">
-  <h2>C · Algoritmo de Punto Fijo</h2>
-  <div class="math-note">
-    <h4>Definición formal</h4>
-    <div class="math-block">$$x_{k+1} = g(x_k), \quad |g'(x)| \leq L < 1$$</div>
-    <p>Teorema de Banach: si |g'| &lt; 1 en el intervalo, la iteración converge al único punto fijo.</p>
-  </div>
-  <div class="editor-container">
-    <div class="controls">
-      <span>punto fijo con verificación de convergencia</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgPF','C_punto_fijo')">Guardar en Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kwAlgPF','C_punto_fijo')">.ipynb</button>
-      <button class="btn-run" onclick="runCode('kwAlgPF','outAlgPF')">Ejecutar</button>
-    </div>
-    <textarea id="kwAlgPF">def punto_fijo(g, x0, tol=1e-10, max_iter=100):
-    x = x0
-    for k in range(max_iter):
-        xn = g(x)
-        err = abs(xn - x)
-        h = 1e-8
-        dg = (g(x + h) - g(x - h)) / (2 * h)
-        print(f"Iter {k+1:3d}: x = {xn:.12f}  err = {err:.3e}  g' = {dg:+.4f}")
-        if err < tol:
-            return xn, k + 1
-        x = xn
-    raise RuntimeError("max_iter alcanzado")
-
-g = lambda x: (x + 1) ** (1/3)
-raiz, iters = punto_fijo(g, 1.0)
-print(f"\nPunto fijo: {raiz:.12f}")
-print(f"Iteraciones: {iters}")</textarea>
-    <div id="outAlgPF" class="output-box">Presiona Ejecutar para ver el resultado...</div>
-  </div>
-</section>
-
-<section id="sec-alg-comparativa">
-  <h2>D · Comparativa de los Tres Métodos</h2>
-  <div class="table-scroll">
-    <table>
-      <tr><th>Método</th><th>Convergencia</th><th>Requiere</th><th>Robustez</th></tr>
-      <tr><td><strong>Bisección</strong></td><td>Lineal (1/2)</td><td>Intervalo con signo opuesto</td><td>Global (Bolzano)</td></tr>
-      <tr><td><strong>Newton-Raphson</strong></td><td>Cuadrática</td><td>f y f', x₀ cercano</td><td>Local</td></tr>
-      <tr><td><strong>Punto Fijo</strong></td><td>Lineal (L)</td><td>Reescritura g con |g'|&lt;1</td><td>Condicional</td></tr>
-    </table>
-  </div>
-</section>
-
-<section id="sec-entorno">
-  <h2>Entorno de Programación · Google Drive + Colab</h2>
-  <div class="concept-block">
-    <div class="informal-note">
-      <h4>¿Cómo funciona?</h4>
-      <p>Esta guía se conecta a <strong>tu Google Drive</strong> para guardar tus notebooks en la carpeta <code>Python_Análisis_Numérico</code>. Desde ahí puedes abrirlos en <strong>Google Colab</strong>.</p>
-    </div>
-    <div class="cmd-note">
-      <h4>Flujo</h4>
-      <ol>
-        <li>Conecta tu Drive en la barra superior.</li>
-        <li>Ve a la vista <strong>Entorno</strong>.</li>
-        <li>Crea carpetas y notebooks con los botones.</li>
-        <li>Escribe código y toca <strong>Ejecutar</strong>.</li>
-        <li>Toca <strong>Guardar</strong> para subir a Drive.</li>
-        <li>Toca <strong>Colab</strong> para abrirlo en Google Colab.</li>
-      </ol>
-    </div>
-  </div>
-</section>
-
 </div>
 </div>
 
@@ -538,93 +132,96 @@ print(f"Iteraciones: {iters}")</textarea>
 </button>
 
 <nav id="sidebar">
-  <div class="sidebar-title">Mapa de Aprendizaje</div>
+  <div class="sidebar-title">Niveles de la Guía</div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g1', this)">
-      <span>01 · Fundamentos</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(0); closeMenu();">
+      <span>Nivel 0 · Antes de empezar</span>
     </button>
-    <div id="g1" class="menu-group-content">
-      <a href="#sec-1">1.1 Variables y Tipos</a>
-    </div>
   </div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g2', this)">
-      <span>02 · Lógica y Control</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(1); closeMenu();">
+      <span>Nivel 1 · Lo más básico</span>
     </button>
-    <div id="g2" class="menu-group-content">
-      <a href="#sec-2">2.1 Lógicos y Bolzano</a>
-      <a href="#sec-3">3.1 Bucles y Parada</a>
-    </div>
   </div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g3', this)">
-      <span>03 · Funciones</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(2); closeMenu();">
+      <span>Nivel 2 · Tipos de datos</span>
     </button>
-    <div id="g3" class="menu-group-content">
-      <a href="#sec-4">4.1 def, lambda, yield</a>
-    </div>
   </div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g4', this)">
-      <span>04 · Módulos</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(3); closeMenu();">
+      <span>Nivel 3 · Operaciones</span>
     </button>
-    <div id="g4" class="menu-group-content">
-      <a href="#sec-5">5.1 Módulo math</a>
-    </div>
   </div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g5', this)">
-      <span>05 · Errores</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(4); closeMenu();">
+      <span>Nivel 4 · Control de flujo</span>
     </button>
-    <div id="g5" class="menu-group-content">
-      <a href="#sec-6">6.1 try, except</a>
-    </div>
   </div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g6', this)">
-      <span>06 · POO</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(5); closeMenu();">
+      <span>Nivel 5 · Colecciones</span>
     </button>
-    <div id="g6" class="menu-group-content">
-      <a href="#sec-7">7.1 Clases</a>
-    </div>
   </div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g7', this)">
-      <span>07 · Algoritmos</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(6); closeMenu();">
+      <span>Nivel 6 · Funciones</span>
     </button>
-    <div id="g7" class="menu-group-content">
-      <a href="#sec-alg-biseccion">A · Bisección</a>
-      <a href="#sec-alg-newton">B · Newton-Raphson</a>
-      <a href="#sec-alg-puntofijo">C · Punto Fijo</a>
-      <a href="#sec-alg-comparativa">D · Comparativa</a>
-    </div>
   </div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g8', this)">
-      <span>08 · Entorno · Drive</span><span class="arrow">▶</span>
+    <button class="menu-group-header" onclick="showLevel(7); closeMenu();">
+      <span>Nivel 7 · Módulos</span>
     </button>
-    <div id="g8" class="menu-group-content">
-      <a href="#sec-entorno">Cómo funciona</a>
-    </div>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showLevel(8); closeMenu();">
+      <span>Nivel 8 · Errores</span>
+    </button>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showLevel(9); closeMenu();">
+      <span>Nivel 9 · Clases y objetos</span>
+    </button>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showLevel(10); closeMenu();">
+      <span>Nivel 10 · Análisis numérico</span>
+    </button>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showLevel(11); closeMenu();">
+      <span>Nivel 11 · Entorno de trabajo</span>
+    </button>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showLevel(99); closeMenu();">
+      <span>Glosario</span>
+    </button>
   </div>
 </nav>
 
 <div id="toast"></div>
 
-<!-- ============ SCRIPTS (orden importante) ============ -->
+<!-- Scripts -->
 <script src="js/tema.js"></script>
 <script src="js/pyodide.js"></script>
 <script src="js/drive.js"></script>
 <script src="js/codemirror.js"></script>
 <script src="js/ui.js"></script>
+<script src="js/guia.js"></script>
 
 </body>
 </html>
