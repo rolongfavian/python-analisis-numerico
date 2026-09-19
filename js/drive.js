@@ -1,21 +1,16 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v3 - Con sistema de guardado en 3 capas
+   v4 - Con importación de archivos
    ============================================ */
 
 (function () {
   'use strict';
 
-  // ============================================================
-  // CONFIGURACIÓN
-  // ============================================================
   const CLIENT_ID = '420968434649-a5itml1n5ijtmin8fs1c5ug6bof0kv9o.apps.googleusercontent.com';
   const SCOPES = 'https://www.googleapis.com/auth/drive.file';
   const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
+  const MAX_IMPORT_MB = 5;
 
-  // ============================================================
-  // ESTADO
-  // ============================================================
   let driveToken = null;
   let driveFolderId = null;
   let currentFolderId = null;
@@ -25,6 +20,7 @@
   let currentFileExt = 'ipynb';
   let guestMode = false;
   let itemMenuTarget = null;
+  let importacionPendiente = null;
 
   // ============================================================
   // ICONOS
@@ -61,12 +57,12 @@
   }
 
   // ============================================================
-  // CONEXIÓN CON DRIVE
+  // CONEXIÓN
   // ============================================================
 
   function connectDrive() {
     if (typeof google === 'undefined' || !google.accounts) {
-      showToast('Google Identity no disponible. Espera 5s y reintenta.', true);
+      showToast('Google Identity no disponible. Espera 5s.', true);
       return;
     }
 
@@ -94,10 +90,7 @@
           if (layout) layout.style.display = 'grid';
 
           await refreshFileList();
-
-          // Al conectar, intentar subir pendientes
           if (window.guardado) window.guardado.intentarSubirTodo();
-
           showToast('Conectado a Google Drive');
         } catch (e) {
           showToast('Error al preparar carpeta: ' + e.message, true);
@@ -468,7 +461,7 @@
 
   async function crearArchivoDrive(filename, tipo) {
     const parent = currentFolderId || driveFolderId;
-    const contenidoInicial = '# ' + filename + '\n\n';
+    const contenidoInicial = '';
     const blob = tipo === 'ipynb'
       ? JSON.stringify(buildIpynb(contenidoInicial, filename))
       : contenidoInicial;
@@ -508,6 +501,201 @@
     } catch (e) {
       showToast('Error: ' + e.message, true);
     }
+  }
+
+  // ============================================================
+  // IMPORTAR
+  // ============================================================
+
+  function abrirSelectorImportar() {
+    const input = document.getElementById('import-input');
+    if (input) {
+      input.value = '';
+      input.click();
+    }
+  }
+
+  async function importarArchivo(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+
+    const nombre = file.name;
+    const esValido = nombre.endsWith('.ipynb') || nombre.endsWith('.py');
+    if (!esValido) {
+      showToast('Solo se pueden importar archivos .ipynb y .py', true);
+      return;
+    }
+
+    if (file.size > MAX_IMPORT_MB * 1024 * 1024) {
+      showToast(`El archivo supera los ${MAX_IMPORT_MB} MB`, true);
+      return;
+    }
+
+    const contenido = await leerArchivoComoTexto(file);
+
+    if (guestMode) {
+      importarAInvitado(nombre, contenido);
+      return;
+    }
+
+    if (!driveToken) {
+      showToast('Conecta Drive primero o usa modo invitado', true);
+      return;
+    }
+
+    const parent = currentFolderId || driveFolderId;
+    const existeId = await buscarArchivoPorNombre(nombre, parent);
+
+    if (existeId) {
+      importacionPendiente = {
+        nombre: nombre,
+        contenido: contenido,
+        parent: parent,
+        existeId: existeId
+      };
+      document.getElementById('import-text').innerHTML =
+        `Ya tienes <strong>${escapeHtml(nombre)}</strong> en esta carpeta. ¿Qué quieres hacer?`;
+      abrirModal('modal-import');
+      return;
+    }
+
+    await subirArchivoImportado(nombre, contenido, parent);
+  }
+
+  async function confirmarImportar(accion) {
+    cerrarModal('modal-import');
+    if (!importacionPendiente) return;
+
+    const info = importacionPendiente;
+    importacionPendiente = null;
+
+    if (accion === 'rename') {
+      const ext = info.nombre.substring(info.nombre.lastIndexOf('.'));
+      const base = info.nombre.substring(0, info.nombre.lastIndexOf('.'));
+      const nuevoNombre = base + '_importado' + ext;
+      const existeNuevo = await buscarArchivoPorNombre(nuevoNombre, info.parent);
+      if (existeNuevo) {
+        const sufijo = Date.now().toString().slice(-4);
+        const nombreUnico = base + '_importado_' + sufijo + ext;
+        await subirArchivoImportado(nombreUnico, info.contenido, info.parent);
+      } else {
+        await subirArchivoImportado(nuevoNombre, info.contenido, info.parent);
+      }
+    } else if (accion === 'replace') {
+      await actualizarArchivoImportado(info.existeId, info.contenido, info.nombre);
+    }
+  }
+
+  function leerArchivoComoTexto(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result);
+      reader.onerror = (e) => reject(e);
+      reader.readAsText(file);
+    });
+  }
+
+  async function buscarArchivoPorNombre(nombre, parent) {
+    const q = encodeURIComponent(`name='${nombre}' and '${parent}' in parents and trashed=false`);
+    const res = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
+      { headers: { 'Authorization': 'Bearer ' + driveToken } }
+    );
+    const data = await res.json();
+    return data.files && data.files.length > 0 ? data.files[0].id : null;
+  }
+
+  async function subirArchivoImportado(nombre, contenido, parent) {
+    const ext = nombre.substring(nombre.lastIndexOf('.') + 1);
+    const mime = ext === 'ipynb' ? 'application/json' : 'text/x-python';
+
+    const metadata = {
+      name: nombre,
+      mimeType: mime,
+      parents: [parent]
+    };
+
+    const boundary = 'foo_bar';
+    const body =
+      `--${boundary}\r\n` +
+      `Content-Type: application/json\r\n\r\n` +
+      `${JSON.stringify(metadata)}\r\n` +
+      `--${boundary}\r\n` +
+      `Content-Type: ${mime}\r\n\r\n` +
+      `${contenido}\r\n` +
+      `--${boundary}--`;
+
+    try {
+      const res = await fetch(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + driveToken,
+            'Content-Type': `multipart/related; boundary=${boundary}`
+          },
+          body
+        }
+      );
+      if (res.ok) {
+        showToast('Importado: ' + nombre);
+        refreshFileList();
+      } else {
+        showToast('Error al importar', true);
+      }
+    } catch (e) {
+      showToast('Error: ' + e.message, true);
+    }
+  }
+
+  async function actualizarArchivoImportado(fileId, contenido, nombre) {
+    const ext = nombre.substring(nombre.lastIndexOf('.') + 1);
+    const mime = ext === 'ipynb' ? 'application/json' : 'text/x-python';
+
+    try {
+      const res = await fetch(
+        `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Authorization': 'Bearer ' + driveToken,
+            'Content-Type': mime
+          },
+          body: contenido
+        }
+      );
+      if (res.ok) {
+        showToast('Reemplazado: ' + nombre);
+        refreshFileList();
+      } else {
+        showToast('Error al reemplazar', true);
+      }
+    } catch (e) {
+      showToast('Error: ' + e.message, true);
+    }
+  }
+
+  function importarAInvitado(nombre, contenido) {
+    const files = JSON.parse(localStorage.getItem('guest_files') || '[]');
+    const existe = files.findIndex(f => f.name === nombre);
+    if (existe >= 0) {
+      const ext = nombre.substring(nombre.lastIndexOf('.'));
+      const base = nombre.substring(0, nombre.lastIndexOf('.'));
+      const nuevoNombre = base + '_importado' + ext;
+      files.push({ name: nuevoNombre, content: contenido });
+      showToast('Importado como: ' + nuevoNombre);
+    } else {
+      files.push({ name: nombre, content: contenido });
+      showToast('Importado: ' + nombre);
+    }
+    localStorage.setItem('guest_files', JSON.stringify(files));
+    refreshGuestFileList();
+
+    if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+      editorsMap['env-editor'].setValue(contenido);
+    }
+    const fnInput = document.getElementById('env-filename');
+    if (fnInput) fnInput.value = nombre;
   }
 
   // ============================================================
@@ -1186,10 +1374,12 @@
   window.marcarCambio = marcarCambio;
   window.marcarGuardado = marcarGuardado;
   window.actualizarFileIdActual = actualizarFileIdActual;
+  window.abrirSelectorImportar = abrirSelectorImportar;
+  window.importarArchivo = importarArchivo;
+  window.confirmarImportar = confirmarImportar;
   window.getDriveToken = () => driveToken;
   window.buildIpynb = buildIpynb;
 
-  // Detectar cambios en el editor
   document.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {
       if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {

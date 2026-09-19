@@ -85,10 +85,14 @@ window.MathJax = {
       <button class="primary" onclick="createPythonFile()">
         <span class="material-symbols-outlined">code</span> .py
       </button>
+      <button class="primary" onclick="abrirSelectorImportar()">
+        <span class="material-symbols-outlined">upload_file</span> Importar
+      </button>
       <button onclick="refreshFileList()" title="Recargar">
         <span class="material-symbols-outlined">refresh</span>
       </button>
     </div>
+    <input type="file" id="import-input" accept=".ipynb,.py" style="display:none" onchange="importarArchivo(event)">
     <ul class="env-files" id="env-file-list">
       <li class="empty">Conecta tu Drive para ver tus archivos</li>
     </ul>
@@ -111,29 +115,7 @@ window.MathJax = {
       <span id="autosave-status"></span>
     </div>
     <div class="env-editor-wrap">
-      <textarea id="env-editor"># Escribe tu código Python aquí
-# Puedes importar numpy, matplotlib, etc.
-
-import numpy as np
-
-def biseccion(f, a, b, tol=1e-8):
-    fa, fb = f(a), f(b)
-    if fa * fb >= 0:
-        raise ValueError("Bolzano no se cumple")
-    for k in range(100):
-        c = (a + b) / 2
-        if (b - a) / 2 < tol:
-            return c, k
-        if fa * f(c) < 0:
-            b = c
-        else:
-            a = c
-    return c, 100
-
-f = lambda x: x**3 - x - 2
-raiz, iters = biseccion(f, 1.0, 2.0)
-print(f"Raiz: {raiz:.10f}")
-print(f"Iteraciones: {iters}")</textarea>
+      <textarea id="env-editor"></textarea>
     </div>
     <div class="env-output" id="env-output">Presiona Ejecutar para ver el resultado...</div>
   </div>
@@ -284,6 +266,18 @@ print(f"Iteraciones: {iters}")</textarea>
     <div class="actions">
       <button onclick="cerrarModal('modal-move')">Cancelar</button>
       <button class="primary" onclick="confirmarMover()">Mover</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-import" onclick="if(event.target===this) cerrarModal('modal-import')">
+  <div class="modal-box">
+    <h3>Ya existe un archivo con ese nombre</h3>
+    <p id="import-text">¿Qué quieres hacer con <strong>archivo.ipynb</strong>?</p>
+    <div class="actions">
+      <button onclick="cerrarModal('modal-import')">Cancelar</button>
+      <button onclick="confirmarImportar('rename')">Renombrar</button>
+      <button class="primary" onclick="confirmarImportar('replace')">Reemplazar</button>
     </div>
   </div>
 </div>
