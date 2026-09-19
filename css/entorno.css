@@ -1,6 +1,6 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v2 - Toolbar colapsable + output redimensionable
+   v4 - Entorno fijo + output redimensionable real
    ============================================ */
 
 .material-symbols-outlined {
@@ -45,11 +45,14 @@
 }
 #guest-warning strong { color: #ffd866; }
 
-/* Layout */
+/* ============================================================
+   LAYOUT GENERAL — todo cabe en pantalla sin scroll externo
+   ============================================================ */
 .env-layout {
   display: grid;
   grid-template-columns: 320px 1fr;
   height: calc(100vh - 52px);
+  max-height: calc(100vh - 52px);
   overflow: hidden;
 }
 .env-sidebar {
@@ -59,7 +62,7 @@
   display: flex;
   flex-direction: column;
   height: 100%;
-  max-height: calc(100vh - 52px);
+  min-height: 0;
 }
 .env-breadcrumb {
   padding: 10px 12px; background: var(--bg-code);
@@ -94,10 +97,9 @@
 .env-actions button.danger { color: var(--danger); border-color: var(--danger); }
 .env-actions button.danger:hover { background: var(--danger-soft); }
 
-/* Lista de archivos */
 .env-files {
   list-style: none; padding: 6px 0; margin: 0;
-  flex: 1; overflow-y: auto;
+  flex: 1; overflow-y: auto; min-height: 0;
 }
 .env-files li {
   padding: 8px 10px 8px 12px; cursor: pointer; font-size: 0.85rem;
@@ -111,11 +113,6 @@
   display: inline-flex; align-items: center; justify-content: center;
 }
 .env-files li .file-icon img { width: 20px; height: 20px; display: block; }
-.env-files li .file-icon.folder { color: #f4b942; }
-.env-files li .file-icon.text { color: #a0a0a0; }
-.env-files li .file-icon.data { color: #4ec9b0; }
-.env-files li .file-icon.image { color: #c586c0; }
-.env-files li .file-icon.unknown { color: var(--text-dim); }
 .env-files li .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .env-files li .menu-btn {
   width: 26px; height: 26px; border-radius: 4px; border: none;
@@ -131,7 +128,6 @@
 }
 .env-files .empty:hover { background: transparent; }
 
-/* Menú flotante */
 #item-menu {
   position: fixed; background: var(--bg-elevated);
   border: 1px solid var(--border-strong); border-radius: 6px;
@@ -152,30 +148,46 @@
 #item-menu button.danger:hover { background: var(--danger-soft); color: var(--danger); }
 #item-menu button .material-symbols-outlined { font-size: 18px; }
 
-/* Panel principal */
+/* ============================================================
+   PANEL PRINCIPAL — Fijo, sin scroll externo
+   ============================================================ */
 .env-main {
-  display: flex; flex-direction: column;
-  overflow: hidden; height: 100%;
-  max-height: calc(100vh - 52px);
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
   position: relative;
+  background: var(--bg-editor);
 }
 
-/* Toolbar colapsable */
+/* Toolbar */
 .env-toolbar {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   background: var(--bg-code);
   padding: 8px 12px;
   border-bottom: 1px solid var(--border);
-  display: flex; gap: 6px; align-items: center; flex-wrap: wrap;
-  transition: all 0.2s;
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+  position: relative;
+  transition: padding 0.2s;
 }
+
 .env-toolbar.collapsed {
-  padding: 6px 8px;
-  justify-content: flex-start;
+  padding: 6px 10px;
+  flex-wrap: nowrap;
+  gap: 8px;
 }
-.env-toolbar.collapsed > *:not(.btn-toggle-toolbar):not(.btn-run-only) {
+.env-toolbar.collapsed > * {
   display: none !important;
 }
+.env-toolbar.collapsed > .btn-toggle-toolbar,
+.env-toolbar.collapsed > .btn-run-only {
+  display: inline-flex !important;
+}
+
 .env-toolbar .btn-toggle-toolbar {
   padding: 6px 8px;
   border-radius: 4px;
@@ -205,6 +217,7 @@
   background: var(--bg-input); color: var(--text); outline: none;
 }
 .env-toolbar input[type="text"]:focus { border-color: var(--accent-dim); }
+
 .env-toolbar button {
   padding: 6px 12px; border-radius: 4px;
   font-family: var(--font-ui); font-size: 0.72rem; font-weight: 500;
@@ -219,6 +232,7 @@
 .env-toolbar button.primary:hover { background: var(--accent-dim); color: var(--bg); }
 .env-toolbar button.danger { color: var(--danger); border-color: var(--danger); }
 .env-toolbar button.danger:hover { background: var(--danger-soft); }
+
 #autosave-status {
   font-size: 0.7rem; color: var(--text-dim);
   margin-left: auto; flex-shrink: 0;
@@ -226,21 +240,30 @@
 .env-toolbar.collapsed #autosave-status { display: none; }
 #autosave-status.saved { color: var(--accent); }
 
-/* Editor */
+/* Editor: crece/encoge automáticamente, scroll interno */
 .env-editor-wrap {
-  flex: 1 1 auto; overflow: auto; min-height: 0;
+  flex: 1 1 0;
+  min-height: 0;
+  overflow: hidden;
+  position: relative;
   background: var(--bg-editor);
 }
 .env-editor-wrap .CodeMirror {
-  height: 100%;
+  height: 100% !important;
   font-family: var(--font-mono); font-size: 0.85rem;
   line-height: 1.6; background: var(--bg-editor); color: var(--text);
 }
+.env-editor-wrap .CodeMirror-scroll {
+  min-height: 0 !important;
+}
+.env-editor-wrap .CodeMirror-sizer {
+  min-height: 0 !important;
+}
 
-/* Divisor redimensionable */
+/* Divisor entre editor y output */
 .output-resizer {
-  flex-shrink: 0;
-  height: 6px;
+  flex: 0 0 auto;
+  height: 8px;
   background: var(--bg-code);
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
@@ -252,6 +275,7 @@
   transition: background 0.15s;
   touch-action: none;
   user-select: none;
+  z-index: 10;
 }
 .output-resizer:hover { background: var(--accent-soft); }
 .output-resizer::after {
@@ -264,19 +288,19 @@
 .output-resizer.dragging { background: var(--accent-dim); }
 .output-resizer.dragging::after { background: var(--bg); }
 
-/* Output */
+/* Output: altura controlada por JS */
 .env-output {
-  flex-shrink: 0;
+  flex: 0 0 auto;
   background: var(--bg-code);
   color: var(--text);
-  border-top: none;
   padding: 10px 14px;
   font-family: var(--font-mono); font-size: 0.78rem;
   height: 180px;
-  max-height: 60vh;
   min-height: 60px;
+  max-height: 60vh;
   overflow-y: auto;
   white-space: pre-wrap;
+  border-top: none;
 }
 .env-output::before {
   content: 'OUTPUT';
@@ -288,7 +312,7 @@
   font-family: var(--font-ui);
 }
 
-/* Botón reconectar */
+/* Banner reconectar */
 #reconnect-banner {
   display: none;
   background: #3a2e1c;
@@ -296,8 +320,7 @@
   color: var(--warning);
   padding: 8px 14px;
   font-size: 0.82rem;
-  flex-shrink: 0;
-  display: none;
+  flex: 0 0 auto;
   align-items: center;
   gap: 10px;
   justify-content: space-between;
@@ -313,6 +336,7 @@
   font-size: 0.75rem;
   font-weight: 600;
   cursor: pointer;
+  flex-shrink: 0;
 }
 #reconnect-banner button:hover {
   background: var(--warning);
@@ -340,8 +364,7 @@
 }
 .editor-container .CodeMirror-linenumber,
 .env-editor-wrap .CodeMirror-linenumber {
-  color: #5a5a5a;
-  padding-right: 8px;
+  color: #5a5a5a; padding-right: 8px;
 }
 .editor-container .CodeMirror-cursor,
 .env-editor-wrap .CodeMirror-cursor { border-left: 2px solid var(--accent); }
@@ -387,10 +410,8 @@ li.CodeMirror-hint-active {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.55);
   z-index: 5000;
-  display: none;
-  align-items: center; justify-content: center;
-  padding: 1rem;
-  backdrop-filter: blur(3px);
+  display: none; align-items: center; justify-content: center;
+  padding: 1rem; backdrop-filter: blur(3px);
 }
 .modal-overlay.open { display: flex; }
 .modal-box {
@@ -407,10 +428,7 @@ li.CodeMirror-hint-active {
   from { opacity: 0; transform: scale(0.96) translateY(8px); }
   to { opacity: 1; transform: scale(1) translateY(0); }
 }
-.modal-box h3 {
-  margin: 0 0 1rem 0; color: var(--text-bright);
-  font-size: 1rem; font-weight: 600;
-}
+.modal-box h3 { margin: 0 0 1rem 0; color: var(--text-bright); font-size: 1rem; font-weight: 600; }
 .modal-box p { font-size: 0.85rem; color: var(--text-dim); margin: 0 0 1rem 0; line-height: 1.55; }
 .modal-box label {
   display: block; font-size: 0.75rem;
@@ -489,8 +507,8 @@ li.CodeMirror-hint-active {
     border-right: none;
     border-bottom: 1px solid var(--border);
   }
-  .env-main { max-height: none; height: auto; }
-  .env-editor-wrap { height: 400px; }
+  .env-main { max-height: none; min-height: 100vh; }
+  .env-editor-wrap { min-height: 400px; }
   .editor-container .CodeMirror { font-size: 0.78rem; }
   .modal-box { padding: 1.2rem; }
   .env-output { height: 150px; }

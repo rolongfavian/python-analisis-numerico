@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v7 - Sin reconexión automática (evita invalid_scope)
+   v8 - Sin reconexión automática + toolbar colapsable
    ============================================ */
 
 (function () {
@@ -1191,7 +1191,9 @@
     localStorage.setItem('toolbar_collapsed', isCollapsed ? '1' : '0');
 
     if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
-      setTimeout(() => editorsMap['env-editor'].refresh(), 250);
+      setTimeout(() => {
+        try { editorsMap['env-editor'].refresh(); } catch (e) {}
+      }, 300);
     }
   }
 
@@ -1403,8 +1405,6 @@
     }, 1000);
   });
 
-  // Al cargar la página: mostrar banner si hay sesión guardada pero no token activo
-  // NO se intenta reconectar automáticamente (evita el error invalid_scope)
   window.addEventListener('load', () => {
     setTimeout(() => {
       if (haySesionGuardada() && !driveToken) {
