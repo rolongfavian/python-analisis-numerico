@@ -1,6 +1,6 @@
 /* ============================================
-   pyodide.js — Motor Python + ejecución de código
-   v2 - Emite evento 'pyodide-ready' al terminar la carga
+   pyodide.js — Motor Python + ejecución + micropip
+   v3 - Soporte para instalar librerías bajo demanda
    ============================================ */
 
 (function () {
@@ -8,23 +8,116 @@
 
   let pyodideReady = false;
   let pyodide = null;
+  let micropipReady = false;
+
+  // Paquetes pre-cargados al iniciar (los más comunes)
+  const PAQUETES_INICIALES = ['numpy'];
 
   async function initPython() {
     const badge = document.getElementById('status-badge');
     try {
       pyodide = await loadPyodide();
+
+      // Cargar paquetes base que ya vienen compilados en Pyodide
+      try {
+        await pyodide.loadPackage(PAQUETES_INICIALES);
+      } catch (e) {
+        console.warn('[pyodide] No se pudieron precargar algunos paquetes:', e);
+      }
+
       pyodideReady = true;
       if (badge) {
         badge.innerText = "Entorno Python listo";
         badge.classList.add("status-ready");
       }
-      // Avisar al resto de scripts que Pyodide ya está disponible
+
+      // Cargar micropip en segundo plano (no bloquea)
+      prepararMicropip();
+
+      // Avisar al resto de scripts
       window.dispatchEvent(new CustomEvent('pyodide-ready'));
     } catch (e) {
       if (badge) badge.innerText = "Error al cargar Python";
       console.error('[pyodide] Error:', e);
     }
   }
+
+  async function prepararMicropip() {
+    try {
+      await pyodide.loadPackage('micropip');
+      micropipReady = true;
+      console.log('[pyodide] micropip listo');
+      window.dispatchEvent(new CustomEvent('micropip-ready'));
+    } catch (e) {
+      console.warn('[pyodide] micropip no disponible:', e);
+    }
+  }
+
+  // ============================================================
+  // INSTALAR PAQUETES BAJO DEMANDA
+  // ============================================================
+
+  /**
+   * Instala un paquete desde PyPI usando micropip.
+   * Devuelve {ok: bool, mensaje: string}
+   */
+  async function instalarPaquete(nombrePaquete) {
+    if (!pyodideReady) {
+      return { ok: false, mensaje: 'Python todavía está cargando. Espera unos segundos.' };
+    }
+    if (!micropipReady) {
+      try {
+        await pyodide.loadPackage('micropip');
+        micropipReady = true;
+      } catch (e) {
+        return { ok: false, mensaje: 'micropip no está disponible.' };
+      }
+    }
+
+    const nombre = String(nombrePaquete || '').trim();
+    if (!nombre) return { ok: false, mensaje: 'Nombre vacío.' };
+
+    if (!/^[a-zA-Z0-9_\-\.\[\]]+$/.test(nombre)) {
+      return { ok: false, mensaje: 'Nombre de paquete inválido.' };
+    }
+
+    try {
+      await pyodide.runPythonAsync(`
+import micropip
+await micropip.install("${nombre}")
+      `);
+      return { ok: true, mensaje: `Paquete "${nombre}" instalado correctamente.` };
+    } catch (err) {
+      const msg = String(err.message || err);
+      if (msg.includes('No module named')) {
+        return { ok: false, mensaje: `El paquete "${nombre}" no existe en PyPI.` };
+      }
+      if (msg.includes('wheel')) {
+        return { ok: false, mensaje: `"${nombre}" necesita compilación nativa. No está disponible en el navegador.` };
+      }
+      return { ok: false, mensaje: `Error instalando "${nombre}": ${msg}` };
+    }
+  }
+
+  /**
+   * Lista los paquetes instalados vía micropip.
+   */
+  async function listarPaquetes() {
+    if (!pyodideReady) return [];
+    try {
+      const result = await pyodide.runPythonAsync(`
+import micropip
+list(micropip.list())
+      `);
+      return result ? result.toJs() : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  // ============================================================
+  // EJECUCIÓN DE CÓDIGO
+  // ============================================================
 
   async function executeCode(code) {
     await pyodide.runPythonAsync(`
@@ -97,4 +190,6 @@ sys.stdout = _buf
   window.runEnvCode = runEnvCode;
   window.isPyodideReady = isPyodideReady;
   window.getPyodide = getPyodide;
+  window.instalarPaquetePyodide = instalarPaquete;
+  window.listarPaquetesPyodide = listarPaquetes;
 })();

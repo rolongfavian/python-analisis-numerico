@@ -110,6 +110,10 @@ window.MathJax = {
       <span>⚠️ La sesión de Google expiró. Vuelve a conectar para guardar en Drive.</span>
       <button onclick="connectDrive()">Reconectar</button>
     </div>
+    <button id="btn-libs" onclick="abrirModalLibrerias()" title="Instalar librerías Python">
+      <span class="material-symbols-outlined">extension</span>
+      <span class="btn-libs-label">Librerías</span>
+    </button>
     <div class="env-toolbar" id="env-toolbar">
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
       <button class="primary" onclick="runEnvCode()">
@@ -318,6 +322,34 @@ window.MathJax = {
   </div>
 </div>
 
+<!-- Modal de librerías -->
+<div class="modal-overlay" id="modal-libs" onclick="if(event.target===this) cerrarModalLibrerias()">
+  <div class="modal-box modal-libs">
+    <h3>Instalar librerías Python</h3>
+    <p>Instala paquetes desde PyPI directamente en el navegador usando <code>micropip</code>. Solo funciona con paquetes compatibles con Pyodide (mayoría pure-Python).</p>
+
+    <label for="libs-input">Nombre del paquete</label>
+    <div class="libs-input-row">
+      <input type="text" id="libs-input" placeholder="ej: scipy" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <button class="primary" onclick="instalarDesdeModal()">
+        <span class="material-symbols-outlined">download</span> Instalar
+      </button>
+    </div>
+
+    <div id="libs-result"></div>
+
+    <label style="margin-top:1.2rem; display:block;">Sugerencias rápidas</label>
+    <div id="libs-sugerencias" class="libs-sugerencias"></div>
+
+    <label style="margin-top:1.2rem; display:block;">Instaladas en esta sesión</label>
+    <div id="libs-instaladas" class="libs-instaladas"></div>
+
+    <div class="actions">
+      <button onclick="cerrarModalLibrerias()">Cerrar</button>
+    </div>
+  </div>
+</div>
+
 <div id="offline-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:#b91c1c; color:white; padding:8px; text-align:center; font-size:0.8rem; z-index:9999;">
   ⚠️ Sin conexión · Los cambios se guardan localmente y se subirán al volver
 </div>
@@ -332,6 +364,7 @@ window.MathJax = {
 <script src="js/codemirror.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/guia.js"></script>
+<script src="js/librerias.js"></script>
 
 </body>
 </html>
