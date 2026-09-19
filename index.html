@@ -71,9 +71,14 @@ window.MathJax = {
 </div>
 
 <div class="env-layout" id="env-layout" style="display:none;">
-  <div class="env-sidebar">
+  <div class="env-sidebar" id="env-sidebar">
     <div class="env-breadcrumb" id="env-breadcrumb">
-      <a onclick="navigateTo('root')">🏠 Raíz</a>
+      <div class="breadcrumb-path">
+        <a onclick="navigateTo('root')">🏠 Raíz</a>
+      </div>
+      <button class="btn-expand-sidebar" onclick="toggleExpandSidebar()" title="Ampliar explorador">
+        <span class="material-symbols-outlined" id="expand-icon">expand_content</span>
+      </button>
     </div>
     <div class="env-actions">
       <button class="primary" onclick="createFolder()">
@@ -106,11 +111,8 @@ window.MathJax = {
       <button onclick="connectDrive()">Reconectar</button>
     </div>
     <div class="env-toolbar" id="env-toolbar">
-      <button class="btn-toggle-toolbar" onclick="toggleToolbar()" title="Ocultar barra">
-        <span class="material-symbols-outlined" id="toggle-icon">expand_less</span>
-      </button>
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-      <button class="primary btn-run-only" onclick="runEnvCode()">
+      <button class="primary" onclick="runEnvCode()">
         <span class="material-symbols-outlined">play_arrow</span> Ejecutar
       </button>
       <button onclick="saveEnvToDrive()">
@@ -136,6 +138,10 @@ window.MathJax = {
 </div>
 </div>
 
+<button id="btn-close-expanded" onclick="cerrarExplorador()">
+  <span class="material-symbols-outlined">close</span> Cerrar
+</button>
+
 <div id="overlay" onclick="toggleMenu()"></div>
 <button id="menu-toggle" onclick="toggleMenu()" aria-label="Menú">
   <span></span><span></span><span></span>
@@ -143,6 +149,7 @@ window.MathJax = {
 
 <nav id="sidebar">
   <div class="sidebar-title">Niveles de la Guía</div>
+
   <div class="menu-group">
     <button class="menu-group-header" onclick="showLevel(0); closeMenu();">
       <span>Nivel 0 · Antes de empezar</span>
@@ -325,6 +332,7 @@ window.MathJax = {
 <script src="js/pyodide.js"></script>
 <script src="js/guardado.js"></script>
 <script src="js/drive.js"></script>
+<script src="js/explorador.js"></script>
 <script src="js/codemirror.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/guia.js"></script>

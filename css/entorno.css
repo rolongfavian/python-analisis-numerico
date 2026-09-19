@@ -1,6 +1,6 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v9 - Editor absorbe el espacio ganado al colapsar
+   v10 - Botón ampliar explorador + sin colapso toolbar
    ============================================ */
 
 .material-symbols-outlined {
@@ -90,15 +90,49 @@ html, body {
   height: 100%;
   min-height: 0;
 }
+
 .env-breadcrumb {
   padding: 8px 10px; background: var(--bg-code);
   border-bottom: 1px solid var(--border);
   font-size: 0.72rem; color: var(--text-dim);
   word-wrap: break-word; flex-shrink: 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+.env-breadcrumb .breadcrumb-path {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .env-breadcrumb a { color: var(--accent); text-decoration: none; cursor: pointer; }
 .env-breadcrumb a:hover { text-decoration: underline; }
 .env-breadcrumb .sep { margin: 0 6px; color: var(--text-dim); }
+
+/* Botón ampliar explorador */
+.btn-expand-sidebar {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0;
+}
+.btn-expand-sidebar:hover {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+.btn-expand-sidebar .material-symbols-outlined { font-size: 18px; }
 
 .env-actions {
   padding: 6px 8px; background: var(--bg-code);
@@ -155,11 +189,106 @@ html, body {
 }
 .env-files .empty:hover { background: transparent; }
 
+/* ============================================================
+   EXPLORADOR AMPLIADO (pantalla completa)
+   ============================================================ */
+.env-sidebar.expanded {
+  position: fixed;
+  inset: 0;
+  z-index: 4500;
+  width: 100% !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  height: 100% !important;
+  border-right: none;
+  padding-top: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+}
+
+.env-sidebar.expanded .env-breadcrumb {
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  background: var(--bg-code);
+  border-bottom: 2px solid var(--accent-dim);
+}
+
+.env-sidebar.expanded .btn-expand-sidebar {
+  width: 36px;
+  height: 36px;
+}
+.env-sidebar.expanded .btn-expand-sidebar .material-symbols-outlined {
+  font-size: 22px;
+}
+
+.env-sidebar.expanded .env-actions {
+  padding: 10px 12px;
+  gap: 6px;
+}
+.env-sidebar.expanded .env-actions button {
+  padding: 10px 14px;
+  font-size: 0.82rem;
+}
+.env-sidebar.expanded .env-actions button .material-symbols-outlined {
+  font-size: 20px;
+}
+
+.env-sidebar.expanded .env-files {
+  padding: 8px 0;
+}
+.env-sidebar.expanded .env-files li {
+  padding: 14px 20px;
+  font-size: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.env-sidebar.expanded .env-files li .file-icon {
+  width: 28px;
+  height: 28px;
+}
+.env-sidebar.expanded .env-files li .file-icon img {
+  width: 24px;
+  height: 24px;
+}
+.env-sidebar.expanded .env-files li .menu-btn {
+  width: 32px;
+  height: 32px;
+}
+.env-sidebar.expanded .env-files li .menu-btn .material-symbols-outlined {
+  font-size: 20px;
+}
+
+#btn-close-expanded {
+  display: none;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 4600;
+  padding: 12px 20px;
+  border-radius: 8px;
+  border: none;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-ui);
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+  align-items: center;
+  gap: 8px;
+}
+#btn-close-expanded.visible { display: inline-flex; }
+#btn-close-expanded:hover { background: var(--accent-dim); }
+#btn-close-expanded .material-symbols-outlined { font-size: 20px; }
+
+/* ============================================================
+   MENÚ FLOTANTE
+   ============================================================ */
 #item-menu {
   position: fixed; background: var(--bg-elevated);
   border: 1px solid var(--border-strong); border-radius: 6px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.4);
-  padding: 4px 0; min-width: 170px; z-index: 4000;
+  padding: 4px 0; min-width: 170px; z-index: 5000;
   display: none; font-size: 0.82rem;
 }
 #item-menu.open { display: block; }
@@ -176,7 +305,7 @@ html, body {
 #item-menu button .material-symbols-outlined { font-size: 18px; }
 
 /* ============================================================
-   PANEL PRINCIPAL — el editor absorbe espacio libre
+   PANEL PRINCIPAL
    ============================================================ */
 .env-main {
   display: flex;
@@ -199,41 +328,6 @@ html, body {
   gap: 6px;
   align-items: center;
   flex-wrap: wrap;
-  transition: padding 0.2s;
-}
-
-.env-toolbar.collapsed {
-  padding: 6px 10px;
-  flex-wrap: nowrap;
-  gap: 8px;
-}
-.env-toolbar.collapsed > * {
-  display: none !important;
-}
-.env-toolbar.collapsed > .btn-toggle-toolbar,
-.env-toolbar.collapsed > .btn-run-only {
-  display: inline-flex !important;
-}
-
-.env-toolbar .btn-toggle-toolbar {
-  padding: 6px 8px;
-  border-radius: 4px;
-  border: 1px solid var(--border);
-  background: var(--bg-elevated);
-  color: var(--text);
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-  margin-left: auto;
-}
-.env-toolbar .btn-toggle-toolbar:hover {
-  background: var(--bg-input);
-  border-color: var(--border-strong);
-}
-.env-toolbar.collapsed .btn-toggle-toolbar {
-  margin-left: 0;
 }
 
 .env-toolbar input[type="text"] {
@@ -264,12 +358,9 @@ html, body {
   font-size: 0.68rem; color: var(--text-dim);
   margin-left: auto; flex-shrink: 0;
 }
-.env-toolbar.collapsed #autosave-status { display: none; }
 #autosave-status.saved { color: var(--accent); }
 
-/* ============================================================
-   EDITOR: flex: 1 1 0 → absorbe TODO el espacio sobrante
-   ============================================================ */
+/* Editor */
 .env-editor-wrap {
   flex: 1 1 0;
   min-height: 200px;
@@ -313,7 +404,7 @@ html, body {
 .output-resizer.dragging::after { background: var(--bg); }
 .output-resizer.hidden { display: none; }
 
-/* Output: altura fija */
+/* Output */
 .env-output {
   flex: 0 0 auto;
   background: var(--bg-code);
@@ -443,7 +534,7 @@ html, body {
   box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
   font-family: var(--font-mono) !important;
   font-size: 0.82rem !important;
-  z-index: 5000 !important;
+  z-index: 5500 !important;
   padding: 4px 0 !important;
 }
 .CodeMirror-hint { padding: 5px 14px !important; color: var(--text) !important; }
@@ -568,6 +659,11 @@ li.CodeMirror-hint-active {
     border-right: none;
     border-bottom: 1px solid var(--border);
     overflow-y: auto;
+  }
+
+  .env-sidebar.expanded {
+    max-height: 100% !important;
+    height: 100% !important;
   }
 
   .env-breadcrumb { padding: 6px 10px; font-size: 0.7rem; }
