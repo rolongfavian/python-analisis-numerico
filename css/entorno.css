@@ -1,7 +1,6 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v5 - Comportamiento VS Code: entorno fijo, solo
-        el divisor editor/output es arrastrable.
+   v6 - Optimizado para móvil: paneles ocultables
    ============================================ */
 
 .material-symbols-outlined {
@@ -17,9 +16,9 @@
   background: var(--bg-panel);
   border: 1px dashed var(--border-strong);
   border-radius: 10px;
-  padding: 2rem;
+  padding: 2rem 1.5rem;
   text-align: center;
-  margin: 2rem auto;
+  margin: 1rem auto;
   max-width: 620px;
 }
 #drive-setup h2 { color: var(--text-bright); margin-top: 0; font-weight: 600; }
@@ -42,13 +41,12 @@
 #guest-warning {
   background: #3a2e1c; border-left: 3px solid var(--warning);
   color: var(--warning); padding: 10px 14px; border-radius: 6px;
-  font-size: 0.82rem; margin: 1rem; line-height: 1.5; flex-shrink: 0;
+  font-size: 0.82rem; margin: 0.6rem; line-height: 1.5; flex-shrink: 0;
 }
 #guest-warning strong { color: #ffd866; }
 
 /* ============================================================
-   BLOQUEO DEL SCROLL GENERAL (como VS Code)
-   El body no hace scroll, todo cabe en pantalla.
+   BLOQUEO DEL SCROLL GENERAL
    ============================================================ */
 html, body {
   overflow: hidden;
@@ -57,7 +55,6 @@ html, body {
   padding: 0;
 }
 
-/* Contenedor de la vista Entorno: ocupa toda la pantalla menos la barra superior */
 #view-env {
   height: calc(100vh - 52px);
   max-height: calc(100vh - 52px);
@@ -79,7 +76,6 @@ html, body {
   flex: 1 1 auto;
 }
 
-/* Sidebar: scroll interno propio */
 .env-sidebar {
   background: var(--bg-panel);
   border-right: 1px solid var(--border);
@@ -91,9 +87,9 @@ html, body {
   min-height: 0;
 }
 .env-breadcrumb {
-  padding: 10px 12px; background: var(--bg-code);
+  padding: 8px 10px; background: var(--bg-code);
   border-bottom: 1px solid var(--border);
-  font-size: 0.75rem; color: var(--text-dim);
+  font-size: 0.72rem; color: var(--text-dim);
   word-wrap: break-word; flex-shrink: 0;
 }
 .env-breadcrumb a { color: var(--accent); text-decoration: none; cursor: pointer; }
@@ -101,13 +97,13 @@ html, body {
 .env-breadcrumb .sep { margin: 0 6px; color: var(--text-dim); }
 
 .env-actions {
-  padding: 8px 12px; background: var(--bg-code);
+  padding: 6px 8px; background: var(--bg-code);
   border-bottom: 1px solid var(--border);
-  display: flex; gap: 6px; flex-wrap: wrap; flex-shrink: 0;
+  display: flex; gap: 4px; flex-wrap: wrap; flex-shrink: 0;
 }
 .env-actions button {
-  flex: 1 1 auto; padding: 6px 10px; border-radius: 4px;
-  font-family: var(--font-ui); font-size: 0.72rem; font-weight: 500;
+  flex: 1 1 auto; padding: 6px 8px; border-radius: 4px;
+  font-family: var(--font-ui); font-size: 0.7rem; font-weight: 500;
   cursor: pointer; border: 1px solid var(--border);
   background: var(--bg-elevated); color: var(--text);
   display: inline-flex; align-items: center; justify-content: center;
@@ -122,34 +118,35 @@ html, body {
 .env-actions button.primary:hover { background: var(--accent-dim); color: var(--bg); }
 .env-actions button.danger { color: var(--danger); border-color: var(--danger); }
 .env-actions button.danger:hover { background: var(--danger-soft); }
+.env-actions button .material-symbols-outlined { font-size: 16px; }
 
 .env-files {
-  list-style: none; padding: 6px 0; margin: 0;
+  list-style: none; padding: 4px 0; margin: 0;
   flex: 1; overflow-y: auto; min-height: 0;
 }
 .env-files li {
-  padding: 8px 10px 8px 12px; cursor: pointer; font-size: 0.85rem;
+  padding: 7px 10px; cursor: pointer; font-size: 0.82rem;
   display: flex; align-items: center; gap: 8px;
-  border-left: 2px solid transparent; position: relative;
+  border-left: 2px solid transparent;
 }
 .env-files li:hover { background: var(--bg-elevated); }
 .env-files li.active { background: var(--bg-elevated); border-left-color: var(--accent); }
 .env-files li .file-icon {
-  width: 22px; height: 22px; flex-shrink: 0;
+  width: 20px; height: 20px; flex-shrink: 0;
   display: inline-flex; align-items: center; justify-content: center;
 }
-.env-files li .file-icon img { width: 20px; height: 20px; display: block; }
+.env-files li .file-icon img { width: 18px; height: 18px; display: block; }
 .env-files li .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .env-files li .menu-btn {
-  width: 26px; height: 26px; border-radius: 4px; border: none;
+  width: 24px; height: 24px; border-radius: 4px; border: none;
   background: transparent; color: var(--text-dim);
   cursor: pointer; display: inline-flex; align-items: center;
   justify-content: center; flex-shrink: 0; padding: 0;
 }
 .env-files li .menu-btn:hover { background: var(--bg-input); color: var(--text); }
-.env-files li .menu-btn .material-symbols-outlined { font-size: 18px; }
+.env-files li .menu-btn .material-symbols-outlined { font-size: 16px; }
 .env-files .empty {
-  color: var(--text-dim); font-style: italic; font-size: 0.78rem;
+  color: var(--text-dim); font-style: italic; font-size: 0.75rem;
   text-align: center; padding: 1rem; cursor: default;
 }
 .env-files .empty:hover { background: transparent; }
@@ -175,7 +172,7 @@ html, body {
 #item-menu button .material-symbols-outlined { font-size: 18px; }
 
 /* ============================================================
-   PANEL PRINCIPAL — Como VS Code
+   PANEL PRINCIPAL
    ============================================================ */
 .env-main {
   display: flex;
@@ -187,17 +184,15 @@ html, body {
   background: var(--bg-editor);
 }
 
-/* Toolbar: FIJA arriba, nunca se mueve */
 .env-toolbar {
   flex: 0 0 auto;
   background: var(--bg-code);
-  padding: 8px 12px;
+  padding: 8px 10px;
   border-bottom: 1px solid var(--border);
   display: flex;
   gap: 6px;
   align-items: center;
   flex-wrap: wrap;
-  position: relative;
   transition: padding 0.2s;
 }
 
@@ -236,7 +231,7 @@ html, body {
 }
 
 .env-toolbar input[type="text"] {
-  flex: 1; min-width: 140px;
+  flex: 1; min-width: 100px;
   padding: 6px 10px; border-radius: 4px;
   border: 1px solid var(--border);
   font-family: var(--font-mono); font-size: 0.78rem;
@@ -245,7 +240,7 @@ html, body {
 .env-toolbar input[type="text"]:focus { border-color: var(--accent-dim); }
 
 .env-toolbar button {
-  padding: 6px 12px; border-radius: 4px;
+  padding: 6px 10px; border-radius: 4px;
   font-family: var(--font-ui); font-size: 0.72rem; font-weight: 500;
   cursor: pointer; border: 1px solid var(--border);
   background: var(--bg-elevated); color: var(--text);
@@ -260,13 +255,12 @@ html, body {
 .env-toolbar button.danger:hover { background: var(--danger-soft); }
 
 #autosave-status {
-  font-size: 0.7rem; color: var(--text-dim);
+  font-size: 0.68rem; color: var(--text-dim);
   margin-left: auto; flex-shrink: 0;
 }
 .env-toolbar.collapsed #autosave-status { display: none; }
 #autosave-status.saved { color: var(--accent); }
 
-/* Editor: se estira o encoge automáticamente, con scroll interno propio */
 .env-editor-wrap {
   flex: 1 1 0;
   min-height: 0;
@@ -279,14 +273,9 @@ html, body {
   font-family: var(--font-mono); font-size: 0.85rem;
   line-height: 1.6; background: var(--bg-editor); color: var(--text);
 }
-.env-editor-wrap .CodeMirror-scroll {
-  min-height: 0 !important;
-}
-.env-editor-wrap .CodeMirror-sizer {
-  min-height: 0 !important;
-}
+.env-editor-wrap .CodeMirror-scroll { min-height: 0 !important; }
+.env-editor-wrap .CodeMirror-sizer { min-height: 0 !important; }
 
-/* Divisor horizontal: solo cambia la altura del output */
 .output-resizer {
   flex: 0 0 auto;
   height: 8px;
@@ -294,7 +283,6 @@ html, body {
   border-top: 1px solid var(--border);
   border-bottom: 1px solid var(--border);
   cursor: ns-resize;
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -313,43 +301,66 @@ html, body {
 }
 .output-resizer.dragging { background: var(--accent-dim); }
 .output-resizer.dragging::after { background: var(--bg); }
+.output-resizer.hidden { display: none; }
 
-/* Output: altura ajustable por JS, scroll interno propio */
 .env-output {
   flex: 0 0 auto;
   background: var(--bg-code);
   color: var(--text);
-  padding: 10px 14px;
+  padding: 10px 12px;
   font-family: var(--font-mono); font-size: 0.78rem;
   height: 180px;
   min-height: 60px;
   max-height: 60vh;
   overflow-y: auto;
   white-space: pre-wrap;
-  border-top: none;
 }
 .env-output::before {
   content: 'OUTPUT';
   color: var(--text-dim);
   display: block;
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   letter-spacing: 1.2px;
   margin-bottom: 0.4rem;
   font-family: var(--font-ui);
 }
+.env-output.hidden { display: none; }
 
-/* Banner reconectar */
+#btn-show-output {
+  display: none;
+  position: absolute;
+  bottom: 8px;
+  right: 8px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-strong);
+  color: var(--text);
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 600;
+  cursor: pointer;
+  z-index: 20;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  align-items: center;
+  gap: 4px;
+}
+#btn-show-output.visible { display: inline-flex; }
+#btn-show-output:hover { background: var(--bg-input); border-color: var(--accent-dim); }
+#btn-show-output .material-symbols-outlined { font-size: 16px; }
+
 #reconnect-banner {
   display: none;
   background: #3a2e1c;
   border-bottom: 1px solid var(--warning);
   color: var(--warning);
-  padding: 8px 14px;
-  font-size: 0.82rem;
+  padding: 8px 12px;
+  font-size: 0.78rem;
   flex: 0 0 auto;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
   justify-content: space-between;
+  flex-wrap: wrap;
 }
 #reconnect-banner.visible { display: flex; }
 #reconnect-banner button {
@@ -359,7 +370,7 @@ html, body {
   background: transparent;
   color: var(--warning);
   font-family: var(--font-ui);
-  font-size: 0.75rem;
+  font-size: 0.72rem;
   font-weight: 600;
   cursor: pointer;
   flex-shrink: 0;
@@ -390,7 +401,7 @@ html, body {
 }
 .editor-container .CodeMirror-linenumber,
 .env-editor-wrap .CodeMirror-linenumber {
-  color: #5a5a5a; padding-right: 8px;
+  color: #5a5a5a; padding-right: 6px;
 }
 .editor-container .CodeMirror-cursor,
 .env-editor-wrap .CodeMirror-cursor { border-left: 2px solid var(--accent); }
@@ -522,43 +533,78 @@ li.CodeMirror-hint-active {
 .modal-box .actions button.danger:hover { background: #d9694f; }
 
 /* ============================================================
-   RESPONSIVE
+   RESPONSIVE — Móvil
    ============================================================ */
 @media (max-width: 768px) {
-  /* En móvil, permitir scroll general porque no cabe todo */
-  html, body {
-    overflow: auto;
-    height: auto;
-  }
   #view-env {
-    height: auto;
-    max-height: none;
-    overflow: visible;
+    height: calc(100vh - 48px);
+    max-height: calc(100vh - 48px);
   }
+
   .env-layout {
     grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+    height: 100%;
+    max-height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .env-sidebar {
+    max-height: 140px;
     height: auto;
     min-height: 0;
-    overflow: visible;
-  }
-  .env-sidebar {
-    max-height: 280px;
     border-right: none;
     border-bottom: 1px solid var(--border);
+    overflow-y: auto;
   }
+
+  .env-breadcrumb { padding: 6px 10px; font-size: 0.7rem; }
+  .env-actions { padding: 5px 8px; gap: 4px; }
+  .env-actions button { padding: 5px 6px; font-size: 0.68rem; }
+  .env-actions button .material-symbols-outlined { font-size: 14px; }
+  .env-files li { padding: 6px 10px; font-size: 0.78rem; }
+
   .env-main {
-    height: auto;
-    min-height: 100vh;
-    max-height: none;
+    height: 100%;
+    min-height: 0;
+    max-height: 100%;
   }
-  .env-editor-wrap {
-    min-height: 400px;
-    height: 400px;
+
+  .env-toolbar {
+    padding: 6px 8px;
+    gap: 4px;
   }
-  .editor-container .CodeMirror { font-size: 0.78rem; }
-  .modal-box { padding: 1.2rem; }
+  .env-toolbar input[type="text"] {
+    min-width: 80px;
+    font-size: 0.72rem;
+    padding: 5px 8px;
+  }
+  .env-toolbar button {
+    padding: 5px 8px;
+    font-size: 0.68rem;
+  }
+  .env-toolbar button .material-symbols-outlined { font-size: 16px; }
+  #autosave-status { display: none; }
+
+  .env-editor-wrap .CodeMirror { font-size: 0.78rem; }
+
   .env-output {
-    height: 150px;
-    max-height: none;
+    height: 120px;
+    min-height: 50px;
+    max-height: 40vh;
+    font-size: 0.72rem;
+    padding: 8px 10px;
   }
+
+  .modal-box { padding: 1.2rem; }
+}
+
+@media (max-width: 400px) {
+  .env-sidebar { max-height: 110px; }
+  .env-output { height: 100px; }
+  .env-toolbar button span:not(.material-symbols-outlined) {
+    display: none;
+  }
+  .env-toolbar button { padding: 5px 8px; }
 }

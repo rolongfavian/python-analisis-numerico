@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v8 - Sin reconexión automática + toolbar colapsable
+   v9 - Paneles ocultables optimizados para móvil
    ============================================ */
 
 (function () {
@@ -147,7 +147,7 @@
   }
 
   // ============================================================
-  // RECORDAR SESIÓN (solo bandera, sin reconexión automática)
+  // SESIÓN
   // ============================================================
 
   function marcarSesionConectada() {
@@ -1177,11 +1177,12 @@
   }
 
   // ============================================================
-  // TOOLBAR COLAPSABLE
+  // TOOLBAR + SIDEBAR COLAPSABLES
   // ============================================================
 
   function toggleToolbar() {
     const toolbar = document.getElementById('env-toolbar');
+    const sidebar = document.querySelector('.env-sidebar');
     const icon = document.getElementById('toggle-icon');
     if (!toolbar || !icon) return;
 
@@ -1189,6 +1190,15 @@
     const isCollapsed = toolbar.classList.contains('collapsed');
     icon.innerText = isCollapsed ? 'expand_more' : 'expand_less';
     localStorage.setItem('toolbar_collapsed', isCollapsed ? '1' : '0');
+
+    // En móvil, colapsar también el sidebar
+    if (window.innerWidth <= 768 && sidebar) {
+      if (isCollapsed) {
+        sidebar.style.display = 'none';
+      } else {
+        sidebar.style.display = '';
+      }
+    }
 
     if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
       setTimeout(() => {
@@ -1202,9 +1212,53 @@
     if (collapsed) {
       const toolbar = document.getElementById('env-toolbar');
       const icon = document.getElementById('toggle-icon');
+      const sidebar = document.querySelector('.env-sidebar');
       if (toolbar) toolbar.classList.add('collapsed');
       if (icon) icon.innerText = 'expand_more';
+      if (window.innerWidth <= 768 && sidebar) sidebar.style.display = 'none';
     }
+  }
+
+  // ============================================================
+  // MOSTRAR / OCULTAR OUTPUT
+  // ============================================================
+
+  function ocultarOutput() {
+    const output = document.getElementById('env-output');
+    const resizer = document.getElementById('output-resizer');
+    const btnShow = document.getElementById('btn-show-output');
+    if (output) output.classList.add('hidden');
+    if (resizer) resizer.classList.add('hidden');
+    if (btnShow) btnShow.classList.add('visible');
+    localStorage.setItem('output_hidden', '1');
+    if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+      setTimeout(() => editorsMap['env-editor'].refresh(), 250);
+    }
+  }
+
+  function mostrarOutput() {
+    const output = document.getElementById('env-output');
+    const resizer = document.getElementById('output-resizer');
+    const btnShow = document.getElementById('btn-show-output');
+    if (output) output.classList.remove('hidden');
+    if (resizer) resizer.classList.remove('hidden');
+    if (btnShow) btnShow.classList.remove('visible');
+    localStorage.setItem('output_hidden', '0');
+    if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+      setTimeout(() => editorsMap['env-editor'].refresh(), 250);
+    }
+  }
+
+  function toggleOutput() {
+    const output = document.getElementById('env-output');
+    if (!output) return;
+    if (output.classList.contains('hidden')) mostrarOutput();
+    else ocultarOutput();
+  }
+
+  function restaurarEstadoOutput() {
+    const hidden = localStorage.getItem('output_hidden') === '1';
+    if (hidden) ocultarOutput();
   }
 
   // ============================================================
@@ -1392,6 +1446,9 @@
   window.importarArchivo = importarArchivo;
   window.confirmarImportar = confirmarImportar;
   window.toggleToolbar = toggleToolbar;
+  window.ocultarOutput = ocultarOutput;
+  window.mostrarOutput = mostrarOutput;
+  window.toggleOutput = toggleOutput;
   window.getDriveToken = () => driveToken;
   window.buildIpynb = buildIpynb;
 
@@ -1401,6 +1458,7 @@
         editorsMap['env-editor'].on('change', marcarCambio);
       }
       restaurarToolbar();
+      restaurarEstadoOutput();
       initResizer();
     }, 1000);
   });
