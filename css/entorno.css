@@ -1,7 +1,6 @@
 /* ============================================
    entorno.css — Estilos del entorno + explorador
-   v7 - Colapso oculta solo toolbar/explorador (no editor)
-        Output con altura mínima = 180px
+   v8 - Editor con min-height 200px garantizado
    ============================================ */
 
 .material-symbols-outlined {
@@ -262,10 +261,12 @@ html, body {
 .env-toolbar.collapsed #autosave-status { display: none; }
 #autosave-status.saved { color: var(--accent); }
 
-/* Editor: SIEMPRE VISIBLE, se estira o encoge automáticamente */
+/* ============================================================
+   EDITOR: SIEMPRE VISIBLE, min-height garantizado 200px
+   ============================================================ */
 .env-editor-wrap {
-  flex: 1 1 0;
-  min-height: 0;
+  flex: 1 1 auto;
+  min-height: 200px;
   overflow: hidden;
   position: relative;
   background: var(--bg-editor);
@@ -278,6 +279,7 @@ html, body {
 .env-editor-wrap .CodeMirror-scroll { min-height: 0 !important; }
 .env-editor-wrap .CodeMirror-sizer { min-height: 0 !important; }
 
+/* Divisor */
 .output-resizer {
   flex: 0 0 auto;
   height: 8px;
@@ -305,6 +307,7 @@ html, body {
 .output-resizer.dragging::after { background: var(--bg); }
 .output-resizer.hidden { display: none; }
 
+/* Output */
 .env-output {
   flex: 0 0 auto;
   background: var(--bg-code);
@@ -312,7 +315,7 @@ html, body {
   padding: 10px 12px;
   font-family: var(--font-mono); font-size: 0.78rem;
   height: 180px;
-  min-height: 180px;   /* ← altura mínima = la de por defecto */
+  min-height: 180px;
   max-height: 60vh;
   overflow-y: auto;
   white-space: pre-wrap;
@@ -589,9 +592,13 @@ li.CodeMirror-hint-active {
   .env-toolbar button .material-symbols-outlined { font-size: 16px; }
   #autosave-status { display: none; }
 
+  /* Editor: mínimo 200px garantizado en móvil también */
+  .env-editor-wrap {
+    min-height: 200px;
+  }
   .env-editor-wrap .CodeMirror { font-size: 0.78rem; }
 
-  /* En móvil, el output mantiene mínimo 180px */
+  /* Output: mínimo 180px garantizado */
   .env-output {
     height: 180px;
     min-height: 180px;
@@ -605,6 +612,7 @@ li.CodeMirror-hint-active {
 
 @media (max-width: 400px) {
   .env-sidebar { max-height: 110px; }
+  .env-editor-wrap { min-height: 180px; }
   .env-toolbar button span:not(.material-symbols-outlined) {
     display: none;
   }

@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador de archivos
-   v10 - Colapso NO oculta editor. Output mínimo 180px.
+   v11 - Editor min-height garantizado + output 180px
    ============================================ */
 
 (function () {
@@ -11,6 +11,7 @@
   const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
   const MAX_IMPORT_MB = 5;
   const MIN_OUTPUT_HEIGHT = 180;
+  const MIN_EDITOR_HEIGHT = 200;
 
   let driveToken = null;
   let driveFolderId = null;
@@ -1178,7 +1179,7 @@
   }
 
   // ============================================================
-  // TOOLBAR COLAPSABLE (NO oculta el editor)
+  // TOOLBAR COLAPSABLE (con protección de editor)
   // ============================================================
 
   function toggleToolbar() {
@@ -1192,7 +1193,6 @@
     icon.innerText = isCollapsed ? 'expand_more' : 'expand_less';
     localStorage.setItem('toolbar_collapsed', isCollapsed ? '1' : '0');
 
-    // En móvil, colapsar también el sidebar (pero NO el editor)
     if (window.innerWidth <= 768 && sidebar) {
       if (isCollapsed) {
         sidebar.style.display = 'none';
@@ -1264,12 +1264,13 @@
   }
 
   // ============================================================
-  // DIVISOR REDIMENSIONABLE (mínimo 180px)
+  // DIVISOR REDIMENSIONABLE (con límites)
   // ============================================================
 
   function initResizer() {
     const resizer = document.getElementById('output-resizer');
     const output = document.getElementById('env-output');
+    const editorWrap = document.querySelector('.env-editor-wrap');
     if (!resizer || !output) return;
 
     // Restaurar altura guardada, pero nunca menor al mínimo
@@ -1296,9 +1297,15 @@
       if (!dragging) return;
       const delta = startY - y;
       let newHeight = startHeight + delta;
-      const maxH = window.innerHeight * 0.6;
+
+      // Calcular máximo permitido para no comerse el editor
+      const mainRect = document.querySelector('.env-main').getBoundingClientRect();
+      const toolbarRect = document.querySelector('.env-toolbar').getBoundingClientRect();
+      const maxOutput = mainRect.height - toolbarRect.height - MIN_EDITOR_HEIGHT - 20;
+
       if (newHeight < MIN_OUTPUT_HEIGHT) newHeight = MIN_OUTPUT_HEIGHT;
-      if (newHeight > maxH) newHeight = maxH;
+      if (newHeight > maxOutput) newHeight = maxOutput;
+
       output.style.height = newHeight + 'px';
     }
 
