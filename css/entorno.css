@@ -1,0 +1,344 @@
+/* ============================================
+   entorno.css — Estilos del entorno + editores
+   ============================================ */
+
+/* Setup inicial */
+#drive-setup {
+  background: var(--bg-panel);
+  border: 1px dashed var(--border-strong);
+  border-radius: 10px;
+  padding: 2rem;
+  text-align: center;
+  margin: 2rem auto;
+  max-width: 560px;
+}
+#drive-setup h2 {
+  color: var(--text-bright);
+  margin-top: 0;
+  font-weight: 600;
+}
+#drive-setup p {
+  color: var(--text-dim);
+  font-size: 0.85rem;
+}
+#drive-setup button {
+  margin-top: 1rem;
+  padding: 10px 22px;
+  border-radius: 6px;
+  border: none;
+  background: var(--accent);
+  color: var(--bg);
+  font-family: var(--font-ui);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+#drive-setup button:hover { background: var(--accent-dim); }
+
+/* Layout del entorno */
+.env-layout {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  height: calc(100vh - 52px);
+}
+.env-sidebar {
+  background: var(--bg-panel);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+}
+.env-breadcrumb {
+  padding: 10px 12px;
+  background: var(--bg-code);
+  border-bottom: 1px solid var(--border);
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  word-wrap: break-word;
+}
+.env-breadcrumb a {
+  color: var(--accent);
+  text-decoration: none;
+  cursor: pointer;
+}
+.env-breadcrumb a:hover { text-decoration: underline; }
+.env-breadcrumb .sep {
+  margin: 0 6px;
+  color: var(--text-dim);
+}
+.env-actions {
+  padding: 8px 12px;
+  background: var(--bg-code);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+.env-actions button {
+  flex: 1 1 auto;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text);
+}
+.env-actions button:hover {
+  background: var(--bg-input);
+  border-color: var(--border-strong);
+}
+.env-actions button.primary {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+.env-actions button.primary:hover {
+  background: var(--accent-dim);
+  color: var(--bg);
+}
+
+/* Lista de archivos */
+.env-files {
+  list-style: none;
+  padding: 6px 0;
+  margin: 0;
+  flex: 1;
+  overflow-y: auto;
+}
+.env-files li {
+  padding: 8px 12px;
+  cursor: pointer;
+  font-size: 0.82rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-left: 2px solid transparent;
+}
+.env-files li:hover { background: var(--bg-elevated); }
+.env-files li.active {
+  background: var(--bg-elevated);
+  border-left-color: var(--accent);
+  color: var(--accent);
+}
+.env-files li .icon {
+  font-size: 0.95rem;
+  flex-shrink: 0;
+}
+.env-files li .name {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.env-files li .delete-btn {
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  opacity: 0.4;
+  padding: 0 4px;
+  cursor: pointer;
+}
+.env-files li .delete-btn:hover {
+  opacity: 1;
+  color: var(--danger);
+  background: var(--danger-soft);
+  border-radius: 3px;
+}
+.env-files .empty {
+  color: var(--text-dim);
+  font-style: italic;
+  font-size: 0.78rem;
+  text-align: center;
+  padding: 1rem;
+  cursor: default;
+}
+.env-files .empty:hover { background: transparent; }
+
+/* Panel principal */
+.env-main {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+.env-toolbar {
+  background: var(--bg-code);
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+.env-toolbar input[type="text"] {
+  flex: 1;
+  min-width: 140px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  background: var(--bg-input);
+  color: var(--text);
+  outline: none;
+}
+.env-toolbar input[type="text"]:focus { border-color: var(--accent-dim); }
+.env-toolbar button {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-family: var(--font-ui);
+  font-size: 0.72rem;
+  font-weight: 500;
+  cursor: pointer;
+  border: 1px solid var(--border);
+  background: var(--bg-elevated);
+  color: var(--text);
+  white-space: nowrap;
+}
+.env-toolbar button:hover {
+  background: var(--bg-input);
+  border-color: var(--border-strong);
+}
+.env-toolbar button.primary {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border-color: var(--accent-dim);
+}
+.env-toolbar button.primary:hover {
+  background: var(--accent-dim);
+  color: var(--bg);
+}
+
+.env-editor-wrap {
+  flex: 1;
+  overflow: auto;
+  background: var(--bg-editor);
+}
+
+.env-output {
+  background: var(--bg-code);
+  color: var(--text);
+  border-top: 1px solid var(--border);
+  padding: 10px 14px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  max-height: 220px;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+.env-output::before {
+  content: 'OUTPUT';
+  color: var(--text-dim);
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 1.2px;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-ui);
+}
+
+/* ============ CODEMIRROR — Estilos compartidos ============ */
+
+.editor-container .CodeMirror,
+.env-editor-wrap .CodeMirror {
+  font-family: var(--font-mono);
+  font-size: 0.85rem;
+  line-height: 1.55;
+  background: var(--bg-editor);
+  color: var(--text);
+}
+.editor-container .CodeMirror { height: auto; }
+.env-editor-wrap .CodeMirror { height: 100%; }
+.editor-container .CodeMirror-scroll {
+  overflow-x: auto !important;
+  overflow-y: hidden;
+}
+.editor-container .CodeMirror-gutters,
+.env-editor-wrap .CodeMirror-gutters {
+  background: var(--bg-editor);
+  border-right: 1px solid var(--border);
+}
+.editor-container .CodeMirror-linenumber,
+.env-editor-wrap .CodeMirror-linenumber {
+  color: #5a5a5a;
+  padding-right: 8px;
+}
+.editor-container .CodeMirror-cursor,
+.env-editor-wrap .CodeMirror-cursor {
+  border-left: 2px solid var(--accent);
+}
+.editor-container .CodeMirror-selected,
+.env-editor-wrap .CodeMirror-selected {
+  background: #264f78 !important;
+}
+.editor-container .CodeMirror-activeline-background,
+.env-editor-wrap .CodeMirror-activeline-background {
+  background: #2a2d2e;
+}
+
+/* Sintaxis Python — tema oscuro */
+.editor-container .cm-keyword,
+.env-editor-wrap .cm-keyword { color: var(--code-keyword); font-weight: 500; }
+.editor-container .cm-def,
+.env-editor-wrap .cm-def { color: var(--code-function); }
+.editor-container .cm-variable,
+.env-editor-wrap .cm-variable { color: var(--code-variable); }
+.editor-container .cm-variable-2,
+.env-editor-wrap .cm-variable-2 { color: var(--code-variable); }
+.editor-container .cm-property,
+.env-editor-wrap .cm-property { color: var(--code-variable); }
+.editor-container .cm-operator,
+.env-editor-wrap .cm-operator { color: var(--code-operator); }
+.editor-container .cm-number,
+.env-editor-wrap .cm-number { color: var(--code-number); }
+.editor-container .cm-string,
+.env-editor-wrap .cm-string { color: var(--code-string); }
+.editor-container .cm-string-2,
+.env-editor-wrap .cm-string-2 { color: var(--code-string); }
+.editor-container .cm-comment,
+.env-editor-wrap .cm-comment { color: var(--code-comment); font-style: italic; }
+.editor-container .cm-builtin,
+.env-editor-wrap .cm-builtin { color: var(--code-builtin); }
+.editor-container .cm-meta,
+.env-editor-wrap .cm-meta { color: var(--code-keyword); }
+.editor-container .cm-attribute,
+.env-editor-wrap .cm-attribute { color: var(--code-function); }
+.editor-container .cm-tag,
+.env-editor-wrap .cm-tag { color: var(--code-keyword); }
+
+/* Autocompletado */
+.CodeMirror-hints {
+  background: var(--bg-elevated) !important;
+  border: 1px solid var(--border-strong) !important;
+  border-radius: 6px !important;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.4) !important;
+  font-family: var(--font-mono) !important;
+  font-size: 0.82rem !important;
+  z-index: 5000 !important;
+  padding: 4px 0 !important;
+}
+.CodeMirror-hint {
+  padding: 5px 14px !important;
+  color: var(--text) !important;
+  border: none !important;
+}
+.CodeMirror-hint-active,
+li.CodeMirror-hint-active {
+  background: var(--accent-dim) !important;
+  color: var(--bg) !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .env-layout {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+  .env-sidebar {
+    max-height: 280px;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+  .env-editor-wrap { height: 450px; }
+  .editor-container .CodeMirror { font-size: 0.78rem; }
+}

@@ -1,0 +1,303 @@
+/* ============================================
+   guia.css — Estilos de la vista Guía
+   ============================================ */
+
+header.guide-header {
+  background: var(--bg-panel);
+  padding: 2rem 1.5rem 1.5rem;
+  text-align: center;
+  border-bottom: 1px solid var(--border);
+}
+header.guide-header h1 {
+  margin: 0;
+  font-size: 1.5rem;
+  color: var(--text-bright);
+  font-weight: 600;
+  letter-spacing: -0.3px;
+}
+header.guide-header p {
+  margin-top: 0.6rem;
+  font-size: 0.85rem;
+  color: var(--text-dim);
+  max-width: 780px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#status-badge {
+  display: inline-block;
+  margin-top: 1rem;
+  padding: 5px 14px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background: var(--bg-elevated);
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+}
+.status-ready {
+  background: var(--accent-soft) !important;
+  color: var(--accent) !important;
+  border-color: var(--accent-dim) !important;
+}
+
+/* Secciones */
+section {
+  background: var(--bg-panel);
+  padding: 1.5rem 1.8rem;
+  margin-bottom: 1.5rem;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  scroll-margin-top: 70px;
+}
+section h2 {
+  color: var(--text-bright);
+  font-weight: 600;
+  font-size: 1.1rem;
+  margin-top: 0;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  letter-spacing: -0.2px;
+}
+section h3 {
+  color: var(--text);
+  font-size: 0.95rem;
+  font-weight: 600;
+  margin: 1.4rem 0 0.5rem 0;
+}
+section h4 {
+  color: var(--text-dim);
+  font-size: 0.82rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  margin: 1rem 0 0.4rem 0;
+}
+
+/* Bloques de notas */
+.concept-block {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.6rem;
+  margin: 1rem 0;
+}
+
+.formal-note,
+.informal-note,
+.faq-note,
+.warning-note,
+.exercise-note,
+.math-note,
+.cmd-note {
+  padding: 0.85rem 1rem;
+  border-radius: 6px;
+  border-left: 3px solid var(--accent-dim);
+  background: var(--bg-elevated);
+  font-size: 0.87rem;
+  color: var(--text);
+  word-wrap: break-word;
+}
+
+.formal-note { border-left-color: #569cd6; }
+.informal-note { border-left-color: var(--accent); }
+.faq-note { border-left-color: var(--warning); }
+.warning-note { border-left-color: var(--danger); }
+.exercise-note { border-left-color: #c586c0; }
+.math-note { border-left-color: #4fc1ff; }
+.cmd-note { border-left-color: var(--accent); }
+
+.formal-note h4,
+.informal-note h4,
+.faq-note h4,
+.warning-note h4,
+.exercise-note h4,
+.math-note h4,
+.cmd-note h4 {
+  margin: 0 0 0.4rem 0;
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.formal-note ul,
+.informal-note ul,
+.faq-note ul,
+.warning-note ul,
+.exercise-note ul,
+.cmd-note ul {
+  margin: 0.3rem 0 0 0;
+  padding-left: 1.2rem;
+}
+
+.formal-note li,
+.informal-note li,
+.faq-note li,
+.warning-note li,
+.exercise-note li,
+.cmd-note li {
+  margin-bottom: 0.25rem;
+}
+
+/* Tablas */
+.table-scroll {
+  width: 100%;
+  overflow-x: auto;
+  border-radius: 6px;
+  border: 1px solid var(--border);
+  margin-top: 0.5rem;
+}
+.table-scroll table {
+  width: 100%;
+  min-width: 500px;
+  border-collapse: collapse;
+  font-size: 0.82rem;
+  background: var(--bg-elevated);
+}
+.table-scroll th {
+  background: var(--bg-code);
+  color: var(--text);
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  text-align: left;
+  font-weight: 600;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.table-scroll td {
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  vertical-align: top;
+}
+
+/* Editores */
+.editor-container {
+  margin: 1rem 0;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  background: var(--bg-editor);
+}
+.controls {
+  background: var(--bg-code);
+  border-bottom: 1px solid var(--border);
+  padding: 6px 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.controls span {
+  color: var(--text-dim);
+  font-size: 0.72rem;
+  font-family: var(--font-mono);
+  flex: 1 1 auto;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Botones */
+.btn-run {
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent-dim);
+  padding: 5px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 0.72rem;
+  font-family: var(--font-ui);
+}
+.btn-run:hover { background: var(--accent-dim); color: var(--bg); }
+
+.btn-secondary {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.7rem;
+  font-family: var(--font-ui);
+}
+.btn-secondary:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+.btn-drive {
+  background: transparent;
+  color: var(--text-dim);
+  border: 1px solid var(--border);
+  padding: 5px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 500;
+  font-size: 0.7rem;
+  font-family: var(--font-ui);
+}
+.btn-drive:hover {
+  background: var(--bg-elevated);
+  color: var(--text);
+  border-color: var(--border-strong);
+}
+
+/* Salida */
+.output-box {
+  background: var(--bg-code);
+  color: var(--text);
+  border-top: 1px solid var(--border);
+  padding: 10px 12px;
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  min-height: 40px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  overflow-x: auto;
+  max-height: 300px;
+  overflow-y: auto;
+}
+.output-box::before {
+  content: 'OUTPUT';
+  color: var(--text-dim);
+  display: block;
+  font-size: 0.65rem;
+  letter-spacing: 1.2px;
+  margin-bottom: 0.4rem;
+  font-family: var(--font-ui);
+}
+
+/* Código inline */
+code {
+  background: var(--bg-code);
+  color: var(--code-string);
+  padding: 2px 6px;
+  border-radius: 3px;
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  border: 1px solid var(--border);
+}
+
+/* Fórmulas */
+.math-block {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0.8rem 1.2rem;
+  margin: 0.9rem 0;
+  overflow-x: auto;
+  text-align: center;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header.guide-header h1 { font-size: 1.2rem; }
+  section { padding: 1rem; }
+  section h2 { font-size: 1rem; }
+}

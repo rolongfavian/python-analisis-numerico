@@ -1,211 +1,72 @@
 <!DOCTYPE html>
-<html lang="es">
+<html lang="es" data-theme="dark">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Python para Análisis Numérico · Guía + Entorno</title>
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+<title>Python para Análisis Numérico</title>
+
+<!-- CodeMirror -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
+
+<!-- Pyodide -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js"></script>
+
+<!-- Google Identity Services -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+<!-- MathJax -->
 <script>
-window.MathJax = { tex: { inlineMath: [['$','$'], ['\\(','\\)']], displayMath: [['$$','$$'], ['\\[','\\]']] } };
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']]
+  }
+};
 </script>
 <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
-<style>
-:root {
-  --bg: #f7f9f4; --bg-panel: #ffffff; --bg-editor: #fbfdf8; --bg-code: #f0f5ea;
-  --border: #d4e0c8; --border-strong: #a8c78f;
-  --text: #1a2b1a; --text-dim: #5a6b58;
-  --green: #166534; --green-bright: #22c55e; --green-soft: #dcfce7;
-  --cyan: #0369a1; --cyan-soft: #e0f2fe;
-  --amber: #b45309; --amber-soft: #fef3c7;
-  --red: #b91c1c; --red-soft: #fee2e2;
-  --purple: #6d28d9; --purple-soft: #ede9fe;
-  --blue: #1d4ed8; --blue-soft: #dbeafe;
-  --font-mono: 'Consolas','Fira Code','JetBrains Mono','Courier New',monospace;
-}
-* { box-sizing: border-box; }
-html { scroll-behavior: smooth; }
-body { font-family: var(--font-mono); line-height: 1.7; color: var(--text); background: var(--bg); margin: 0; padding: 0; font-size: 15px; }
-#view-bar { position: sticky; top: 0; z-index: 100; background: var(--bg-panel); border-bottom: 2px solid var(--border-strong); padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
-#view-bar .title { font-weight: 800; color: var(--green); font-size: 0.95rem; }
-#view-bar .title::before { content: '$ '; color: var(--cyan); }
-#view-tabs { display: flex; gap: 6px; }
-.view-tab { padding: 8px 16px; border-radius: 6px; border: 1px solid var(--border-strong); background: var(--bg-panel); color: var(--green); font-family: var(--font-mono); font-size: 0.78rem; font-weight: 700; cursor: pointer; white-space: nowrap; }
-.view-tab:hover { background: var(--green-soft); }
-.view-tab.active { background: var(--green); color: white; border-color: var(--green); }
-#drive-status { font-size: 0.72rem; padding: 4px 10px; border-radius: 12px; background: var(--red-soft); color: var(--red); font-weight: 700; cursor: pointer; white-space: nowrap; }
-#drive-status.connected { background: var(--green-soft); color: var(--green); }
-.view { display: none; }
-.view.active { display: block; }
-header.guide-header { background: linear-gradient(180deg, #ffffff 0%, #eef6e6 100%); padding: 2rem 1.5rem 1.5rem; text-align: center; border-bottom: 1px solid var(--border-strong); }
-header.guide-header h1 { margin: 0; font-size: 1.6rem; color: var(--green); }
-header.guide-header h1::before { content: '$ '; color: var(--cyan); }
-header.guide-header p { margin-top: 0.6rem; font-size: 0.82rem; color: var(--text-dim); max-width: 900px; margin-left: auto; margin-right: auto; }
-#status-badge { display: inline-block; margin-top: 1rem; padding: 6px 16px; border-radius: 6px; font-size: 0.75rem; font-weight: bold; background: var(--green-soft); color: var(--green); border: 1px solid var(--border-strong); }
-.status-ready { background: #bbf7d0 !important; border-color: var(--green-bright) !important; }
-#menu-toggle { position: fixed; top: 68px; left: 14px; z-index: 1001; width: 42px; height: 42px; border-radius: 8px; background: var(--bg-panel); border: 1px solid var(--border-strong); cursor: pointer; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 4px; padding: 0; }
-#menu-toggle:hover { background: var(--green-soft); }
-#menu-toggle span { display: block; width: 20px; height: 2px; background: var(--green); transition: all 0.3s; border-radius: 2px; }
-#menu-toggle.open span:nth-child(1) { transform: rotate(45deg) translate(4px,4px); }
-#menu-toggle.open span:nth-child(2) { opacity: 0; }
-#menu-toggle.open span:nth-child(3) { transform: rotate(-45deg) translate(4px,-4px); }
-#sidebar { position: fixed; top: 0; left: -400px; width: 380px; max-width: 90vw; height: 100vh; background: var(--bg-panel); border-right: 2px solid var(--border-strong); z-index: 1000; overflow-y: auto; transition: left 0.3s ease; padding: 68px 0 2rem 0; }
-#sidebar.open { left: 0; }
-.sidebar-title { color: var(--green); font-size: 0.78rem; text-transform: uppercase; letter-spacing: 2px; padding: 0.7rem 1.5rem 0.5rem; border-bottom: 1px solid var(--border); }
-.sidebar-title::before { content: '> '; color: var(--cyan); }
-.menu-group { border-bottom: 1px solid var(--border); }
-.menu-group-header { background: transparent; border: none; width: 100%; text-align: left; padding: 11px 1.5rem; color: var(--cyan); font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; cursor: pointer; display: flex; justify-content: space-between; align-items: center; }
-.menu-group-header:hover { background: var(--green-soft); color: var(--green); }
-.menu-group-header .arrow { transition: transform 0.25s; font-size: 0.6rem; color: var(--green); }
-.menu-group-header.active .arrow { transform: rotate(90deg); }
-.menu-group-content { display: none; background: var(--bg-code); padding: 0.3rem 0; border-top: 1px solid var(--border); }
-.menu-group-content.open { display: block; }
-.menu-group-content a { display: block; padding: 6px 1.5rem 6px 2.2rem; color: var(--text-dim); text-decoration: none; font-size: 0.78rem; border-left: 3px solid transparent; position: relative; }
-.menu-group-content a::before { content: '·'; position: absolute; left: 1.4rem; color: var(--green-bright); }
-.menu-group-content a:hover { color: var(--green); background: var(--green-soft); border-left-color: var(--green); }
-#overlay { position: fixed; inset: 0; background: rgba(20,30,20,0.4); z-index: 999; display: none; }
-#overlay.open { display: block; }
-.container { max-width: 1150px; margin: 1.5rem auto; padding: 0 1.5rem; }
-section { background: var(--bg-panel); padding: 1.6rem 1.8rem; margin-bottom: 1.8rem; border-radius: 10px; border: 1px solid var(--border); box-shadow: 0 2px 12px rgba(0,0,0,0.04); scroll-margin-top: 80px; }
-section h2 { color: var(--green); border-bottom: 2px solid var(--border-strong); padding-bottom: 0.5rem; margin-top: 0; font-size: 1.15rem; word-wrap: break-word; }
-section h2::before { content: '// '; color: var(--text-dim); font-weight: 400; }
-section h3 { color: var(--cyan); font-size: 0.95rem; margin: 1.5rem 0 0.5rem 0; border-left: 3px solid var(--cyan); padding-left: 0.7rem; }
-section h3::before { content: '>>> '; color: var(--text-dim); font-weight: 400; font-size: 0.85em; }
-section h4 { color: var(--amber); font-size: 0.88rem; margin: 1rem 0 0.4rem 0; }
-.concept-block { display: grid; grid-template-columns: 1fr; gap: 0.75rem; margin: 1rem 0; }
-.formal-note, .informal-note, .faq-note, .warning-note, .exercise-note, .math-note, .cmd-note { padding: 0.85rem 1.1rem; border-radius: 6px; border-left: 4px solid; font-size: 0.85rem; word-wrap: break-word; }
-.formal-note { border-color: var(--blue); background: var(--blue-soft); }
-.informal-note { border-color: var(--green-bright); background: var(--green-soft); }
-.faq-note { border-color: var(--amber); background: var(--amber-soft); }
-.warning-note { border-color: var(--red); background: var(--red-soft); }
-.exercise-note { border-color: var(--purple); background: var(--purple-soft); }
-.math-note { border-color: var(--cyan); background: var(--cyan-soft); }
-.cmd-note { border-color: var(--green); background: linear-gradient(135deg, #f0f9ea 0%, #ffffff 100%); }
-.formal-note h4, .informal-note h4, .faq-note h4, .warning-note h4, .exercise-note h4, .math-note h4, .cmd-note h4 { margin: 0 0 0.35rem 0; font-size: 0.72rem; text-transform: uppercase; letter-spacing: 1.2px; }
-.formal-note h4 { color: var(--blue); } .informal-note h4 { color: var(--green); }
-.faq-note h4 { color: var(--amber); } .warning-note h4 { color: var(--red); }
-.exercise-note h4 { color: var(--purple); } .math-note h4 { color: var(--cyan); }
-.cmd-note h4 { color: var(--green); }
-.formal-note ul, .informal-note ul, .faq-note ul, .warning-note ul, .exercise-note ul, .cmd-note ul { margin: 0.4rem 0 0 0; padding-left: 1.1rem; }
-.formal-note li, .informal-note li, .faq-note li, .warning-note li, .exercise-note li, .cmd-note li { margin-bottom: 0.3rem; }
-.table-scroll { width: 100%; overflow-x: auto; border-radius: 6px; border: 1px solid var(--border); margin-top: 0.5rem; }
-.table-scroll table { width: 100%; min-width: 560px; border-collapse: collapse; font-size: 0.8rem; background: white; }
-.table-scroll th { background: var(--green-soft); color: var(--green); padding: 7px; border: 1px solid var(--border); text-align: left; }
-.table-scroll td { padding: 7px; border: 1px solid var(--border); vertical-align: top; }
-.editor-container { margin: 1.2rem 0; border-radius: 8px; overflow: hidden; border: 1px solid var(--border-strong); background: var(--bg-editor); }
-.controls { background: var(--bg-code); border-bottom: 1px solid var(--border); padding: 7px 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
-.controls span { color: var(--amber); font-size: 0.72rem; font-weight: bold; flex: 1 1 auto; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.controls span::before { content: '# '; color: var(--text-dim); }
-.btn-run { background: var(--green); color: white; border: none; padding: 6px 14px; border-radius: 5px; cursor: pointer; font-weight: 800; font-size: 0.72rem; font-family: var(--font-mono); }
-.btn-run:hover { background: var(--green-bright); color: #052e16; }
-.btn-secondary { background: white; color: var(--cyan); border: 1px solid var(--cyan); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: 700; font-size: 0.7rem; font-family: var(--font-mono); }
-.btn-secondary:hover { background: var(--cyan-soft); }
-.btn-drive { background: white; color: var(--green); border: 1px solid var(--green); padding: 5px 10px; border-radius: 5px; cursor: pointer; font-weight: 700; font-size: 0.7rem; font-family: var(--font-mono); }
-.btn-drive:hover { background: var(--green-soft); }
-.editor-container .CodeMirror { height: auto; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.55; background: var(--bg-editor); }
-.editor-container .CodeMirror-scroll { overflow-x: auto !important; overflow-y: hidden; }
-.editor-container .CodeMirror-gutters { background: #eef6e6; border-right: 1px solid var(--border); }
-.editor-container .CodeMirror-linenumber { color: #94a88f; }
-.editor-container .CodeMirror-cursor { border-left: 2px solid var(--green); }
-.editor-container .cm-keyword { color: #7c3aed; font-weight: 600; }
-.editor-container .cm-def { color: #1d4ed8; }
-.editor-container .cm-operator { color: #b91c1c; }
-.editor-container .cm-number { color: #b45309; }
-.editor-container .cm-string { color: #15803d; }
-.editor-container .cm-comment { color: #6b7280; font-style: italic; }
-.editor-container .cm-builtin { color: #9333ea; }
-.output-box { background: #f0f9ea; color: var(--green); border-top: 1px solid var(--border); padding: 12px 14px; font-family: var(--font-mono); font-size: 0.78rem; min-height: 40px; white-space: pre-wrap; word-break: break-word; overflow-x: auto; }
-.output-box::before { content: '$ output\n'; color: var(--text-dim); display: block; font-size: 0.65rem; margin-bottom: 0.3rem; letter-spacing: 1px; }
-code { background: var(--bg-code); color: var(--cyan); padding: 2px 5px; border-radius: 4px; font-size: 0.85em; border: 1px solid var(--border); }
-.math-block { background: #f0f9ea; border: 1px solid var(--border); border-left: 3px solid var(--cyan); border-radius: 6px; padding: 0.8rem 1.2rem; margin: 0.9rem 0; overflow-x: auto; text-align: center; }
-#drive-setup { background: var(--bg-panel); border: 2px dashed var(--border-strong); border-radius: 12px; padding: 2rem; text-align: center; margin: 2rem auto; max-width: 600px; }
-#drive-setup h2 { color: var(--green); margin-top: 0; }
-#drive-setup p { color: var(--text-dim); font-size: 0.85rem; }
-#drive-setup button { margin-top: 1rem; padding: 12px 24px; border-radius: 8px; border: none; background: linear-gradient(135deg, #4285f4 0%, #34a853 100%); color: white; font-family: var(--font-mono); font-size: 0.9rem; font-weight: 700; cursor: pointer; }
-#drive-setup button:hover { transform: translateY(-2px); }
-.env-layout { display: grid; grid-template-columns: 320px 1fr; height: calc(100vh - 60px); }
-.env-sidebar { background: var(--bg-panel); border-right: 1px solid var(--border); overflow-y: auto; display: flex; flex-direction: column; }
-.env-breadcrumb { padding: 10px 12px; background: var(--bg-code); border-bottom: 1px solid var(--border); font-size: 0.75rem; color: var(--text-dim); word-wrap: break-word; }
-.env-breadcrumb a { color: var(--cyan); text-decoration: none; cursor: pointer; }
-.env-breadcrumb a:hover { text-decoration: underline; }
-.env-breadcrumb .sep { margin: 0 4px; color: var(--text-dim); }
-.env-actions { padding: 8px 12px; background: var(--bg-code); border-bottom: 1px solid var(--border); display: flex; gap: 6px; flex-wrap: wrap; }
-.env-actions button { flex: 1 1 auto; padding: 6px 8px; border-radius: 5px; font-family: var(--font-mono); font-size: 0.68rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border-strong); background: white; color: var(--green); }
-.env-actions button:hover { background: var(--green-soft); }
-.env-actions button.primary { background: var(--green); color: white; border-color: var(--green); }
-.env-actions button.primary:hover { background: var(--green-bright); }
-.env-files { list-style: none; padding: 6px 0; margin: 0; flex: 1; overflow-y: auto; }
-.env-files li { padding: 8px 12px; cursor: pointer; font-size: 0.8rem; display: flex; align-items: center; gap: 8px; border-left: 3px solid transparent; }
-.env-files li:hover { background: var(--green-soft); }
-.env-files li.active { background: var(--green-soft); border-left-color: var(--green); font-weight: 700; color: var(--green); }
-.env-files li .icon { font-size: 1rem; flex-shrink: 0; }
-.env-files li .name { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.env-files li .delete-btn { color: var(--red); font-size: 0.85rem; opacity: 0.5; padding: 0 4px; cursor: pointer; }
-.env-files li .delete-btn:hover { opacity: 1; background: var(--red-soft); border-radius: 3px; }
-.env-files .empty { color: var(--text-dim); font-style: italic; font-size: 0.75rem; text-align: center; padding: 1rem; cursor: default; }
-.env-files .empty:hover { background: transparent; }
-.env-main { display: flex; flex-direction: column; overflow: hidden; }
-.env-toolbar { background: var(--bg-code); padding: 8px 14px; border-bottom: 1px solid var(--border); display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
-.env-toolbar input[type="text"] { flex: 1; min-width: 150px; padding: 6px 10px; border-radius: 5px; border: 1px solid var(--border); font-family: var(--font-mono); font-size: 0.78rem; background: white; }
-.env-toolbar button { padding: 6px 12px; border-radius: 5px; font-family: var(--font-mono); font-size: 0.72rem; font-weight: 700; cursor: pointer; border: 1px solid var(--border-strong); background: white; color: var(--green); white-space: nowrap; }
-.env-toolbar button.primary { background: var(--green); color: white; border-color: var(--green); }
-.env-toolbar button.primary:hover { background: var(--green-bright); }
-.env-toolbar button:hover { background: var(--green-soft); }
-.env-editor-wrap { flex: 1; overflow: auto; background: var(--bg-editor); }
-.env-editor-wrap .CodeMirror { height: 100%; font-family: var(--font-mono); font-size: 0.85rem; line-height: 1.6; background: var(--bg-editor); }
-.env-output { background: #f0f9ea; color: var(--green); border-top: 1px solid var(--border); padding: 10px 14px; font-family: var(--font-mono); font-size: 0.78rem; max-height: 200px; overflow-y: auto; white-space: pre-wrap; }
-.env-output::before { content: '$ output\n'; color: var(--text-dim); display: block; font-size: 0.65rem; margin-bottom: 0.3rem; }
-#toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(120px); background: var(--green); color: white; padding: 10px 20px; border-radius: 8px; font-family: var(--font-mono); font-size: 0.8rem; font-weight: 700; box-shadow: 0 6px 20px rgba(0,0,0,0.2); z-index: 3000; transition: transform 0.3s ease; max-width: 90vw; }
-#toast.show { transform: translateX(-50%) translateY(0); }
-#toast.error { background: var(--red); }
-@media (max-width: 768px) {
-  body { font-size: 14px; }
-  header.guide-header h1 { font-size: 1.2rem; }
-  section { padding: 1rem 1rem; }
-  section h2 { font-size: 1rem; }
-  #sidebar { width: 320px; left: -330px; }
-  #menu-toggle { top: 60px; left: 10px; width: 40px; height: 40px; }
-  .container { padding: 0 0.8rem; }
-  #view-bar { padding: 8px 10px; }
-  #view-bar .title { display: none; }
-  .view-tab { padding: 6px 12px; font-size: 0.7rem; }
-  #drive-status { font-size: 0.65rem; padding: 3px 8px; }
-  .env-layout { grid-template-columns: 1fr; height: auto; }
-  .env-sidebar { max-height: 300px; border-right: none; border-bottom: 1px solid var(--border); }
-  .env-editor-wrap { height: 500px; }
-  .editor-container .CodeMirror { font-size: 0.74rem; }
-  .controls span { font-size: 0.65rem; }
-  .btn-run, .btn-secondary, .btn-drive { font-size: 0.65rem; padding: 5px 9px; }
-}
-</style>
+
+<!-- Estilos propios (orden importante) -->
+<link rel="stylesheet" href="css/base.css">
+<link rel="stylesheet" href="css/guia.css">
+<link rel="stylesheet" href="css/entorno.css">
 </head>
 <body>
 
+<!-- ============ BARRA SUPERIOR ============ -->
 <div id="view-bar">
   <div class="title">Python Análisis Numérico</div>
   <div id="view-tabs">
-    <button class="view-tab active" onclick="switchView('guide')">📚 Guía</button>
-    <button class="view-tab" onclick="switchView('env')">💻 Entorno</button>
+    <button class="view-tab active" onclick="switchView('guide')">Guía</button>
+    <button class="view-tab" onclick="switchView('env')">Entorno</button>
   </div>
-  <div id="drive-status" onclick="connectDrive()">⚪ Drive: no conectado</div>
+  <select id="theme-select" title="Tema">
+    <option value="dark">Oscuro</option>
+    <option value="light">Claro</option>
+    <option value="system">Sistema</option>
+  </select>
+  <div id="drive-status" onclick="connectDrive()">Drive: no conectado</div>
 </div>
 
+<!-- ============ VISTA GUÍA ============ -->
 <div id="view-guide" class="view active">
 <header class="guide-header">
   <h1>Python para Análisis Numérico</h1>
-  <p>Guía interactiva con los algoritmos de Bisección, Newton-Raphson y Punto Fijo. Ejecuta el código directamente en tu navegador y guarda tu progreso en tu Google Drive.</p>
-  <div id="status-badge">⏳ Cargando el motor interactivo de Python...</div>
+  <p>Guía interactiva con Bisección, Newton-Raphson y Punto Fijo. Ejecuta el código en tu navegador y guarda tus notebooks en Google Drive.</p>
+  <div id="status-badge">Cargando Python...</div>
 </header>
 <div class="container">
 
 <section id="sec-1">
-  <h2>1.1 · Salida, Variables y Tipos Numéricos</h2>
+  <h2>1.1 Salida, Variables y Tipos Numéricos</h2>
   <div class="concept-block">
     <div class="cmd-note">
-      <h4>Comandos de esta sección</h4>
+      <h4>Comandos</h4>
       <ul>
         <li><code>print(valor, ..., sep=' ', end='\n')</code> — imprime en pantalla.</li>
         <li><code>type(x)</code> — devuelve la clase del objeto.</li>
@@ -215,25 +76,24 @@ code { background: var(--bg-code); color: var(--cyan); padding: 2px 5px; border-
       </ul>
     </div>
     <div class="math-note">
-      <h4>Definición · Coma flotante IEEE 754</h4>
+      <h4>Coma flotante IEEE 754</h4>
       <div class="math-block">$$x = (-1)^{s} \cdot (1.m)_{2} \cdot 2^{\,e-1023}$$</div>
       <p>Épsilon de la máquina: $\varepsilon_{\text{máq}} = 2^{-52} \approx 2.22 \times 10^{-16}$</p>
     </div>
     <div class="warning-note">
-      <h4>⚠️ Errores típicos</h4>
+      <h4>Errores típicos</h4>
       <ul>
         <li>Comparar floats con <code>==</code>. Usa <code>math.isclose</code>.</li>
         <li>Usar <code>== None</code> en lugar de <code>is None</code>.</li>
       </ul>
     </div>
   </div>
-  <h3>Ejemplo · Variables y error de redondeo</h3>
   <div class="editor-container">
     <div class="controls">
-      <span>keywords: print, type, is, None</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw1','01_variables')">☁ Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw1','01_variables')">↓ .ipynb</button>
-      <button class="btn-run" onclick="runCode('kw1','out1')">▶ EJECUTAR</button>
+      <span>variables · tipos · error de redondeo</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kw1','01_variables')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kw1','01_variables')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kw1','out1')">Ejecutar</button>
     </div>
     <textarea id="kw1">iteraciones = 10
 tolerancia  = 1e-5
@@ -250,13 +110,21 @@ print("¿Es igual a 0.3? ->", (0.1 + 0.2) == 0.3)
 
 if raiz is None:
     print("\nEstado: el metodo aun no ha calculado la raiz.")</textarea>
-    <div id="out1" class="output-box">Presiona 'EJECUTAR' para ver el resultado...</div>
+    <div id="out1" class="output-box">Presiona Ejecutar para ver el resultado...</div>
   </div>
 </section>
 
 <section id="sec-2">
-  <h2>2.1 · Operadores Lógicos y Teorema de Bolzano</h2>
+  <h2>2.1 Operadores Lógicos y Teorema de Bolzano</h2>
   <div class="concept-block">
+    <div class="cmd-note">
+      <h4>Comandos</h4>
+      <ul>
+        <li><code>A and B</code>, <code>A or B</code>, <code>not A</code> — operadores lógicos.</li>
+        <li><code>x in coleccion</code> — pertenencia exacta.</li>
+        <li><code>a &lt;= x &lt;= b</code> — comparación encadenada.</li>
+      </ul>
+    </div>
     <div class="math-note">
       <h4>Teorema de Bolzano</h4>
       <p>Si $f$ es continua en $[a,b]$ y $f(a) \cdot f(b) < 0$, existe al menos un $c \in (a,b)$ con $f(c) = 0$.</p>
@@ -264,10 +132,10 @@ if raiz is None:
   </div>
   <div class="editor-container">
     <div class="controls">
-      <span>keywords: and, or, not, in</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kw2','02_bolzano')">☁ Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kw2','02_bolzano')">↓ .ipynb</button>
-      <button class="btn-run" onclick="runCode('kw2','out2')">▶ EJECUTAR</button>
+      <span>lógica · Bolzano · cortocircuito</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kw2','02_bolzano')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kw2','02_bolzano')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kw2','out2')">Ejecutar</button>
     </div>
     <textarea id="kw2">a, b = 1.0, 2.0
 fa = a**2 - 2
@@ -279,7 +147,177 @@ print("Bolzano se cumple:", fa * fb < 0)
 malla = [0.0, 0.5, 1.0, 1.5, 2.0]
 print(f"\n1.5 in malla -> {1.5 in malla}")
 print(f"1.25 en [0,2] -> {0 <= 1.25 <= 2}")</textarea>
-    <div id="out2" class="output-box">Presiona 'EJECUTAR' para ver el resultado...</div>
+    <div id="out2" class="output-box">Presiona Ejecutar para ver el resultado...</div>
+  </div>
+</section>
+
+<section id="sec-3">
+  <h2>3.1 Bucles y Criterios de Parada</h2>
+  <div class="concept-block">
+    <div class="math-note">
+      <h4>Error absoluto y relativo</h4>
+      <div class="math-block">$$\hat{E}_{\text{abs}}^{(k)} = |x_{k+1} - x_k|, \quad \hat{E}_{\text{rel}}^{(k)} = \frac{|x_{k+1} - x_k|}{|x_{k+1}|}$$</div>
+    </div>
+  </div>
+  <div class="editor-container">
+    <div class="controls">
+      <span>bucle for · bisección básica</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kw3','03_biseccion_for')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kw3','03_biseccion_for')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kw3','out3')">Ejecutar</button>
+    </div>
+    <textarea id="kw3">a, b = 1.0, 2.0
+tol = 1e-4
+max_iter = 20
+
+for k in range(1, max_iter + 1):
+    c = (a + b) / 2.0
+    fc = c**2 - 2
+    fa = a**2 - 2
+    err = (b - a) / 2.0
+    print(f"Iter {k:02d}: c = {c:.6f} | f(c) = {fc:+.6f} | err = {err:.6f}")
+    if err < tol or abs(fc) < 1e-12:
+        print(f"\nConvergencia en iteracion {k}")
+        print(f"Raiz aproximada = {c:.6f}")
+        break
+    if fa * fc < 0:
+        b = c
+    else:
+        a = c
+else:
+    print("\nNo convergio")</textarea>
+    <div id="out3" class="output-box">Presiona Ejecutar para ver el resultado...</div>
+  </div>
+</section>
+
+<section id="sec-4">
+  <h2>4.1 Funciones: def, lambda, yield</h2>
+  <div class="concept-block">
+    <div class="math-note">
+      <h4>Diferenciación numérica</h4>
+      <div class="math-block">$$f'(x) \approx \frac{f(x+h) - f(x-h)}{2h} + O(h^2)$$</div>
+    </div>
+  </div>
+  <div class="editor-container">
+    <div class="controls">
+      <span>def · lambda · yield</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kw4','04_funciones')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kw4','04_funciones')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kw4','out4')">Ejecutar</button>
+    </div>
+    <textarea id="kw4">f = lambda x: x**3 - x - 1
+
+def derivada(f, x, h=1e-5):
+    return (f(x + h) - f(x - h)) / (2 * h)
+
+def sucesion_pf(x0, n):
+    x = x0
+    for _ in range(n):
+        x = (x + 1) ** (1/3)
+        yield x
+
+print("f(2.0) =", f(2.0))
+print("f'(2.0) aprox =", derivada(f, 2.0))
+print("\nSucesion de punto fijo:")
+for k, x in enumerate(sucesion_pf(1.0, 6), 1):
+    print(f"  x_{k} = {x:.8f}")</textarea>
+    <div id="out4" class="output-box">Presiona Ejecutar para ver el resultado...</div>
+  </div>
+</section>
+
+<section id="sec-5">
+  <h2>5.1 Módulo math y Trascendentes</h2>
+  <div class="editor-container">
+    <div class="controls">
+      <span>math · trigonométricas · radianes</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kw5','05_math')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kw5','05_math')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kw5','out5')">Ejecutar</button>
+    </div>
+    <textarea id="kw5">import math as m
+from math import pi, e
+
+print("pi =", pi)
+print("e  =", e)
+print(f"f(pi/3) = {m.exp(-pi/3) - m.cos(pi/3):.8f}")
+print("factorial(10) =", m.factorial(10))
+print("gcd(48,18)   =", m.gcd(48, 18))
+
+print("\nangulo | sin      | cos      | tan")
+for g in [0, 30, 45, 60, 89]:
+    r = m.radians(g)
+    print(f"{g:5d}° | {m.sin(r):+.6f} | {m.cos(r):+.6f} | {m.tan(r):+.6f}")</textarea>
+    <div id="out5" class="output-box">Presiona Ejecutar para ver el resultado...</div>
+  </div>
+</section>
+
+<section id="sec-6">
+  <h2>6.1 Manejo de Errores</h2>
+  <div class="editor-container">
+    <div class="controls">
+      <span>try · except · finally · raise</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kw6','06_errores')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kw6','06_errores')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kw6','out6')">Ejecutar</button>
+    </div>
+    <textarea id="kw6">def paso_newton(fx, dfx):
+    assert isinstance(fx, (int, float))
+    assert isinstance(dfx, (int, float))
+    if abs(dfx) < 1e-12:
+        raise ZeroDivisionError("derivada casi nula")
+    return fx / dfx
+
+for i, (fx, dfx) in enumerate([(2.0, 4.0), (1.0, 0.0)], 1):
+    print(f"\n--- Caso {i}: f={fx}, f'={dfx} ---")
+    try:
+        print("  paso =", paso_newton(fx, dfx))
+    except ZeroDivisionError as e:
+        print(f"  capturado: {e}")
+    finally:
+        print("  fin del chequeo")</textarea>
+    <div id="out6" class="output-box">Presiona Ejecutar para ver el resultado...</div>
+  </div>
+</section>
+
+<section id="sec-7">
+  <h2>7.1 Clases y Estado del Solver</h2>
+  <div class="editor-container">
+    <div class="controls">
+      <span>class · __init__ · self</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kw7','07_clases')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kw7','07_clases')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kw7','out7')">Ejecutar</button>
+    </div>
+    <textarea id="kw7">class SolverBiseccion:
+    version = "1.0"
+
+    def __init__(self, f, tol=1e-6, max_iter=50):
+        self.f = f
+        self.tol = tol
+        self.max_iter = max_iter
+        self.historial = []
+
+    def resolver(self, a, b):
+        for k in range(1, self.max_iter + 1):
+            c = (a + b) / 2.0
+            fc = self.f(c)
+            self.historial.append((k, c, fc))
+            if abs(fc) < self.tol or (b - a) / 2 < self.tol:
+                return c
+            if self.f(a) * fc < 0:
+                b = c
+            else:
+                a = c
+        raise RuntimeError("No convergio")
+
+s1 = SolverBiseccion(lambda x: x**2 - 2, tol=1e-4)
+s2 = SolverBiseccion(lambda x: x**3 - 5, tol=1e-4)
+
+r1 = s1.resolver(1.0, 2.0)
+r2 = s2.resolver(1.0, 3.0)
+print(f"raiz x^2-2 ~ {r1:.6f} en {len(s1.historial)} pasos")
+print(f"raiz x^3-5 ~ {r2:.6f} en {len(s2.historial)} pasos")</textarea>
+    <div id="out7" class="output-box">Presiona Ejecutar para ver el resultado...</div>
   </div>
 </section>
 
@@ -287,18 +325,19 @@ print(f"1.25 en [0,2] -> {0 <= 1.25 <= 2}")</textarea>
   <h2>A · Algoritmo de Bisección</h2>
   <div class="math-note">
     <h4>Definición formal</h4>
-    <div class="math-block">$$c_k = \frac{a_k + b_k}{2}, \quad |c_k - x^*| \leq \frac{b_0 - a_0}{2^{k+1}}$$</div>
+    <div class="math-block">
+      $$c_k = \frac{a_k + b_k}{2}, \quad |c_k - x^*| \leq \frac{b_0 - a_0}{2^{k+1}}$$
+    </div>
+    <p>Convergencia lineal (factor 1/2). Robustez garantizada por Bolzano.</p>
   </div>
   <div class="editor-container">
     <div class="controls">
-      <span>algoritmo completo</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgB','A_biseccion')">☁ Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kwAlgB','A_biseccion')">↓ .ipynb</button>
-      <button class="btn-run" onclick="runCode('kwAlgB','outAlgB')">▶ EJECUTAR</button>
+      <span>algoritmo completo con criterio doble</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgB','A_biseccion')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kwAlgB','A_biseccion')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kwAlgB','outAlgB')">Ejecutar</button>
     </div>
-    <textarea id="kwAlgB">import math
-
-def biseccion(f, a, b, tol=1e-8, max_iter=100):
+    <textarea id="kwAlgB">def biseccion(f, a, b, tol=1e-8, max_iter=100):
     fa, fb = f(a), f(b)
     if fa * fb >= 0:
         raise ValueError("Bolzano no se cumple")
@@ -319,7 +358,7 @@ f = lambda x: x**3 - x - 2
 raiz, iters = biseccion(f, 1.0, 2.0, tol=1e-8)
 print(f"\nRaiz: {raiz:.10f}")
 print(f"Iteraciones: {iters}")</textarea>
-    <div id="outAlgB" class="output-box">Presiona 'EJECUTAR' para ver el resultado...</div>
+    <div id="outAlgB" class="output-box">Presiona Ejecutar para ver el resultado...</div>
   </div>
 </section>
 
@@ -333,9 +372,9 @@ print(f"Iteraciones: {iters}")</textarea>
   <div class="editor-container">
     <div class="controls">
       <span>Newton-Raphson completo</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgN','B_newton_raphson')">☁ Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kwAlgN','B_newton_raphson')">↓ .ipynb</button>
-      <button class="btn-run" onclick="runCode('kwAlgN','outAlgN')">▶ EJECUTAR</button>
+      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgN','B_newton_raphson')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kwAlgN','B_newton_raphson')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kwAlgN','outAlgN')">Ejecutar</button>
     </div>
     <textarea id="kwAlgN">def newton_raphson(f, df, x0, tol=1e-10, max_iter=50):
     x = x0
@@ -357,7 +396,7 @@ df = lambda x: 3*x**2 - 1
 raiz, iters = newton_raphson(f, df, 1.5)
 print(f"\nRaiz: {raiz:.12f}")
 print(f"Iteraciones: {iters}")</textarea>
-    <div id="outAlgN" class="output-box">Presiona 'EJECUTAR' para ver el resultado...</div>
+    <div id="outAlgN" class="output-box">Presiona Ejecutar para ver el resultado...</div>
   </div>
 </section>
 
@@ -366,13 +405,14 @@ print(f"Iteraciones: {iters}")</textarea>
   <div class="math-note">
     <h4>Definición formal</h4>
     <div class="math-block">$$x_{k+1} = g(x_k), \quad |g'(x)| \leq L < 1$$</div>
+    <p>Teorema de Banach: si |g'| &lt; 1 en el intervalo, la iteración converge al único punto fijo.</p>
   </div>
   <div class="editor-container">
     <div class="controls">
-      <span>Punto fijo con verificación</span>
-      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgPF','C_punto_fijo')">☁ Drive</button>
-      <button class="btn-secondary" onclick="exportToIpynb('kwAlgPF','C_punto_fijo')">↓ .ipynb</button>
-      <button class="btn-run" onclick="runCode('kwAlgPF','outAlgPF')">▶ EJECUTAR</button>
+      <span>punto fijo con verificación de convergencia</span>
+      <button class="btn-drive" onclick="saveEditorToDrive('kwAlgPF','C_punto_fijo')">Guardar en Drive</button>
+      <button class="btn-secondary" onclick="exportToIpynb('kwAlgPF','C_punto_fijo')">.ipynb</button>
+      <button class="btn-run" onclick="runCode('kwAlgPF','outAlgPF')">Ejecutar</button>
     </div>
     <textarea id="kwAlgPF">def punto_fijo(g, x0, tol=1e-10, max_iter=100):
     x = x0
@@ -391,24 +431,24 @@ g = lambda x: (x + 1) ** (1/3)
 raiz, iters = punto_fijo(g, 1.0)
 print(f"\nPunto fijo: {raiz:.12f}")
 print(f"Iteraciones: {iters}")</textarea>
-    <div id="outAlgPF" class="output-box">Presiona 'EJECUTAR' para ver el resultado...</div>
+    <div id="outAlgPF" class="output-box">Presiona Ejecutar para ver el resultado...</div>
   </div>
 </section>
 
 <section id="sec-alg-comparativa">
-  <h2>D · Comparativa</h2>
+  <h2>D · Comparativa de los Tres Métodos</h2>
   <div class="table-scroll">
     <table>
       <tr><th>Método</th><th>Convergencia</th><th>Requiere</th><th>Robustez</th></tr>
-      <tr><td><strong>Bisección</strong></td><td>Lineal (1/2)</td><td>Intervalo con signo opuesto</td><td>Global</td></tr>
-      <tr><td><strong>Newton</strong></td><td>Cuadrática</td><td>f y f', x₀ cercano</td><td>Local</td></tr>
-      <tr><td><strong>Punto Fijo</strong></td><td>Lineal (L)</td><td>Reescritura con |g'|&lt;1</td><td>Condicional</td></tr>
+      <tr><td><strong>Bisección</strong></td><td>Lineal (1/2)</td><td>Intervalo con signo opuesto</td><td>Global (Bolzano)</td></tr>
+      <tr><td><strong>Newton-Raphson</strong></td><td>Cuadrática</td><td>f y f', x₀ cercano</td><td>Local</td></tr>
+      <tr><td><strong>Punto Fijo</strong></td><td>Lineal (L)</td><td>Reescritura g con |g'|&lt;1</td><td>Condicional</td></tr>
     </table>
   </div>
 </section>
 
 <section id="sec-entorno">
-  <h2>Entorno de Programación · Drive + Colab</h2>
+  <h2>Entorno de Programación · Google Drive + Colab</h2>
   <div class="concept-block">
     <div class="informal-note">
       <h4>¿Cómo funciona?</h4>
@@ -417,12 +457,12 @@ print(f"Iteraciones: {iters}")</textarea>
     <div class="cmd-note">
       <h4>Flujo</h4>
       <ol>
-        <li>Conecta tu Drive (arriba a la derecha).</li>
-        <li>Ve a la vista <strong>💻 Entorno</strong>.</li>
+        <li>Conecta tu Drive en la barra superior.</li>
+        <li>Ve a la vista <strong>Entorno</strong>.</li>
         <li>Crea carpetas y notebooks con los botones.</li>
-        <li>Escribe código y toca <strong>▶ Ejecutar</strong>.</li>
-        <li>Toca <strong>☁ Guardar</strong> para subir a Drive.</li>
-        <li>Toca <strong>▶ Colab</strong> para abrirlo en Google Colab.</li>
+        <li>Escribe código y toca <strong>Ejecutar</strong>.</li>
+        <li>Toca <strong>Guardar</strong> para subir a Drive.</li>
+        <li>Toca <strong>Colab</strong> para abrirlo en Google Colab.</li>
       </ol>
     </div>
   </div>
@@ -431,21 +471,23 @@ print(f"Iteraciones: {iters}")</textarea>
 </div>
 </div>
 
+<!-- ============ VISTA ENTORNO ============ -->
 <div id="view-env" class="view">
 <div id="drive-setup">
-  <h2>🚀 Entorno de Programación</h2>
+  <h2>Entorno de Programación</h2>
   <p>Conecta tu cuenta de Google para guardar tus notebooks en tu Drive. Los archivos se organizan en la carpeta <code>Python_Análisis_Numérico</code>.</p>
-  <button onclick="connectDrive()">🔓 Conectar con Google Drive</button>
+  <button onclick="connectDrive()">Conectar con Google Drive</button>
 </div>
+
 <div class="env-layout" id="env-layout" style="display:none;">
   <div class="env-sidebar">
     <div class="env-breadcrumb" id="env-breadcrumb">
-      <a onclick="navigateTo('root')">📁 Python_Análisis_Numérico</a>
+      <a onclick="navigateTo('root')">🏠 Raíz</a>
     </div>
     <div class="env-actions">
-      <button class="primary" onclick="createFolder()">➕ 📁</button>
-      <button class="primary" onclick="createNotebook()">➕ 📄</button>
-      <button onclick="refreshFileList()">🔄</button>
+      <button class="primary" onclick="createFolder()">+ Carpeta</button>
+      <button class="primary" onclick="createNotebook()">+ Notebook</button>
+      <button onclick="refreshFileList()">Recargar</button>
     </div>
     <ul class="env-files" id="env-file-list">
       <li class="empty">Conecta tu Drive para ver tus archivos</li>
@@ -454,13 +496,14 @@ print(f"Iteraciones: {iters}")</textarea>
   <div class="env-main">
     <div class="env-toolbar">
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-      <button class="primary" onclick="runEnvCode()">▶ Ejecutar</button>
-      <button onclick="saveEnvToDrive()">☁ Guardar</button>
-      <button onclick="openInColab()">▶ Colab</button>
-      <button onclick="deleteCurrentFile()" style="color:var(--red); border-color:var(--red);">🗑️</button>
+      <button class="primary" onclick="runEnvCode()">Ejecutar</button>
+      <button onclick="saveEnvToDrive()">Guardar</button>
+      <button onclick="openInColab()">Colab</button>
+      <button onclick="deleteCurrentFile()" style="color:var(--danger); border-color:var(--danger);">Borrar</button>
     </div>
     <div class="env-editor-wrap">
       <textarea id="env-editor"># Escribe tu código Python aquí
+# Puedes importar numpy, matplotlib, etc.
 
 import numpy as np
 
@@ -483,25 +526,79 @@ raiz, iters = biseccion(f, 1.0, 2.0)
 print(f"Raiz: {raiz:.10f}")
 print(f"Iteraciones: {iters}")</textarea>
     </div>
-    <div class="env-output" id="env-output">Presiona '▶ Ejecutar' para ver el resultado...</div>
+    <div class="env-output" id="env-output">Presiona Ejecutar para ver el resultado...</div>
   </div>
 </div>
 </div>
 
+<!-- ============ MENÚ Y OVERLAY ============ -->
 <div id="overlay" onclick="toggleMenu()"></div>
-<button id="menu-toggle" onclick="toggleMenu()" aria-label="Menú"><span></span><span></span><span></span></button>
+<button id="menu-toggle" onclick="toggleMenu()" aria-label="Menú">
+  <span></span><span></span><span></span>
+</button>
+
 <nav id="sidebar">
   <div class="sidebar-title">Mapa de Aprendizaje</div>
+
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g1', this)"><span>[01] Fundamentos</span><span class="arrow">▶</span></button>
-    <div id="g1" class="menu-group-content"><a href="#sec-1">1.1 · Variables y Tipos</a></div>
+    <button class="menu-group-header" onclick="toggleGroup('g1', this)">
+      <span>01 · Fundamentos</span><span class="arrow">▶</span>
+    </button>
+    <div id="g1" class="menu-group-content">
+      <a href="#sec-1">1.1 Variables y Tipos</a>
+    </div>
   </div>
+
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g2', this)"><span>[02] Lógica</span><span class="arrow">▶</span></button>
-    <div id="g2" class="menu-group-content"><a href="#sec-2">2.1 · Bolzano</a></div>
+    <button class="menu-group-header" onclick="toggleGroup('g2', this)">
+      <span>02 · Lógica y Control</span><span class="arrow">▶</span>
+    </button>
+    <div id="g2" class="menu-group-content">
+      <a href="#sec-2">2.1 Lógicos y Bolzano</a>
+      <a href="#sec-3">3.1 Bucles y Parada</a>
+    </div>
   </div>
+
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g7', this)"><span>[07] Algoritmos</span><span class="arrow">▶</span></button>
+    <button class="menu-group-header" onclick="toggleGroup('g3', this)">
+      <span>03 · Funciones</span><span class="arrow">▶</span>
+    </button>
+    <div id="g3" class="menu-group-content">
+      <a href="#sec-4">4.1 def, lambda, yield</a>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="toggleGroup('g4', this)">
+      <span>04 · Módulos</span><span class="arrow">▶</span>
+    </button>
+    <div id="g4" class="menu-group-content">
+      <a href="#sec-5">5.1 Módulo math</a>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="toggleGroup('g5', this)">
+      <span>05 · Errores</span><span class="arrow">▶</span>
+    </button>
+    <div id="g5" class="menu-group-content">
+      <a href="#sec-6">6.1 try, except</a>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="toggleGroup('g6', this)">
+      <span>06 · POO</span><span class="arrow">▶</span>
+    </button>
+    <div id="g6" class="menu-group-content">
+      <a href="#sec-7">7.1 Clases</a>
+    </div>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="toggleGroup('g7', this)">
+      <span>07 · Algoritmos</span><span class="arrow">▶</span>
+    </button>
     <div id="g7" class="menu-group-content">
       <a href="#sec-alg-biseccion">A · Bisección</a>
       <a href="#sec-alg-newton">B · Newton-Raphson</a>
@@ -509,432 +606,25 @@ print(f"Iteraciones: {iters}")</textarea>
       <a href="#sec-alg-comparativa">D · Comparativa</a>
     </div>
   </div>
+
   <div class="menu-group">
-    <button class="menu-group-header" onclick="toggleGroup('g8', this)"><span>[08] Entorno · Drive</span><span class="arrow">▶</span></button>
-    <div id="g8" class="menu-group-content"><a href="#sec-entorno">Cómo funciona</a></div>
+    <button class="menu-group-header" onclick="toggleGroup('g8', this)">
+      <span>08 · Entorno · Drive</span><span class="arrow">▶</span>
+    </button>
+    <div id="g8" class="menu-group-content">
+      <a href="#sec-entorno">Cómo funciona</a>
+    </div>
   </div>
 </nav>
 
 <div id="toast"></div>
 
-<script>
-let pyodideReady = false;
-let pyodide;
-const editorsMap = {};
-let currentView = 'guide';
-let driveToken = null;
-let driveFolderId = null;
-const DRIVE_FOLDER_NAME = 'Python_Análisis_Numérico';
-const CLIENT_ID = '420968434649-a5itml1n5ijtmin8fs1c5ug6bof0kv9o.apps.googleusercontent.com';
-const SCOPES = 'https://www.googleapis.com/auth/drive.file';
-let currentFolderId = null;
-let currentFolderPath = [];
-let currentFileId = null;
+<!-- ============ SCRIPTS (orden importante) ============ -->
+<script src="js/tema.js"></script>
+<script src="js/pyodide.js"></script>
+<script src="js/drive.js"></script>
+<script src="js/codemirror.js"></script>
+<script src="js/ui.js"></script>
 
-async function initPython() {
-  const badge = document.getElementById('status-badge');
-  try {
-    pyodide = await loadPyodide();
-    pyodideReady = true;
-    if (badge) { badge.innerText = "✅ Entorno Python listo"; badge.classList.add("status-ready"); }
-  } catch (e) {
-    if (badge) badge.innerText = "❌ Error al cargar Python";
-  }
-}
-initPython();
-
-document.addEventListener('DOMContentLoaded', () => {
-  document.querySelectorAll('textarea').forEach(textarea => {
-    const editor = CodeMirror.fromTextArea(textarea, {
-      mode: 'python', lineNumbers: true, indentUnit: 4, tabSize: 4, indentWithTabs: false,
-      extraKeys: { "Tab": cm => cm.replaceSelection("    ", "end") }
-    });
-    editorsMap[textarea.id] = editor;
-  });
-});
-
-function switchView(view) {
-  currentView = view;
-  document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-  document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-  if (view === 'guide') {
-    document.getElementById('view-guide').classList.add('active');
-    document.querySelectorAll('.view-tab')[0].classList.add('active');
-    document.getElementById('menu-toggle').style.display = 'flex';
-  } else {
-    document.getElementById('view-env').classList.add('active');
-    document.querySelectorAll('.view-tab')[1].classList.add('active');
-    document.getElementById('menu-toggle').style.display = 'none';
-  }
-  setTimeout(() => Object.values(editorsMap).forEach(ed => ed.refresh()), 100);
-}
-
-async function runCode(editorId, outputId) {
-  const out = document.getElementById(outputId);
-  if (!pyodideReady) { out.innerText = "Esperando Python..."; return; }
-  const editor = editorsMap[editorId];
-  if (!editor) { out.innerText = "Editor no encontrado."; return; }
-  const code = editor.getValue();
-  out.innerText = "Ejecutando...";
-  try {
-    await pyodide.runPythonAsync(`import sys, io\n_buf = io.StringIO()\nsys.stdout = _buf\n`);
-    await pyodide.runPythonAsync(code);
-    const stdout = pyodide.runPython("sys.stdout.getvalue()");
-    out.innerText = stdout || "(sin salida)";
-  } catch (err) {
-    out.innerText = "Error:\n" + err;
-  }
-}
-
-async function runEnvCode() {
-  const code = editorsMap['env-editor'].getValue();
-  const out = document.getElementById('env-output');
-  if (!pyodideReady) { out.innerText = "Esperando Python..."; return; }
-  out.innerText = "Ejecutando...";
-  try {
-    await pyodide.runPythonAsync(`import sys, io\n_buf = io.StringIO()\nsys.stdout = _buf\n`);
-    await pyodide.runPythonAsync(code);
-    const stdout = pyodide.runPython("sys.stdout.getvalue()");
-    out.innerText = stdout || "(sin salida)";
-  } catch (err) {
-    out.innerText = "Error:\n" + err;
-  }
-}
-
-function connectDrive() {
-  if (typeof google === 'undefined' || !google.accounts) {
-    showToast("Google Identity no disponible. Espera 5s.", true);
-    return;
-  }
-  const client = google.accounts.oauth2.initTokenClient({
-    client_id: CLIENT_ID,
-    scope: SCOPES,
-    callback: async (response) => {
-      if (response.error) { showToast("Error: " + response.error, true); return; }
-      driveToken = response.access_token;
-      try {
-        await ensureDriveFolder();
-        updateDriveStatus(true);
-        showToast("✅ Conectado a Google Drive");
-        document.getElementById('drive-setup').style.display = 'none';
-        document.getElementById('env-layout').style.display = 'grid';
-        await refreshFileList();
-        setTimeout(() => Object.values(editorsMap).forEach(ed => ed.refresh()), 100);
-      } catch (e) {
-        showToast("Error al preparar carpeta: " + e.message, true);
-      }
-    }
-  });
-  client.requestAccessToken();
-}
-
-async function ensureDriveFolder() {
-  const q = encodeURIComponent(`name='${DRIVE_FOLDER_NAME}' and mimeType='application/vnd.google-apps.folder' and trashed=false`);
-  const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name)`, {
-    headers: { 'Authorization': 'Bearer ' + driveToken }
-  });
-  const data = await res.json();
-  if (data.files && data.files.length > 0) {
-    driveFolderId = data.files[0].id;
-  } else {
-    const createRes = await fetch('https://www.googleapis.com/drive/v3/files', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: DRIVE_FOLDER_NAME, mimeType: 'application/vnd.google-apps.folder' })
-    });
-    const folder = await createRes.json();
-    driveFolderId = folder.id;
-  }
-}
-
-function updateDriveStatus(connected) {
-  const el = document.getElementById('drive-status');
-  if (connected) { el.innerText = "🟢 Drive: conectado"; el.classList.add('connected'); }
-  else { el.innerText = "⚪ Drive: no conectado"; el.classList.remove('connected'); }
-}
-
-async function refreshFileList() {
-  if (!driveToken || !driveFolderId) {
-    document.getElementById('env-file-list').innerHTML = '<li class="empty">Conecta tu Drive para ver tus archivos</li>';
-    return;
-  }
-  const parent = currentFolderId || driveFolderId;
-  const q = encodeURIComponent(`'${parent}' in parents and trashed=false`);
-  try {
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id,name,mimeType)&orderBy=folder,name&pageSize=200`, {
-      headers: { 'Authorization': 'Bearer ' + driveToken }
-    });
-    const data = await res.json();
-    renderFileList(data.files || []);
-  } catch (e) {
-    showToast("Error al listar: " + e.message, true);
-  }
-}
-
-function renderFileList(files) {
-  const ul = document.getElementById('env-file-list');
-  ul.innerHTML = '';
-  if (files.length === 0) {
-    ul.innerHTML = '<li class="empty">Carpeta vacía</li>';
-    return;
-  }
-  files.forEach(f => {
-    const isFolder = f.mimeType === 'application/vnd.google-apps.folder';
-    const li = document.createElement('li');
-    li.dataset.id = f.id;
-    li.innerHTML = `<span class="icon">${isFolder ? '📁' : '📄'}</span><span class="name">${f.name}</span><span class="delete-btn">🗑️</span>`;
-    li.addEventListener('click', (e) => {
-      if (e.target.classList.contains('delete-btn')) {
-        e.stopPropagation();
-        deleteItem(f.id, f.name, isFolder);
-        return;
-      }
-      if (isFolder) navigateTo(f.id, f.name);
-      else openFile(f.id, f.name);
-    });
-    ul.appendChild(li);
-  });
-}
-
-function navigateTo(folderId, folderName) {
-  if (folderId === 'root') { currentFolderId = null; currentFolderPath = []; }
-  else { currentFolderId = folderId; currentFolderPath.push({ id: folderId, name: folderName }); }
-  renderBreadcrumb();
-  refreshFileList();
-}
-
-function renderBreadcrumb() {
-  const bc = document.getElementById('env-breadcrumb');
-  let html = `<a onclick="navigateTo('root')">📁 Raíz</a>`;
-  currentFolderPath.forEach((f, i) => {
-    html += ` <span class="sep">/</span> `;
-    if (i === currentFolderPath.length - 1) html += `<span>📁 ${f.name}</span>`;
-    else html += `<a onclick="navigateToPath(${i})">📁 ${f.name}</a>`;
-  });
-  bc.innerHTML = html;
-}
-
-function navigateToPath(index) {
-  currentFolderPath = currentFolderPath.slice(0, index + 1);
-  currentFolderId = currentFolderPath[index].id;
-  renderBreadcrumb();
-  refreshFileList();
-}
-
-async function createFolder() {
-  const name = prompt("Nombre de la nueva carpeta:");
-  if (!name) return;
-  const parent = currentFolderId || driveFolderId;
-  try {
-    await fetch('https://www.googleapis.com/drive/v3/files', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ name: name, mimeType: 'application/vnd.google-apps.folder', parents: [parent] })
-    });
-    showToast(`📁 ${name}`);
-    refreshFileList();
-  } catch (e) { showToast("Error: " + e.message, true); }
-}
-
-async function createNotebook() {
-  const name = prompt("Nombre del nuevo notebook (sin .ipynb):", "nuevo");
-  if (!name) return;
-  const filename = name.endsWith('.ipynb') ? name : name + '.ipynb';
-  const parent = currentFolderId || driveFolderId;
-  const emptyIpynb = buildIpynb("# " + name + "\n\n# Escribe tu código aquí\n", name);
-  const metadata = { name: filename, mimeType: 'application/json', parents: [parent] };
-  const boundary = 'foo_bar';
-  const body = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(emptyIpynb)}\r\n--${boundary}--`;
-  try {
-    const res = await fetch('https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id', {
-      method: 'POST',
-      headers: { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': `multipart/related; boundary=${boundary}` },
-      body
-    });
-    const data = await res.json();
-    showToast(`📄 ${filename}`);
-    setTimeout(() => openFile(data.id, filename), 500);
-    refreshFileList();
-  } catch (e) { showToast("Error: " + e.message, true); }
-}
-
-async function openFile(fileId, fileName) {
-  if (!fileName.endsWith('.ipynb')) { showToast("Solo .ipynb", true); return; }
-  try {
-    const res = await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`, {
-      headers: { 'Authorization': 'Bearer ' + driveToken }
-    });
-    const ipynb = await res.json();
-    const code = extractCodeFromIpynb(ipynb);
-    currentFileId = fileId;
-    document.getElementById('env-filename').value = fileName;
-    editorsMap['env-editor'].setValue(code);
-    document.getElementById('env-output').innerText = `Abierto: ${fileName}`;
-    showToast(`📄 ${fileName}`);
-    document.querySelectorAll('#env-file-list li').forEach(li => {
-      li.classList.toggle('active', li.dataset.id === fileId);
-    });
-  } catch (e) { showToast("Error al abrir: " + e.message, true); }
-}
-
-function extractCodeFromIpynb(ipynb) {
-  if (!ipynb.cells) return "";
-  return ipynb.cells.filter(c => c.cell_type === 'code').map(c => Array.isArray(c.source) ? c.source.join('') : (c.source || '')).join('\n\n');
-}
-
-async function saveEnvToDrive() {
-  if (!driveToken) { showToast("Conecta Drive primero", true); return; }
-  const filename = document.getElementById('env-filename').value.trim() || 'nuevo.ipynb';
-  const nombre = filename.replace('.ipynb', '');
-  const code = editorsMap['env-editor'].getValue();
-  const ipynb = buildIpynb(code, nombre);
-  const parent = currentFolderId || driveFolderId;
-  let fileId = currentFileId;
-  if (!fileId) {
-    const q = encodeURIComponent(`name='${filename}' and '${parent}' in parents and trashed=false`);
-    const search = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, {
-      headers: { 'Authorization': 'Bearer ' + driveToken }
-    });
-    const searchData = await search.json();
-    if (searchData.files && searchData.files.length > 0) fileId = searchData.files[0].id;
-  }
-  let url, method;
-  if (fileId) { url = `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`; method = 'PATCH'; }
-  else { url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id'; method = 'POST'; }
-  const boundary = 'foo_bar';
-  const metadata = { name: filename, mimeType: 'application/json', parents: [parent] };
-  const body = method === 'POST' ? `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(ipynb)}\r\n--${boundary}--` : JSON.stringify(ipynb);
-  const headers = method === 'POST' ? { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': `multipart/related; boundary=${boundary}` } : { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' };
-  try {
-    const res = await fetch(url, { method, headers, body });
-    const data = await res.json();
-    if (method === 'POST' && data.id) currentFileId = data.id;
-    showToast(`✅ ${filename}`);
-    refreshFileList();
-  } catch (e) { showToast("Error: " + e.message, true); }
-}
-
-async function deleteCurrentFile() {
-  if (!currentFileId) { showToast("No hay archivo abierto", true); return; }
-  const fileName = document.getElementById('env-filename').value;
-  if (!confirm(`¿Borrar "${fileName}"?`)) return;
-  await deleteItem(currentFileId, fileName, false);
-}
-
-async function deleteItem(fileId, name, isFolder) {
-  const msg = isFolder ? `¿Borrar carpeta "${name}" y TODO su contenido?` : `¿Borrar "${name}"?`;
-  if (!confirm(msg)) return;
-  try {
-    await fetch(`https://www.googleapis.com/drive/v3/files/${fileId}`, {
-      method: 'DELETE',
-      headers: { 'Authorization': 'Bearer ' + driveToken }
-    });
-    showToast(`🗑️ ${name}`);
-    if (fileId === currentFileId) {
-      currentFileId = null;
-      editorsMap['env-editor'].setValue("");
-      document.getElementById('env-filename').value = "nuevo.ipynb";
-    }
-    refreshFileList();
-  } catch (e) { showToast("Error: " + e.message, true); }
-}
-
-async function openInColab() {
-  if (!driveToken) { showToast("Conecta Drive primero", true); return; }
-  let fileId = currentFileId;
-  if (!fileId) {
-    await saveEnvToDrive();
-    fileId = currentFileId;
-    if (!fileId) { showToast("No se pudo guardar", true); return; }
-  }
-  window.open(`https://colab.research.google.com/drive/${fileId}`, '_blank');
-}
-
-async function saveEditorToDrive(editorId, nombre, silent = false) {
-  if (!driveToken) { if (!silent) showToast("Conecta Drive primero", true); return; }
-  const editor = editorsMap[editorId];
-  if (!editor) return;
-  const code = editor.getValue();
-  const ipynb = buildIpynb(code, nombre);
-  const q = encodeURIComponent(`name='${nombre}.ipynb' and '${driveFolderId}' in parents and trashed=false`);
-  const search = await fetch(`https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`, {
-    headers: { 'Authorization': 'Bearer ' + driveToken }
-  });
-  const searchData = await search.json();
-  let url, method;
-  if (searchData.files && searchData.files.length > 0) {
-    url = `https://www.googleapis.com/upload/drive/v3/files/${searchData.files[0].id}?uploadType=media`;
-    method = 'PATCH';
-  } else {
-    url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart';
-    method = 'POST';
-  }
-  const boundary = 'foo_bar';
-  const metadata = { name: nombre + '.ipynb', mimeType: 'application/json', parents: [driveFolderId] };
-  const body = method === 'POST' ? `--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(metadata)}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${JSON.stringify(ipynb)}\r\n--${boundary}--` : JSON.stringify(ipynb);
-  const headers = method === 'POST' ? { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': `multipart/related; boundary=${boundary}` } : { 'Authorization': 'Bearer ' + driveToken, 'Content-Type': 'application/json' };
-  try {
-    const res = await fetch(url, { method, headers, body });
-    if (res.ok) { if (!silent) showToast(`☁ ${nombre}.ipynb`); }
-    else { if (!silent) showToast("Error al guardar", true); }
-  } catch (e) { if (!silent) showToast("Error: " + e.message, true); }
-}
-
-function buildIpynb(code, nombre) {
-  return {
-    cells: [
-      { cell_type: "markdown", metadata: {}, source: [`# ${nombre}\n`, "\n", "Generado desde la guía de Python para Análisis Numérico.\n"] },
-      { cell_type: "code", execution_count: null, metadata: {}, outputs: [], source: code.split("\n").map((l, i, a) => i < a.length - 1 ? l + "\n" : l) }
-    ],
-    metadata: { kernelspec: { display_name: "Python 3", language: "python", name: "python3" }, language_info: { name: "python", version: "3.11" } },
-    nbformat: 4, nbformat_minor: 5
-  };
-}
-
-function exportToIpynb(editorId, nombre) {
-  const editor = editorsMap[editorId];
-  if (!editor) return;
-  const ipynb = buildIpynb(editor.getValue(), nombre);
-  const blob = new Blob([JSON.stringify(ipynb, null, 1)], { type: "application/json" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url; a.download = nombre + ".ipynb"; a.click();
-  URL.revokeObjectURL(url);
-  showToast(`Descargado: ${nombre}.ipynb`);
-}
-
-function toggleMenu() {
-  const sidebar = document.getElementById('sidebar');
-  const overlay = document.getElementById('overlay');
-  const btn = document.getElementById('menu-toggle');
-  const open = sidebar.classList.toggle('open');
-  overlay.classList.toggle('open', open);
-  btn.classList.toggle('open', open);
-}
-
-function toggleGroup(id, btn) {
-  const el = document.getElementById(id);
-  const isOpen = el.classList.toggle('open');
-  btn.classList.toggle('active', isOpen);
-}
-
-function showToast(msg, isError = false) {
-  const t = document.getElementById('toast');
-  t.innerText = msg;
-  t.classList.toggle('error', isError);
-  t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), 3500);
-}
-
-document.querySelectorAll('.menu-group-content a').forEach(a => {
-  a.addEventListener('click', () => {
-    setTimeout(() => {
-      document.getElementById('sidebar').classList.remove('open');
-      document.getElementById('overlay').classList.remove('open');
-      document.getElementById('menu-toggle').classList.remove('open');
-    }, 100);
-  });
-});
-</script>
 </body>
 </html>
