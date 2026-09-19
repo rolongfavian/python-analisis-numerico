@@ -1,6 +1,6 @@
 /* ============================================
    ejemplos.js — Ejemplos precargados para el editor
-   v2 - Incluye los ejercicios del curso corregidos
+   v3 - Incluye escapeHtml (fix) + ejemplos del curso
    ============================================ */
 
 (function () {
@@ -541,6 +541,14 @@ print("Debería ser 1, da 0 por pérdida de precisión")`
   ];
 
   // ============================================================
+  // UTILIDADES
+  // ============================================================
+  function escapeHtml(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+  }
+
+  // ============================================================
   // UI
   // ============================================================
   function abrirMenuEjemplos() {
@@ -588,13 +596,37 @@ print("Debería ser 1, da 0 por pérdida de precisión")`
     if (menu) menu.classList.remove('open');
   }
 
+  // ============================================================
+  // CARGAR EJEMPLO
+  // ============================================================
   async function cargarEjemplo(ej) {
-    if (typeof editorsMap === 'undefined' || !editorsMap['env-editor']) {
-      showToast('Editor no encontrado', true);
+    // Verificar que exista el editor (con espera hasta 3 segundos)
+    let editor = null;
+    const inicio = Date.now();
+
+    while (!editor && Date.now() - inicio < 3000) {
+      if (typeof editorsMap !== 'undefined' && editorsMap['env-editor']) {
+        editor = editorsMap['env-editor'];
+        break;
+      }
+      await new Promise(r => setTimeout(r, 100));
+    }
+
+    if (!editor) {
+      const textarea = document.getElementById('env-editor');
+      if (textarea) {
+        textarea.value = ej.codigo;
+        if (typeof showToast === 'function') {
+          showToast('Ejemplo cargado: ' + ej.nombre);
+        }
+        const fnInput = document.getElementById('env-filename');
+        if (fnInput) fnInput.value = ej.id + '.py';
+        return;
+      }
+      alert('No se encontró el editor. Abre la vista Entorno primero.');
       return;
     }
 
-    const editor = editorsMap['env-editor'];
     const codigoActual = editor.getValue().trim();
 
     if (codigoActual.length > 0) {
@@ -604,18 +636,26 @@ print("Debería ser 1, da 0 por pérdida de precisión")`
       if (!ok) return;
     }
 
-    editor.setValue(ej.codigo);
-    editor.clearHistory();
-    editor.refresh();
+    try {
+      editor.setValue(ej.codigo);
+      editor.clearHistory();
+      editor.refresh();
 
-    const fnInput = document.getElementById('env-filename');
-    if (fnInput) {
-      fnInput.value = ej.id + '.py';
+      const fnInput = document.getElementById('env-filename');
+      if (fnInput) fnInput.value = ej.id + '.py';
+
+      if (typeof showToast === 'function') {
+        showToast('Ejemplo cargado: ' + ej.nombre);
+      }
+    } catch (e) {
+      console.error('[ejemplos] Error cargando:', e);
+      alert('Error al cargar el ejemplo: ' + e.message);
     }
-
-    showToast('Ejemplo cargado: ' + ej.nombre);
   }
 
+  // ============================================================
+  // INIT
+  // ============================================================
   function init() {
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') cerrarMenuEjemplos();
