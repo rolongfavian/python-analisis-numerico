@@ -1,0 +1,47 @@
+{
+  "nivel": 9,
+  "niveles": [
+    {
+      "id": "nivel-9",
+      "numero": "9",
+      "titulo": "Clases y objetos (POO)",
+      "descripcion": "La programación orientada a objetos (POO) permite agrupar datos y funciones relacionadas. Es el nivel más avanzado de Python básico, y sirve para construir sistemas complejos como un solver numérico reutilizable.",
+      "comandos": [
+        {
+          "nombre": "¿Qué es una clase?",
+          "alias": "Plantillas para crear objetos",
+          "basico": "<p>Una <strong>clase</strong> es una plantilla. Un <strong>objeto</strong> es una copia concreta creada a partir de esa plantilla.</p><p>Analogía: la clase es el plano de una casa, y cada casa construida es un objeto.</p><div class='cmd-sintaxis'>class Nombre:\n    # atributos y métodos</div><p>Por convención, los nombres de clases van en MayúsculaInicial.</p>",
+          "intermedio": "<p><strong>Por qué usar clases:</strong></p><ul><li>Agrupar datos relacionados.</li><li>Reutilizar código con diferentes configuraciones.</li><li>Modelar conceptos del mundo real o matemáticos.</li></ul><p><strong>En análisis numérico:</strong> una clase <code>SolverBiseccion</code> puede guardar la función a resolver, la tolerancia, el historial de iteraciones y el resultado final.</p>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Clase:</strong> plantilla de objetos.</li><li><strong>Objeto:</strong> instancia concreta.</li><li><strong>Instancia:</strong> sinónimo de objeto.</li><li><strong>Atributo:</strong> variable dentro del objeto.</li><li><strong>Método:</strong> función dentro de la clase.</li></ul></div><p><strong>Relación con matemáticas:</strong> una clase puede representar un objeto matemático complejo. Por ejemplo, un polinomio que tiene coeficientes (atributos) y métodos para evaluarlo o derivarlo.</p>"
+        },
+        {
+          "nombre": "class / __init__ / self",
+          "alias": "Definir una clase",
+          "basico": "<p><code>class</code> define la clase. <code>__init__</code> es el constructor: se ejecuta al crear un objeto. <code>self</code> es la referencia al objeto actual.</p><div class='cmd-sintaxis'>class Persona:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad</div>",
+          "intermedio": "<p><strong>Crear objetos:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>ana = Persona(\"Ana\", 25)\nprint(ana.nombre)   # Ana\nprint(ana.edad)     # 25</pre><p><strong>Añadir métodos:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>class Persona:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    def saludar(self):\n        print(f\"Hola, soy {self.nombre}\")</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>__init__:</strong> el constructor. Se llama al crear el objeto.</li><li><strong>self:</strong> la referencia al objeto dentro de sus métodos. Siempre es el primer parámetro.</li><li><strong>Atributo de instancia:</strong> variable propia de cada objeto.</li><li><strong>Método:</strong> función definida dentro de la clase.</li></ul></div><p><strong>Trampa común:</strong> olvidar poner <code>self</code> como primer parámetro de un método. Python te dará un error tipo <code>TypeError: metodo() takes 0 positional arguments but 1 was given</code>.</p>",
+          "codigo": "class Persona:\n    def __init__(self, nombre, edad):\n        self.nombre = nombre\n        self.edad = edad\n\n    def saludar(self):\n        print(f\"Hola, soy {self.nombre} y tengo {self.edad} años\")\n\n    def cumplir_anios(self):\n        self.edad += 1\n\n# Crear objetos\nana = Persona(\"Ana\", 25)\nluis = Persona(\"Luis\", 30)\n\nana.saludar()\nluis.saludar()\n\nana.cumplir_anios()\nprint(\"\\nDespués del cumpleaños:\")\nana.saludar()",
+          "etiquetaCodigo": "class / __init__ / self"
+        },
+        {
+          "nombre": "Atributos y métodos",
+          "alias": "Datos y comportamiento",
+          "basico": "<p>Los <strong>atributos</strong> son los datos del objeto. Los <strong>métodos</strong> son las acciones que puede hacer.</p><div class='cmd-sintaxis'>class Circulo:\n    def __init__(self, radio):\n        self.radio = radio\n\n    def area(self):\n        return 3.14159 * self.radio ** 2</div>",
+          "intermedio": "<p><strong>Atributos de instancia vs de clase:</strong></p><ul><li><strong>Instancia:</strong> propios de cada objeto (se definen en <code>__init__</code>).</li><li><strong>Clase:</strong> compartidos por todos (se definen a nivel de clase).</li></ul><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>class Circulo:\n    pi = 3.14159   # atributo de clase\n    def __init__(self, radio):\n        self.radio = radio  # atributo de instancia</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Atributo:</strong> variable dentro de la clase u objeto.</li><li><strong>Método:</strong> función dentro de la clase.</li><li><strong>Método especial (dunder):</strong> métodos con nombres como <code>__str__</code>, <code>__repr__</code>, <code>__eq__</code>.</li></ul></div><p><strong>Métodos especiales útiles:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>def __str__(self):\n    return f\"Circulo(r={self.radio})\"\n\ndef __eq__(self, otro):\n    return self.radio == otro.radio</pre>",
+          "codigo": "class Circulo:\n    pi = 3.14159\n\n    def __init__(self, radio):\n        self.radio = radio\n\n    def area(self):\n        return self.pi * self.radio ** 2\n\n    def perimetro(self):\n        return 2 * self.pi * self.radio\n\n    def __str__(self):\n        return f\"Circulo(radio={self.radio})\"\n\nc1 = Circulo(1)\nc2 = Circulo(5)\n\nprint(c1)\nprint(\"  Área:\", c1.area())\nprint(\"  Perímetro:\", c1.perimetro())\n\nprint(c2)\nprint(\"  Área:\", c2.area())",
+          "etiquetaCodigo": "Atributos y métodos"
+        },
+        {
+          "nombre": "Herencia",
+          "alias": "Extender clases",
+          "basico": "<p>La <strong>herencia</strong> permite crear una clase nueva basada en otra, reutilizando sus atributos y métodos.</p><div class='cmd-sintaxis'>class Hija(Padre):\n    # hereda todo000 todo del Padre</div><p>La hija puede añadir cosas nuevas o sobrescribir las del padre.</p>",
+          "intermedio": "<p><strong>Ejemplo:</strong></p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>class Animal:\n    def comer(self):\n        print(\"Comiendo\")\n\nclass Perro(Animal):\n    def ladrar(self):\n        print(\"Guau\")</pre><p>Un <code>Perro</code> puede <code>comer()</code> (heredado) y también <code>ladrar()</code> (propio).</p><p><strong>super():</strong> llama al método del padre.</p><pre style='background:var(--bg-code); padding:0.6rem; border-radius:4px; font-family:var(--font-mono); font-size:0.82rem; color:var(--code-function); overflow-x:auto;'>class Perro(Animal):\n    def __init__(self, nombre):\n        super().__init__()\n        self.nombre = nombre</pre>",
+          "avanzado": "<div class='cmd-vocab'><strong>Vocabulario:</strong><ul><li><strong>Herencia:</strong> reutilizar código de otra clase.</li><li><strong>Clase padre:</strong> de donde se hereda.</li><li><strong>Clase hija:</strong> la que hereda.</li><li><strong>Sobrescribir:</strong> redefinir un método del padre.</li><li><strong>super():</strong> llamar al padre.</li></ul></div><p><strong>En análisis numérico:</strong> una clase base <code>Solver</code> con método <code>resolver()</code>, y clases hijas <code>SolverBiseccion</code>, <code>SolverNewton</code> que implementan su propia versión.</p>",
+          "codigo": "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n\n    def hablar(self):\n        print(\"...\")\n\nclass Perro(Animal):\n    def hablar(self):\n        print(f\"{self.nombre}: Guau!\")\n\nclass Gato(Animal):\n    def hablar(self):\n        print(f\"{self.nombre}: Miau!\")\n\n# Polimorfismo\nanimales = [Perro(\"Rex\"), Gato(\"Michi\"), Perro(\"Fido\")]\n\nfor a in animales:\n    a.hablar()",
+          "etiquetaCodigo": "Herencia"
+        }
+      ]
+    }
+  ]
+}
