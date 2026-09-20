@@ -55,7 +55,7 @@ window.MathJax = {
 <header class="guide-header">
   <h1>Python para Análisis Numérico</h1>
   <p>Guía interactiva desde cero. Aprende Python paso a paso hasta resolver ecuaciones con métodos numéricos. Ejecuta el código directamente en tu navegador.</p>
-  <div id="status-badge">Cargando Python...</div>
+  <div id="status-badge">Cargando...</div>
 </header>
 <div class="container">
   <div id="guide-content">
@@ -67,10 +67,10 @@ window.MathJax = {
 <div id="view-env" class="view">
 <div id="drive-setup">
   <h2>Entorno de Programación</h2>
-  <p>Conecta tu cuenta de Google para guardar tus notebooks en tu Drive. Los archivos se organizan en la carpeta <code>Python_Análisis_Numérico</code>.</p>
+  <p>Conecta tu cuenta de Google para guardar tus notebooks en tu Drive y usar Google Colab. Los archivos se organizan en la carpeta <code>Python_Análisis_Numérico</code>.</p>
   <button onclick="connectDrive()">Conectar con Google Drive</button>
   <button class="secondary" onclick="activarModoInvitado()">Continuar como invitado</button>
-  <p style="margin-top:1rem;font-size:0.72rem;">Como invitado puedes escribir y ejecutar código, pero <strong>no se guardará en la nube</strong>. Descarga tus archivos antes de cerrar.</p>
+  <p style="margin-top:1rem;font-size:0.72rem;">Como invitado puedes ejecutar comandos básicos de Python en tu navegador. Para librerías científicas necesitas conectar tu cuenta.</p>
 </div>
 
 <div class="env-layout" id="env-layout" style="display:none;">
@@ -113,19 +113,13 @@ window.MathJax = {
       <span>⚠️ La sesión de Google expiró. Vuelve a conectar para guardar en Drive.</span>
       <button onclick="connectDrive()">Reconectar</button>
     </div>
-    <button id="btn-libs" onclick="abrirModalLibrerias()" title="Tienda de librerías">
-      <span class="material-symbols-outlined">storefront</span>
-      <span class="btn-libs-label">Tienda</span>
-    </button>
     <div class="env-toolbar" id="env-toolbar">
       <button onclick="abrirMenuEjemplos()" title="Cargar ejemplo">
         <span class="material-symbols-outlined">menu_book</span> Ejemplos
       </button>
       <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-      
-      <button class="primary" onclick="runEnvCode()" title="Ejecutar">
+      <button class="primary" onclick="runEnvCode()" title="Ejecuta local o en Colab según el código">
         <span class="material-symbols-outlined">play_arrow</span> Ejecutar
-      </button>
       </button>
       <button onclick="saveEnvToDrive()">
         <span class="material-symbols-outlined">save</span> Guardar
@@ -333,40 +327,6 @@ window.MathJax = {
   </div>
 </div>
 
-<!-- Modal de la tienda -->
-<div class="modal-overlay" id="modal-libs" onclick="if(event.target===this) cerrarModalLibrerias()">
-  <div class="modal-box modal-libs" style="max-width: 680px;">
-    <div class="libs-header">
-      <h3 style="margin:0; display:flex; align-items:center; gap:8px;">
-        <span class="material-symbols-outlined" style="color:var(--accent); font-size:22px;">storefront</span>
-        Tienda de Librerías
-      </h3>
-      <button class="libs-refresh" id="libs-recargar" title="Recargar catálogo">
-        <span class="material-symbols-outlined">refresh</span>
-      </button>
-    </div>
-    <p>Explora e instala paquetes de Python compatibles con el navegador. Se instalan directamente desde PyPI la primera vez; luego quedan guardados en tu navegador.</p>
-
-    <div class="libs-input-row">
-      <input type="text" id="libs-search" placeholder="Buscar librería…" autocomplete="off" spellcheck="false">
-    </div>
-
-    <div id="libs-result"></div>
-
-    <div id="libs-categorias" class="libs-categorias"></div>
-
-    <div id="libs-catalogo" class="libs-catalogo"></div>
-
-    <label style="margin-top:1.2rem; display:block;">Instaladas</label>
-    <div id="libs-instaladas" class="libs-instaladas"></div>
-
-    <div class="actions">
-      <button onclick="cerrarModalLibrerias()">Cerrar</button>
-    </div>
-  </div>
-</div>
-
-<!-- Modal del buscador -->
 <div class="modal-overlay" id="modal-buscador" onclick="if(event.target===this) cerrarBuscador()">
   <div class="modal-box">
     <input type="text" id="buscador-input" placeholder="Buscar en la guía… (Ctrl+K)" autocomplete="off" spellcheck="false">
@@ -374,7 +334,6 @@ window.MathJax = {
   </div>
 </div>
 
-<!-- Menú de ejemplos -->
 <div id="ejemplos-menu" class="ejemplos-menu"></div>
 
 <div id="offline-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:#b91c1c; color:white; padding:8px; text-align:center; font-size:0.8rem; z-index:9999;">
@@ -383,35 +342,27 @@ window.MathJax = {
 
 <div id="toast"></div>
 
+<script>
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('sw.js', { scope: './' })
+      .then(reg => console.log('[SW] Registrado. Scope:', reg.scope))
+      .catch(err => console.warn('[SW] No se pudo registrar:', err));
+  });
+}
+</script>
+
 <script src="js/tema.js"></script>
-<script src="js/skulpt-runner.js"></script>
-<script src="js/ejecutor.js"></script>
 <script src="js/guardado.js"></script>
 <script src="js/drive.js"></script>
 <script src="js/explorador.js"></script>
 <script src="js/codemirror.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/guia.js"></script>
-<script src="js/librerias.js"></script>
 <script src="js/ejemplos.js"></script>
 <script src="js/buscador.js"></script>
-
-<!-- Service Worker: cachea Pyodide y CDNs -->
-<script>
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js', { scope: './' })
-      .then(reg => {
-        console.log('[SW] Registrado. Scope:', reg.scope);
-      })
-      .catch(err => {
-        console.warn('[SW] No se pudo registrar:', err);
-      });
-  });
-} else {
-  console.warn('[SW] Service Workers no soportados en este navegador');
-}
-</script>
+<script src="js/skulpt-runner.js"></script>
+<script src="js/ejecutor.js"></script>
 
 </body>
 </html>

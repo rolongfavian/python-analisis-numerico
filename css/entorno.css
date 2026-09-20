@@ -1294,7 +1294,7 @@ li.CodeMirror-hint-active {
 }
 
 /* ============================================================
-   OUTPUT: estilos para Skulpt
+   OUTPUT: estilos unificados
    ============================================================ */
 .output-text {
   margin: 0 0 8px 0;
@@ -1315,3 +1315,7 @@ li.CodeMirror-hint-active {
   font-size: 0.78rem;
   line-height: 1.5;
 }
+
+/* Ocultar la tienda si quedó en el DOM */
+#btn-libs { display: none !important; }
+#modal-libs { display: none !important; }
