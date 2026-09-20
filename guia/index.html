@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="es" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Python para Análisis Numérico · Guía</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$','$'], ['\\(','\\)']],
+    displayMath: [['$$','$$'], ['\\[','\\]']]
+  }
+};
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+<link rel="stylesheet" href="css/guia.css">
+</head>
+<body>
+
+<div id="view-bar">
+  <div class="title">Python para Análisis Numérico</div>
+  <button id="btn-buscar" onclick="abrirBuscador()" title="Buscar en la guía (Ctrl+K)">
+    <span class="material-symbols-outlined">search</span>
+    <span class="btn-buscar-label">Buscar</span>
+  </button>
+  <select id="theme-select" title="Tema">
+    <option value="dark">Oscuro</option>
+    <option value="light">Claro</option>
+    <option value="system">Sistema</option>
+  </select>
+</div>
+
+<header class="guide-header">
+  <h1>Python para Análisis Numérico</h1>
+  <p>Guía completa desde cero. Aprende Python paso a paso hasta resolver ecuaciones con métodos numéricos.</p>
+</header>
+
+<div class="container">
+  <div id="guide-content">
+    <div id="loading-guide">Cargando contenido...</div>
+  </div>
+</div>
+
+<div id="overlay" onclick="toggleMenu()"></div>
+<button id="menu-toggle" onclick="toggleMenu()" aria-label="Menú">
+  <span></span><span></span><span></span>
+</button>
+
+<nav id="sidebar">
+  <div class="sidebar-title">Niveles de la Guía</div>
+
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(0); closeMenu();"><span>Nivel 0 · Antes de empezar</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(1); closeMenu();"><span>Nivel 1 · Lo más básico</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(2); closeMenu();"><span>Nivel 2 · Tipos de datos</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(3); closeMenu();"><span>Nivel 3 · Operaciones</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(4); closeMenu();"><span>Nivel 4 · Control de flujo</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(5); closeMenu();"><span>Nivel 5 · Colecciones</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(6); closeMenu();"><span>Nivel 6 · Funciones</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(7); closeMenu();"><span>Nivel 7 · Módulos</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(8); closeMenu();"><span>Nivel 8 · Errores</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(9); closeMenu();"><span>Nivel 9 · Clases y objetos</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(10); closeMenu();"><span>Nivel 10 · Análisis numérico</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(11); closeMenu();"><span>Nivel 11 · Entorno de trabajo</span></button></div>
+  <div class="menu-group"><button class="menu-group-header" onclick="showLevel(99); closeMenu();"><span>Glosario</span></button></div>
+</nav>
+
+<div class="modal-overlay" id="modal-buscador" onclick="if(event.target===this) cerrarBuscador()">
+  <div class="modal-box modal-buscador">
+    <input type="text" id="buscador-input" placeholder="Buscar en la guía… (Ctrl+K)" autocomplete="off" spellcheck="false">
+    <div id="buscador-resultados"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script src="js/tema.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/guia.js"></script>
+<script src="js/buscador.js"></script>
+
+</body>
+</html>
