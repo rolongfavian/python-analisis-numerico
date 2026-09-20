@@ -1,0 +1,617 @@
+{
+  "parte": 6,
+  "titulo": "Funciones",
+  "emoji": "⚙️",
+  "descripcion": "Una función es un bloque de código con nombre que hace una tarea concreta. Se puede usar muchas veces sin repetir el código. Son la base de cualquier programa serio: te permiten organizar, reutilizar y probar tu código.",
+  "temas": [
+    {
+      "id": "def-return",
+      "numero": "1",
+      "titulo": "def y return — Definir funciones",
+      "emoji": "🧩",
+      "subtitulo": "Crear bloques de código reutilizables",
+      "que_es": [
+        "<p>Una <strong>función</strong> es un bloque de código con nombre que hace una tarea específica. Se define con <code>def</code>, y devuelve un valor con <code>return</code>.</p>",
+        "<p>Las funciones son la forma de <strong>no repetir código</strong>. En vez de copiar y pegar lo mismo diez veces, defines la función una vez y la llamas diez veces.</p>",
+        "<p>Además, las funciones te obligan a <strong>pensar en bloques</strong>: cada función hace una cosa y la hace bien. Esto hace el código más fácil de leer, probar y mantener.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Las funciones se usan para:</p>",
+        "<ul><li><strong>Reutilizar código</strong>: definir una vez, usar muchas.</li><li><strong>Organizar</strong>: cada función hace una tarea específica.</li><li><strong>Probar</strong>: puedes probar cada función por separado.</li><li><strong>Documentar</strong>: los nombres de funciones explican qué hace el programa.</li></ul>",
+        "<p>En análisis numérico, cada método (bisección, Newton, punto fijo) se implementa como una función independiente.</p>"
+      ],
+      "sintaxis": "def nombre_funcion(parametros):\n    # cuerpo de la función\n    return resultado\n\n# Llamar a la función\nvariable = nombre_funcion(argumentos)",
+      "ejemplos": [
+        {
+          "titulo": "La función más simple",
+          "codigo": "def saludar():\n    print(\"Hola, mundo\")\n\n# Llamar a la función\nsaludar()\nsaludar()\nsaludar()",
+          "explicacion": [
+            "<p>Definimos la función con <code>def</code>. Cuando la llamas con <code>saludar()</code>, se ejecuta el código dentro.</p>",
+            "<p>Esta función no recibe parámetros y no devuelve nada. Solo imprime.</p>"
+          ]
+        },
+        {
+          "titulo": "Función con parámetros y return",
+          "codigo": "def area_rectangulo(base, altura):\n    area = base * altura\n    return area\n\nresultado = area_rectangulo(5, 3)\nprint(resultado)   # 15\n\nprint(area_rectangulo(10, 2))   # 20",
+          "explicacion": [
+            "<p><code>base</code> y <code>altura</code> son los <strong>parámetros</strong>: variables que la función recibe.</p>",
+            "<p><code>return area</code> devuelve el resultado. Cuando llamas a la función con argumentos, obtienes ese valor.</p>",
+            "<p>Puedes llamar la función cuantas veces quieras con distintos valores.</p>"
+          ]
+        },
+        {
+          "titulo": "Función matemática: f(x) = x² - 2",
+          "codigo": "def f(x):\n    return x**2 - 2\n\nprint(f(0))    # -2\nprint(f(1))    # -1\nprint(f(2))    # 2\nprint(f(3))    # 7",
+          "explicacion": [
+            "<p>Esta es la forma de definir funciones matemáticas en Python.</p>",
+            "<p>La correspondencia es directa: <code>def f(x)</code> es la función matemática <em>f</em>, y <code>return x**2 - 2</code> es la expresión <em>x² − 2</em>.</p>",
+            "<p>En análisis numérico, así se definen las funciones cuyas raíces buscamos.</p>"
+          ]
+        },
+        {
+          "titulo": "Diferencia entre print y return",
+          "codigo": "def f_print(x):\n    print(x**2)\n\ndef f_return(x):\n    return x**2\n\n# Con print: no puedes usar el resultado\nresultado = f_print(5)\nprint(\"Resultado con print:\", resultado)   # None\n\n# Con return: sí puedes usar el resultado\nresultado = f_return(5)\nprint(\"Resultado con return:\", resultado)   # 25",
+          "explicacion": [
+            "<p><strong>Muy importante:</strong> <code>print</code> muestra en pantalla. <code>return</code> devuelve el valor.</p>",
+            "<p>Una función sin <code>return</code> devuelve <code>None</code>. Si luego usas ese valor, obtienes None y todo falla.</p>",
+            "<p><strong>Regla:</strong> si quieres <strong>usar</strong> el resultado, usa <code>return</code>. Si solo quieres <strong>mostrarlo</strong>, usa <code>print</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar print dentro de una función y luego intentar usar el resultado",
+          "razon": "print no devuelve nada. La variable resultante es None.",
+          "correcto": "Usa return para devolver el valor."
+        },
+        {
+          "error": "Definir la función pero olvidar llamarla",
+          "razon": "La función no se ejecuta sola. Hay que llamarla con nombre(argumentos).",
+          "correcto": "def saludar(): ...\nsaludar()   # ← llamada necesaria"
+        },
+        {
+          "error": "def f(x)  sin dos puntos",
+          "razon": "Los dos puntos al final de la definición son obligatorios.",
+          "correcto": "def f(x):"
+        },
+        {
+          "error": "Código fuera del cuerpo de la función por mala indentación",
+          "razon": "El cuerpo debe estar indentado. Si no, no forma parte de la función.",
+          "correcto": "def f(x):\n    return x*2   # ← indentado"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> el nombre de la función debe describir qué hace: <code>calcular_area</code>, <code>buscar_raiz</code>, <code>imprimir_tabla</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> una función debería hacer <strong>una sola cosa</strong>. Si hace demasiado, divídela.</p>",
+        "<p>💡 <strong>Truco 3:</strong> documenta tus funciones con un docstring (lo veremos en el tema 8).</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, las funciones matemáticas se definen con <code>def f(x): return ...</code> o con lambdas si son cortas.</p>"
+      ],
+      "resumen": "def define una función. return devuelve un valor. Sin return, la función devuelve None. Las funciones permiten reutilizar y organizar el código."
+    },
+    {
+      "id": "parametros",
+      "numero": "2",
+      "titulo": "Parámetros y argumentos",
+      "emoji": "📥",
+      "subtitulo": "Cómo pasar valores a las funciones",
+      "que_es": [
+        "<p>A veces se confunden <strong>parámetro</strong> y <strong>argumento</strong>. La diferencia es sutil pero importante:</p>",
+        "<ul><li><strong>Parámetro</strong>: la variable declarada en la definición de la función.</li><li><strong>Argumento</strong>: el valor que le pasas al llamarla.</li></ul>",
+        "<p>Python permite pasar argumentos de varias formas: posicionales, con nombre, con valores por defecto, en paquetes... Aquí veremos los dos más básicos: por posición y por nombre.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los parámetros son la forma de que una función reciba datos y trabaje con ellos. Sin parámetros, todas las funciones harían lo mismo.</p>",
+        "<p>Poder pasar argumentos por nombre te permite:</p>",
+        "<ul><li><strong>Mayor claridad</strong>: <code>f(x=2, y=3)</code> se lee mejor que <code>f(2, 3)</code>.</li><li><strong>No recordar el orden</strong>: puedes pasar en cualquier orden.</li><li><strong>Omitir valores por defecto</strong>: solo pasas los que cambian.</li></ul>"
+      ],
+      "sintaxis": "def f(a, b, c):\n    return a + b + c\n\n# Posicional (orden importa)\nf(1, 2, 3)\n\n# Con nombre (orden no importa)\nf(c=3, a=1, b=2)\n\n# Mezcla (posicionales primero)\nf(1, c=3, b=2)",
+      "ejemplos": [
+        {
+          "titulo": "Argumentos posicionales",
+          "codigo": "def restar(a, b):\n    return a - b\n\nprint(restar(10, 3))   # 7\nprint(restar(3, 10))   # -7 (¡orden importa!)",
+          "explicacion": [
+            "<p>El orden importa. <code>restar(10, 3)</code> asigna a=10, b=3. <code>restar(3, 10)</code> asigna a=3, b=10.</p>",
+            "<p>Resultado: -7 en el segundo caso.</p>"
+          ]
+        },
+        {
+          "titulo": "Argumentos con nombre",
+          "codigo": "def restar(a, b):\n    return a - b\n\nprint(restar(a=10, b=3))   # 7\nprint(restar(b=3, a=10))   # 7 (mismo resultado)\n\nprint(restar(10, b=3))     # 7 (mezclado)",
+          "explicacion": [
+            "<p>Con argumentos con nombre, el orden no importa. Solo se usa el nombre para asignar.</p>",
+            "<p>Puedes mezclar: los posicionales primero, los con nombre después.</p>",
+            "<p><strong>Regla:</strong> nunca pongas un posicional después de un nombrado. <code>restar(a=10, 3)</code> da error.</p>"
+          ]
+        },
+        {
+          "titulo": "Función con varios parámetros",
+          "codigo": "def estadisticas(numeros, decimales=2):\n    minimo = min(numeros)\n    maximo = max(numeros)\n    promedio = sum(numeros) / len(numeros)\n    return (\n        round(minimo, decimales),\n        round(maximo, decimales),\n        round(promedio, decimales)\n    )\n\nresultado = estadisticas([1, 2, 3, 4, 5])\nprint(resultado)   # (1, 5, 3.0)",
+          "explicacion": [
+            "<p>La función recibe una lista y devuelve una tupla con mínimo, máximo y promedio.</p>",
+            "<p><code>decimales=2</code> es un parámetro por defecto (lo veremos en el siguiente tema).</p>",
+            "<p>El <code>return</code> con varios valores separados por comas devuelve una tupla automáticamente.</p>"
+          ]
+        },
+        {
+          "titulo": "Error típico: posicional después de nombrado",
+          "codigo": "def f(a, b, c):\n    return a + b + c\n\n# f(1, b=2, 3)   # Error: SyntaxError\n\n# Formas válidas:\nf(1, 2, 3)          # OK\nf(1, 2, c=3)        # OK\nf(1, b=2, c=3)      # OK\nf(a=1, b=2, c=3)    # OK",
+          "explicacion": [
+            "<p>Python no puede adivinar a qué parámetro corresponde un argumento posicional después de uno nombrado.</p>",
+            "<p>Por eso, si empiezas a usar nombres, todos los siguientes deben ser nombrados.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "f(1, b=2, 3)",
+          "razon": "Posicional después de nombrado. Python da SyntaxError.",
+          "correcto": "f(1, b=2, c=3)"
+        },
+        {
+          "error": "f(1, 2)  cuando la función espera 3 parámetros",
+          "razon": "Faltan argumentos. Da TypeError.",
+          "correcto": "Pasa todos los parámetros requeridos."
+        },
+        {
+          "error": "f(1, 2, 3, 4)  cuando solo acepta 3",
+          "razon": "Demasiados argumentos. Da TypeError.",
+          "correcto": "Verifica la firma de la función."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> para funciones con muchos parámetros, usa nombres para mayor claridad: <code>crear_archivo(nombre=\"datos\", ext=\".txt\")</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en análisis numérico, es común pasar parámetros por nombre para no equivocarse: <code>biseccion(f=f, a=1, b=2, tol=1e-8)</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si una función tiene más de 4-5 parámetros, probablemente estás haciendo algo mal. Divídela.</p>"
+      ],
+      "resumen": "Los parámetros son las variables que la función recibe. Los argumentos son los valores que le pasas. Se pueden pasar por posición (orden importa) o por nombre (orden no importa)."
+    },
+    {
+      "id": "valores-defecto",
+      "numero": "3",
+      "titulo": "Valores por defecto",
+      "emoji": "🎁",
+      "subtitulo": "Parámetros opcionales en tus funciones",
+      "que_es": [
+        "<p>En la definición de una función puedes darle un <strong>valor por defecto</strong> a un parámetro. Si el usuario no lo pasa al llamar, se usa el valor por defecto.</p>",
+        "<p>Esto hace los parámetros <strong>opcionales</strong>: puedes llamar a la función con o sin ellos.</p>",
+        "<p><strong>Regla importante:</strong> los parámetros con valor por defecto van siempre <strong>al final</strong> de la lista de parámetros. Si los pones al principio, Python no puede saber cuáles estás pasando.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los valores por defecto son muy útiles para:</p>",
+        "<ul><li><strong>Parámetros opcionales</strong>: que el usuario solo pase lo necesario.</li><li><strong>Configuraciones comunes</strong>: valores típicos sin tener que repetirlos.</li><li><strong>API limpias</strong>: <code>print(x, end=\"\\n\")</code> — puedes ignorar el <code>end</code>.</li></ul>",
+        "<p>En análisis numérico, casi todas las funciones tienen valores por defecto para <code>tol</code> y <code>max_iter</code>.</p>"
+      ],
+      "sintaxis": "def f(obligatorio, opcional=valor_defecto):\n    # cuerpo\n\n# Llamar con o sin el opcional\nf(1)\nf(1, 5)",
+      "ejemplos": [
+        {
+          "titulo": "Función con un parámetro por defecto",
+          "codigo": "def saludar(nombre, saludo=\"Hola\"):\n    return f\"{saludo}, {nombre}\"\n\nprint(saludar(\"Ana\"))                 # Hola, Ana\nprint(saludar(\"Ana\", \"Buenos días\"))   # Buenos días, Ana",
+          "explicacion": [
+            "<p><code>saludo</code> tiene valor por defecto <code>\"Hola\"</code>.</p>",
+            "<ul><li>Si solo pasas nombre, se usa \"Hola\".</li><li>Si pasas ambos, se usa el que diste.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Función con varios parámetros por defecto",
+          "codigo": "def potencia(base, exponente=2):\n    return base ** exponente\n\nprint(potencia(5))       # 25 (usa exponente=2)\nprint(potencia(5, 3))    # 125\nprint(potencia(2, 10))   # 1024",
+          "explicacion": [
+            "<p>Por defecto, <code>potencia(5)</code> eleva al cuadrado. Pero puedes pasar otro exponente si quieres.</p>",
+            "<p>Este patrón es muy común: parámetros opcionales que ajustan el comportamiento.</p>"
+          ]
+        },
+        {
+          "titulo": "Ejemplo real en análisis numérico",
+          "codigo": "def biseccion(f, a, b, tol=1e-8, max_iter=100):\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol:\n            return c, k\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    return c, max_iter\n\n# Sin tol ni max_iter (usa defaults)\nf = lambda x: x**3 - x - 2\nraiz, iters = biseccion(f, 1, 2)\nprint(f\"Raíz: {raiz:.10f}\")\nprint(f\"Iteraciones: {iters}\")\n\n# Con tol específica\nraiz, iters = biseccion(f, 1, 2, tol=1e-12)\nprint(f\"Raíz: {raiz:.12f}\")",
+          "explicacion": [
+            "<p>Este es el patrón estándar en análisis numérico. Casi todos los métodos tienen <code>tol</code> y <code>max_iter</code> como parámetros opcionales.</p>",
+            "<p>El usuario no tiene que pensar en ellos si no quiere.</p>"
+          ]
+        },
+        {
+          "titulo": "El error clásico: mutables por defecto",
+          "codigo": "# ¡MAL! El valor por defecto es la MISMA lista\n# def agregar(x, lista=[]):\n#     lista.append(x)\n#     return lista\n#\n# print(agregar(1))   # [1]\n# print(agregar(2))   # [1, 2]  ¡No esperabas esto!\n\n# CORRECTO: usar None como default\ndef agregar(x, lista=None):\n    if lista is None:\n        lista = []\n    lista.append(x)\n    return lista\n\nprint(agregar(1))   # [1]\nprint(agregar(2))   # [2]  ¡Ahora sí!",
+          "explicacion": [
+            "<p><strong>Error muy famoso de Python:</strong> los valores por defecto se evalúan <strong>una sola vez</strong>, cuando se define la función.</p>",
+            "<p>Si el default es una lista, se comparte entre todas las llamadas. Cada llamada añade a la misma lista.</p>",
+            "<p><strong>Solución:</strong> usa <code>None</code> como default y crea la lista dentro.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "def f(a=1, b):",
+          "razon": "Los parámetros con default deben ir al final. Si no, da SyntaxError.",
+          "correcto": "def f(b, a=1):"
+        },
+        {
+          "error": "def agregar(x, lista=[]):",
+          "razon": "La lista default se comparte entre llamadas. Es un bug famoso.",
+          "correcto": "def agregar(x, lista=None):\n    if lista is None:\n        lista = []"
+        },
+        {
+          "error": "Pensar que el default se recalcula en cada llamada",
+          "razon": "El default se evalúa una sola vez, al definir la función.",
+          "correcto": "Si necesitas un valor nuevo cada vez, usa None."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> los defaults son ideales para parámetros opcionales: <code>tol=1e-8</code>, <code>max_iter=100</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> nunca uses <code>[]</code>, <code>{}</code> o <code>set()</code> como default. Usa <code>None</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si un default es un número (inmutable), no hay problema. Solo los mutables dan problemas.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, los defaults bien elegidos hacen que tus funciones sean fáciles de usar.</p>"
+      ],
+      "resumen": "Los valores por defecto hacen parámetros opcionales. Van al final de la lista. Nunca uses listas o dicts como default: usa None y créalos dentro."
+    },
+    {
+      "id": "args-kwargs",
+      "numero": "4",
+      "titulo": "*args y **kwargs — Argumentos variables",
+      "emoji": "🎒",
+      "subtitulo": "Funciones que aceptan cualquier número de argumentos",
+      "que_es": [
+        "<p>A veces no sabes cuántos argumentos recibirá una función. Python tiene dos sintaxis especiales para esto:</p>",
+        "<ul><li><code>*args</code> → recibe un número variable de argumentos <strong>posicionales</strong>, empaquetados en una tupla.</li><li><code>**kwargs</code> → recibe un número variable de argumentos <strong>con nombre</strong>, empaquetados en un diccionario.</li></ul>",
+        "<p>Los nombres <code>args</code> y <code>kwargs</code> son convenciones. El <code>*</code> y <code>**</code> son lo importante.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usan cuando:</p>",
+        "<ul><li><strong>No sabes cuántos argumentos llegarán</strong>: funciones de suma, print, logging.</li><li><strong>Quieres pasar opciones con nombre</strong>: configuraciones, parámetros opcionales.</li><li><strong>Envuelves otras funciones</strong>: decoradores, wrappers.</li></ul>",
+        "<p>En la práctica, los usarás sobre todo al leer código de otros. Python los usa mucho internamente.</p>"
+      ],
+      "sintaxis": "def f(*args):\n    # args es una tupla\n    for x in args:\n        print(x)\n\ndef g(**kwargs):\n    # kwargs es un diccionario\n    for k, v in kwargs.items():\n        print(f\"{k} = {v}\")\n\ndef h(a, b, *args, **kwargs):\n    # combinación\n    pass",
+      "ejemplos": [
+        {
+          "titulo": "*args: cualquier número de argumentos",
+          "codigo": "def sumar_todo(*args):\n    print(\"Recibí:\", args)\n    return sum(args)\n\nprint(sumar_todo(1, 2, 3))         # 6\nprint(sumar_todo(10, 20))          # 30\nprint(sumar_todo(1, 2, 3, 4, 5))   # 15\nprint(sumar_todo())                # 0",
+          "explicacion": [
+            "<p><code>args</code> es una <strong>tupla</strong> con todos los argumentos posicionales que le pases.</p>",
+            "<p>Puedes pasar 0, 1 o 100 argumentos. La función se adapta.</p>"
+          ]
+        },
+        {
+          "titulo": "**kwargs: argumentos con nombre",
+          "codigo": "def mostrar_info(**kwargs):\n    for clave, valor in kwargs.items():\n        print(f\"{clave}: {valor}\")\n\nmostrar_info(nombre=\"Ana\", edad=25, ciudad=\"Madrid\")\n# nombre: Ana\n# edad: 25\n# ciudad: Madrid",
+          "explicacion": [
+            "<p><code>kwargs</code> es un <strong>diccionario</strong> con los argumentos que pasaste con nombre.</p>",
+            "<p>Es muy útil para configuraciones flexibles: <code>crear(nombre=\"x\", color=\"rojo\", tamano=10)</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Combinación de ambos",
+          "codigo": "def funcion(a, b, *args, **kwargs):\n    print(\"a:\", a)\n    print(\"b:\", b)\n    print(\"args:\", args)\n    print(\"kwargs:\", kwargs)\n\nfuncion(1, 2, 3, 4, 5, x=10, y=20)\n# a: 1\n# b: 2\n# args: (3, 4, 5)\n# kwargs: {'x': 10, 'y': 20}",
+          "explicacion": [
+            "<p>El orden en la definición importa:</p>",
+            "<ol><li>Parámetros normales.</li><li><code>*args</code>.</li><li>Parámetros con default.</li><li><code>**kwargs</code>.</li></ol>",
+            "<p>Los posicionales van a <code>args</code>, los nombrados a <code>kwargs</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Desempaquetar al llamar",
+          "codigo": "def f(a, b, c):\n    return a + b + c\n\n# Lista/tupla → argumentos posicionales\nvalores = [1, 2, 3]\nprint(f(*valores))   # 6\n\n# Dict → argumentos con nombre\nopciones = {\"a\": 1, \"b\": 2, \"c\": 3}\nprint(f(**opciones))   # 6",
+          "explicacion": [
+            "<p>El <code>*</code> y <code>**</code> también sirven al <strong>llamar</strong> una función:</p>",
+            "<ul><li><code>f(*lista)</code> pasa los elementos de la lista como argumentos posicionales.</li><li><code>f(**dict)</code> pasa los pares clave-valor como argumentos con nombre.</li></ul>",
+            "<p>Muy útil cuando tienes los argumentos en una estructura y no quieres escribirlos uno a uno.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Olvidar el * o **",
+          "razon": "Sin el asterisco, Python no sabe que quieres empaquetar.",
+          "correcto": "def f(*args):   y   def g(**kwargs):"
+        },
+        {
+          "error": "def f(**kwargs, *args):",
+          "razon": "El orden importa. *args debe ir antes de **kwargs.",
+          "correcto": "def f(*args, **kwargs):"
+        },
+        {
+          "error": "Confundir args (tupla) con kwargs (dict)",
+          "razon": "args es tupla, kwargs es diccionario. No son intercambiables.",
+          "correcto": "args → tupla de posicionales\nkwargs → dict de nombrados"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> los nombres <code>args</code> y <code>kwargs</code> son convención. El <code>*</code> y <code>**</code> son lo importante.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en la práctica, casi nunca los usarás en tus propias funciones. Pero los verás en código de otros.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si necesitas <code>*args</code> en una función numérica, probablemente estás complicando algo.</p>",
+        "<p>💡 <strong>Truco 4:</strong> cuando llames a una función con <code>*</code> o <code>**</code>, verifica que los elementos coincidan con los parámetros.</p>"
+      ],
+      "resumen": "*args recibe argumentos posicionales en una tupla. **kwargs recibe argumentos nombrados en un dict. También sirven al llamar: f(*lista) y f(**dict)."
+    },
+    {
+      "id": "scope",
+      "numero": "5",
+      "titulo": "Scope — Ámbito de las variables",
+      "emoji": "🎯",
+      "subtitulo": "Dónde vive cada variable y desde dónde se puede usar",
+      "que_es": [
+        "<p>El <strong>scope</strong> (ámbito) es la región del código donde una variable es visible. Una variable solo existe dentro del bloque donde se creó.</p>",
+        "<p>Hay dos scopes básicos que debes conocer:</p>",
+        "<ul><li><strong>Global</strong>: variables definidas fuera de cualquier función. Visibles desde casi cualquier sitio.</li><li><strong>Local</strong>: variables definidas dentro de una función. Solo visibles dentro de esa función.</li></ul>",
+        "<p>Cuando una función termina, sus variables locales se destruyen. La próxima vez que la llames, se crean de nuevo desde cero.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Entender el scope es fundamental para:</p>",
+        "<ul><li><strong>Evitar bugs</strong>: modificar una variable equivocada.</li><li><strong>Diseñar mejor</strong>: funciones que no dependen del exterior.</li><li><strong>Usar global</strong> cuando de verdad hace falta.</li><li><strong>Entender errores</strong>: NameError, UnboundLocalError.</li></ul>"
+      ],
+      "sintaxis": "# Variable global\nx = 10\n\ndef f():\n    # Variable local (solo existe aquí dentro)\n    y = 20\n    print(x)   # OK, puede leer la global\n    print(y)   # OK, es local\n\nf()\n# print(y)   # Error: y no existe fuera de f\n\n# Para modificar una global desde dentro:\ndef g():\n    global x\n    x = 100\n\ng()\nprint(x)   # 100",
+      "ejemplos": [
+        {
+          "titulo": "Variables locales vs globales",
+          "codigo": "mensaje = \"global\"\n\ndef funcion():\n    mensaje = \"local\"   # esta es otra variable\n    print(\"Dentro:\", mensaje)\n\nfuncion()\nprint(\"Fuera:\", mensaje)",
+          "explicacion": [
+            "<p>Hay dos variables <code>mensaje</code>, una global y otra local. No se pisan.</p>",
+            "<ul><li>Dentro de la función, se usa la local.</li><li>Fuera, se usa la global.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Leer la global desde dentro",
+          "codigo": "contador = 0\n\ndef mostrar():\n    # Solo lee, no modifica\n    print(\"Contador:\", contador)\n\nmostrar()   # Contador: 0\ncontador = 10\nmostrar()   # Contador: 10",
+          "explicacion": [
+            "<p>Una función puede <strong>leer</strong> variables globales sin problema.</p>",
+            "<p>Lo que no puede hacer sin <code>global</code> es <strong>modificarlas</strong>.</p>"
+          ]
+        },
+        {
+          "titulo": "El error clásico: modificar sin global",
+          "codigo": "# ESTO DA ERROR\ncontador = 0\n\ndef incrementar():\n    contador = contador + 1   # UnboundLocalError\n\n# Python ve la asignación y crea una local 'contador',\n# pero intenta leerla antes de asignarla.\n\n# CORRECTO:\ndef incrementar_ok():\n    global contador\n    contador = contador + 1\n\nincrementar_ok()\nprint(contador)   # 1",
+          "explicacion": [
+            "<p>Si asignas a una variable dentro de una función, Python la considera local.</p>",
+            "<p>Si intentas leerla antes de asignarla, error.</p>",
+            "<p><strong>Solución:</strong> declara <code>global contador</code> al inicio de la función.</p>"
+          ]
+        },
+        {
+          "titulo": "Buenas prácticas: evitar global",
+          "codigo": "# MAL: función que depende de variables globales\n# Está acoplada al exterior, difícil de probar\n\n# BIEN: función que recibe y devuelve\ndef incrementar(contador):\n    return contador + 1\n\ncontador = 0\ncontador = incrementar(contador)\nprint(contador)   # 1",
+          "explicacion": [
+            "<p>Es mejor que las funciones reciban sus datos por parámetros y devuelvan resultados.</p>",
+            "<p>Así la función es independiente, más fácil de probar y reutilizar.</p>",
+            "<p>En la práctica, casi nunca deberías necesitar <code>global</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Modificar una variable global sin declararla global",
+          "razon": "Python crea una local, no modifica la global.",
+          "correcto": "Declara global x al inicio de la función."
+        },
+        {
+          "error": "Usar variables de una función fuera de ella",
+          "razon": "Las variables locales no existen fuera. Da NameError.",
+          "correcto": "Devuelve el valor con return y úsalo fuera."
+        },
+        {
+          "error": "Depender mucho de variables globales",
+          "razon": "El código se vuelve difícil de entender y probar.",
+          "correcto": "Pasa parámetros y devuelve resultados."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> si necesitas <code>global</code> para algo, probablemente hay una forma mejor. Replantéalo.</p>",
+        "<p>💡 <strong>Truco 2:</strong> las funciones puras (reciben y devuelven, no tocan nada externo) son más fáciles de probar.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, evita global. Cada método debe recibir sus parámetros y devolver sus resultados.</p>"
+      ],
+      "resumen": "Las variables globales se definen fuera de funciones, las locales dentro. Las funciones pueden leer globales, pero no modificarlas sin 'global'. Evita depender de globales: pasa parámetros y devuelve resultados."
+    },
+    {
+      "id": "lambda",
+      "numero": "6",
+      "titulo": "lambda — Funciones anónimas",
+      "emoji": "⚡",
+      "subtitulo": "Funciones de una línea sin nombre",
+      "que_es": [
+        "<p>Una <strong>lambda</strong> es una función anónima (sin nombre) que se escribe en una sola línea. Se usa para funciones muy simples que solo necesitas una vez.</p>",
+        "<p>La sintaxis es: <code>lambda parametros: expresion</code>. La expresión se evalúa y se devuelve automáticamente (no hace falta <code>return</code>).</p>",
+        "<p>Son especialmente útiles para pasar funciones como argumento a otras funciones (como <code>sort</code>, <code>map</code>, <code>filter</code>).</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Las lambdas se usan para:</p>",
+        "<ul><li><strong>Funciones matemáticas simples</strong>: <code>f = lambda x: x**2</code>.</li><li><strong>Claves de ordenamiento</strong>: <code>sorted(lista, key=lambda x: x[1])</code>.</li><li><strong>Filtros rápidos</strong>: <code>filter(lambda x: x > 0, numeros)</code>.</li><li><strong>Callbacks</strong>: pasar funciones a otras funciones.</li></ul>",
+        "<p>En análisis numérico son perfectas para definir <code>f(x)</code> y <code>df(x)</code> de forma concisa.</p>"
+      ],
+      "sintaxis": "f = lambda x: x**2\n\n# Es equivalente a:\ndef f(x):\n    return x**2\n\n# Con varios parámetros:\ng = lambda a, b: a + b",
+      "ejemplos": [
+        {
+          "titulo": "Lambda básica",
+          "codigo": "cuadrado = lambda x: x**2\nprint(cuadrado(5))   # 25\n\nsuma = lambda a, b: a + b\nprint(suma(3, 4))    # 7\n\nmayor = lambda a, b: a if a > b else b\nprint(mayor(10, 5))  # 10",
+          "explicacion": [
+            "<p>Se definen en una línea. El resultado de la expresión se devuelve automáticamente.</p>",
+            "<p>Pueden tener varios parámetros, separados por comas.</p>",
+            "<p>Pueden usar expresiones condicionales: <code>a if a > b else b</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Lambda en sort",
+          "codigo": "puntos = [(3, 5), (1, 2), (4, 1), (2, 8)]\n\n# Ordenar por el segundo elemento\npuntos.sort(key=lambda p: p[1])\nprint(puntos)   # [(4, 1), (1, 2), (3, 5), (2, 8)]\n\n# Ordenar por la suma\npuntos.sort(key=lambda p: p[0] + p[1])\nprint(puntos)   # [(4, 1), (1, 2), (3, 5), (2, 8)]",
+          "explicacion": [
+            "<p><code>key</code> recibe una función que se aplica a cada elemento para obtener la clave de ordenamiento.</p>",
+            "<p>Con lambda, dices en una línea qué usar para ordenar.</p>"
+          ]
+        },
+        {
+          "titulo": "Lambda con map y filter",
+          "codigo": "numeros = [1, 2, 3, 4, 5]\n\n# map: aplicar una función a cada elemento\ncuadrados = list(map(lambda x: x**2, numeros))\nprint(cuadrados)   # [1, 4, 9, 16, 25]\n\n# filter: quedarse con los que cumplan\npares = list(filter(lambda x: x % 2 == 0, numeros))\nprint(pares)       # [2, 4]",
+          "explicacion": [
+            "<p><code>map</code> y <code>filter</code> reciben una función y una colección.</p>",
+            "<p><code>map</code> aplica la función a cada elemento. <code>filter</code> se queda con los que devuelven True.</p>",
+            "<p>En Python moderno, se prefieren las comprensiones, pero map/filter con lambdas siguen apareciendo en código de otros.</p>"
+          ]
+        },
+        {
+          "titulo": "Lambda en análisis numérico",
+          "codigo": "f = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\n# Usar en un método de Newton\ndef newton(f, df, x0, tol=1e-10):\n    x = x0\n    for _ in range(100):\n        x_nuevo = x - f(x) / df(x)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo\n        x = x_nuevo\n    return x\n\nraiz = newton(f, df, 1.5)\nprint(f\"Raíz: {raiz:.10f}\")",
+          "explicacion": [
+            "<p>Definir <code>f</code> y <code>df</code> con lambda es limpio y conciso.</p>",
+            "<p>Luego se pasan a la función del método como argumentos.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Lambdas complejas con muchas operaciones",
+          "razon": "Si la lambda tiene lógica complicada, mejor usa def. Las lambdas son para casos simples.",
+          "correcto": "def f(x): ...   para lógica compleja"
+        },
+        {
+          "error": "Lambdas con return",
+          "razon": "La lambda devuelve automáticamente la expresión. No lleva return.",
+          "correcto": "lambda x: x**2   (no lambda x: return x**2)"
+        },
+        {
+          "error": "Lambdas con varias líneas",
+          "razon": "Las lambdas son de una sola expresión. No admiten bloques.",
+          "correcto": "Si necesitas varias líneas, usa def."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa lambda solo si la función es trivial. Si tiene más de una expresión, mejor un def.</p>",
+        "<p>💡 <strong>Truco 2:</strong> lambdas + sorted es una combinación muy potente para ordenar por cualquier criterio.</p>",
+        "<p>💡 <strong>Truco 3:</strong> no asignes lambdas a variables si solo las usas una vez. Pásalas directamente.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, <code>f = lambda x: x**3 - x - 2</code> es muy común. Es conciso y claro.</p>"
+      ],
+      "resumen": "lambda crea funciones anónimas de una línea. Se usan para funciones simples que se pasan como argumento. En análisis numérico, son útiles para definir f y df rápidamente."
+    },
+    {
+      "id": "recursion",
+      "numero": "7",
+      "titulo": "Recursión — Funciones que se llaman a sí mismas",
+      "emoji": "🌀",
+      "subtitulo": "Una técnica elegante para problemas que se repiten",
+      "que_es": [
+        "<p>Una función <strong>recursiva</strong> es una función que se llama a sí misma. Se usa para resolver problemas que se pueden dividir en versiones más pequeñas del mismo problema.</p>",
+        "<p>Toda función recursiva necesita dos partes:</p>",
+        "<ul><li><strong>Caso base</strong>: cuándo parar. Sin esto, la recursión es infinita.</li><li><strong>Caso recursivo</strong>: la llamada a sí misma con un problema más pequeño.</li></ul>",
+        "<p>Python tiene un límite de recursión (por defecto ~1000 llamadas). Si te pasas, da RecursionError.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>La recursión se usa para problemas naturalmente recursivos:</p>",
+        "<ul><li><strong>Matemáticas</strong>: factorial, Fibonacci, potencias.</li><li><strong>Estructuras de datos</strong>: recorrer árboles, listas anidadas.</li><li><strong>Algoritmos</strong>: búsqueda binaria, Quicksort, Merge Sort.</li><li><strong>Problemas combinatorios</strong>: permutaciones, combinaciones.</li></ul>",
+        "<p>En análisis numérico se usa menos, porque suele ser más lenta y consumir más memoria. Pero es bueno conocerla.</p>"
+      ],
+      "sintaxis": "def funcion_recursiva(n):\n    if n <= caso_base:\n        return valor_base   # caso base\n    else:\n        return funcion_recursiva(n - 1)  # caso recursivo",
+      "ejemplos": [
+        {
+          "titulo": "Factorial",
+          "codigo": "def factorial(n):\n    if n <= 1:\n        return 1              # caso base\n    return n * factorial(n - 1)   # caso recursivo\n\nprint(factorial(5))    # 120\nprint(factorial(0))    # 1\nprint(factorial(10))   # 3628800",
+          "explicacion": [
+            "<p>La definición matemática del factorial es recursiva: <code>n! = n × (n-1)!</code>, con <code>0! = 1</code>.</p>",
+            "<p>La función sigue esa definición directamente:</p>",
+            "<ul><li><code>factorial(5)</code> = 5 × factorial(4)</li><li><code>factorial(4)</code> = 4 × factorial(3)</li><li>... hasta factorial(1) = 1 (caso base).</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Fibonacci",
+          "codigo": "def fib(n):\n    if n <= 1:\n        return n\n    return fib(n - 1) + fib(n - 2)\n\nfor i in range(10):\n    print(fib(i), end=\" \")\n# 0 1 1 2 3 5 8 13 21 34",
+          "explicacion": [
+            "<p>La sucesión de Fibonacci se define recursivamente: <code>F(n) = F(n-1) + F(n-2)</code>, con <code>F(0)=0</code>, <code>F(1)=1</code>.</p>",
+            "<p><strong>Ojo:</strong> esta implementación es muy ineficiente. Calcula lo mismo muchas veces. Para n=30 tarda segundos.</p>"
+          ]
+        },
+        {
+          "titulo": "El problema de la eficiencia",
+          "codigo": "# Fibonacci iterativo (mucho más rápido)\ndef fib_iter(n):\n    if n <= 1:\n        return n\n    a, b = 0, 1\n    for _ in range(n - 1):\n        a, b = b, a + b\n    return b\n\nprint(fib_iter(30))   # instantáneo\n\n# Recursivo:\n# print(fib(30))       # ¡tarda varios segundos!",
+          "explicacion": [
+            "<p>La recursión puede ser muy elegante, pero <strong>cara</strong>. Fibonacci recursivo es un ejemplo clásico.</p>",
+            "<p>Para problemas donde la recursión repite cálculos, casi siempre hay una versión iterativa más eficiente.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Olvidar el caso base",
+          "razon": "La recursión no termina. Python da RecursionError después de ~1000 llamadas.",
+          "correcto": "Siempre define un caso base que pare la recursión."
+        },
+        {
+          "error": "El caso base no progresa",
+          "razon": "Si la llamada recursiva no reduce el problema, nunca llegarás al caso base.",
+          "correcto": "Asegúrate de que cada llamada acerca al caso base (n-1, n//2, etc.)."
+        },
+        {
+          "error": "Usar recursión donde la iteración es más simple",
+          "razon": "En Python, la recursión suele ser más lenta y consumir más memoria que un bucle.",
+          "correcto": "Si el problema es simple, usa un for o while."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> en Python casi siempre la iteración es mejor que la recursión. La recursión se usa en casos específicos.</p>",
+        "<p>💡 <strong>Truco 2:</strong> si usas recursión, verifica que el caso base se alcance y que el problema se reduzca en cada paso.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, casi nunca necesitas recursión. Los métodos iterativos se implementan con bucles.</p>"
+      ],
+      "resumen": "La recursión es una función que se llama a sí misma. Necesita un caso base y un caso recursivo. Es elegante pero suele ser menos eficiente que la iteración en Python."
+    },
+    {
+      "id": "docstrings",
+      "numero": "8",
+      "titulo": "Docstrings — Documentar funciones",
+      "emoji": "📖",
+      "subtitulo": "Explicar qué hace tu función sin que sea un comentario",
+      "que_es": [
+        "<p>Un <strong>docstring</strong> es un texto que describe qué hace una función, sus parámetros y su valor de retorno. Se escribe entre triple comilla <code>\"\"\"...\"\"\"</code> justo después del <code>def</code>.</p>",
+        "<p>A diferencia de los comentarios (<code>#</code>), los docstrings son <strong>accesibles en tiempo de ejecución</strong>. Puedes verlos con <code>help(funcion)</code> o <code>funcion.__doc__</code>.</p>",
+        "<p>Los docstrings son la forma estándar de documentar en Python. Los editores y herramientas los muestran automáticamente.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Documentar con docstrings te da:</p>",
+        "<ul><li><strong>Ayuda integrada</strong>: <code>help(f)</code> muestra el docstring.</li><li><strong>Autocompletado</strong>: los editores muestran el docstring al escribir.</li><li><strong>Documentación generada</strong>: herramientas como Sphinx la convierten en HTML.</li><li><strong>Código autodocumentado</strong>: quien lea tu función sabe qué hace sin leer el cuerpo.</li></ul>"
+      ],
+      "sintaxis": "def funcion(a, b):\n    \"\"\"Resumen breve de qué hace.\n    \n    Descripción más larga si hace falta.\n    \n    Args:\n        a: descripción del parámetro a.\n        b: descripción del parámetro b.\n    \n    Returns:\n        Descripción del valor devuelto.\n    \"\"\"\n    return a + b",
+      "ejemplos": [
+        {
+          "titulo": "Docstring básico",
+          "codigo": "def area_circulo(radio):\n    \"\"\"Calcula el área de un círculo dado su radio.\"\"\"\n    return 3.14159 * radio ** 2\n\nprint(area_circulo(5))\nprint(area_circulo.__doc__)",
+          "explicacion": [
+            "<p>El docstring es una sola línea que describe qué hace la función.</p>",
+            "<p>Con <code>.__doc__</code> accedes al texto. Con <code>help(area_circulo)</code> también.</p>"
+          ]
+        },
+        {
+          "titulo": "Docstring completo",
+          "codigo": "def biseccion(f, a, b, tol=1e-8, max_iter=100):\n    \"\"\"Encuentra una raíz de f(x) = 0 en el intervalo [a, b].\n\n    Usa el método de bisección, que divide el intervalo a la mitad\n    en cada iteración. Requiere que f(a) y f(b) tengan signos opuestos.\n\n    Args:\n        f: función a la que buscarle la raíz.\n        a: extremo izquierdo del intervalo.\n        b: extremo derecho del intervalo.\n        tol: tolerancia del error (default 1e-8).\n        max_iter: número máximo de iteraciones (default 100).\n\n    Returns:\n        Una tupla (raíz, iteraciones) con la aproximación y el número\n        de iteraciones realizadas.\n\n    Raises:\n        ValueError: si f(a) * f(b) >= 0.\n    \"\"\"\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol:\n            return c, k\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    return c, max_iter\n\nhelp(biseccion)",
+          "explicacion": [
+            "<p>Un docstring completo incluye:</p>",
+            "<ul><li><strong>Resumen</strong> breve en la primera línea.</li><li><strong>Descripción</strong> más detallada.</li><li><strong>Args</strong>: qué recibe cada parámetro.</li><li><strong>Returns</strong>: qué devuelve.</li><li><strong>Raises</strong>: qué errores puede lanzar.</li></ul>",
+            "<p>Es el estándar para funciones bien documentadas.</p>"
+          ]
+        },
+        {
+          "titulo": "Ver el docstring de una función interna",
+          "codigo": "print(print.__doc__)\n\nimport math\nprint(\"---\")\nprint(math.sqrt.__doc__)",
+          "explicacion": [
+            "<p>Las funciones de Python también tienen docstrings. Puedes verlos con <code>help()</code>.</p>",
+            "<p>Es una forma rápida de consultar cómo se usa una función sin salir del intérprete.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar # en vez de \"\"\" para documentar",
+          "razon": "Los comentarios # no son accesibles desde el código. Los docstrings sí.",
+          "correcto": "Usa \"\"\"texto\"\"\" justo después del def."
+        },
+        {
+          "error": "Docstring después de código, no al inicio",
+          "razon": "El docstring debe ser la primera línea del cuerpo. Si va después, no se reconoce.",
+          "correcto": "def f():\n    \"\"\"docstring\"\"\"\n    # código"
+        },
+        {
+          "error": "Docstrings que repiten el código",
+          "razon": "El docstring debe explicar QUÉ hace, no CÓMO. El cómo está en el código.",
+          "correcto": "Explica el propósito, los parámetros y qué devuelve."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> escribe el docstring antes del código. Te ayuda a pensar qué debe hacer la función.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para funciones simples, un docstring de una línea basta.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, documenta la fórmula matemática en el docstring:</p>",
+        "<pre class='cmd-sintaxis'>def newton(f, df, x0, tol=1e-10):\n    \"\"\"Método de Newton-Raphson.\n    \n    Itera x_{k+1} = x_k - f(x_k) / f'(x_k) hasta convergencia.\n    \"\"\"</pre>",
+        "<p>💡 <strong>Truco 4:</strong> herramientas como Sphinx o pdoc generan documentación HTML a partir de los docstrings.</p>"
+      ],
+      "resumen": "Los docstrings son texto entre \"\"\" que documenta funciones. Son accesibles vía help() y .__doc__. Incluyen resumen, args, returns y raises. Son la forma estándar de documentar en Python."
+    }
+  ]
+}
