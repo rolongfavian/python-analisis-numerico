@@ -1,23 +1,34 @@
 /* ============================================
-   guia.js — Cargador de contenido (versión solo-guía)
-   Vive en /guia/, lee de ../contenido/
+   guia.js — Cargador de partes de la guía
+   v1 - Lee parte-XX.json con el nuevo formato
    ============================================ */
 
 (function () {
   'use strict';
 
-  const CONTENT_PATH = '../contenido/';
-  let currentLevel = null;
+  const CONTENT_PATH = 'contenido/';
+
+  // Lista de partes disponibles (a medida que las crees, las añades aquí)
+  const PARTES = [
+    { id: 1, titulo: 'Primeros pasos', emoji: '🐣' }
+    // { id: 2, titulo: 'Tipos de datos', emoji: '🔢' },
+    // { id: 3, titulo: 'Operaciones', emoji: '➕' },
+    // ...
+  ];
+
   let cache = {};
 
-  async function loadLevel(levelId) {
-    if (cache[levelId]) return cache[levelId];
-    const file = `nivel-${String(levelId).padStart(2, '0')}.json`;
+  // ============================================================
+  // CARGA
+  // ============================================================
+  async function loadParte(parteId) {
+    if (cache[parteId]) return cache[parteId];
+    const file = `parte-${String(parteId).padStart(2, '0')}.json`;
     try {
       const res = await fetch(CONTENT_PATH + file);
       if (!res.ok) throw new Error('No se pudo cargar ' + file);
       const data = await res.json();
-      cache[levelId] = data;
+      cache[parteId] = data;
       return data;
     } catch (e) {
       console.error('[guia] Error:', e);
@@ -25,6 +36,9 @@
     }
   }
 
+  // ============================================================
+  // MATH
+  // ============================================================
   function renderMath(element) {
     if (!element) return;
     if (window.MathJax && window.MathJax.typesetPromise) {
@@ -34,92 +48,166 @@
     }
   }
 
-  function renderLevel(container, data) {
-    if (!data || !data.niveles) {
-      container.innerHTML = '<div id="loading-guide">Error al cargar el contenido.</div>';
+  // ============================================================
+  // SIDEBAR
+  // ============================================================
+  function renderSidebar() {
+    const cont = document.getElementById('sidebar-partes');
+    if (!cont) return;
+    cont.innerHTML = '';
+
+    PARTES.forEach(p => {
+      const div = document.createElement('div');
+      div.className = 'menu-group';
+      div.innerHTML = `
+        <button class="menu-group-header" onclick="showParte(${p.id}); closeMenu();">
+          <span>${p.emoji} Parte ${p.id} · ${escapeHtml(p.titulo)}</span>
+        </button>
+      `;
+      cont.appendChild(div);
+    });
+  }
+
+  // ============================================================
+  // RENDERIZAR PARTE
+  // ============================================================
+  function renderParte(container, data) {
+    if (!data || !data.temas) {
+      container.innerHTML = '<div id="loading-guide">Error al cargar la parte.</div>';
       return;
     }
 
     let html = '';
-    data.niveles.forEach(nivel => {
-      html += `<div class="level-section" id="${nivel.id}">`;
-      html += `<h2><span class="level-num">${nivel.numero}</span> ${nivel.titulo}</h2>`;
-      if (nivel.descripcion) {
-        html += `<p class="level-desc">${nivel.descripcion}</p>`;
-      }
-      (nivel.comandos || []).forEach((cmd, i) => {
-        html += renderCommand(cmd, nivel.id, i);
-      });
-      html += `</div>`;
+
+    // Encabezado de la parte
+    html += `<div class="parte-header">`;
+    html += `<div class="parte-emoji">${data.emoji || '📚'}</div>`;
+    html += `<h1>Parte ${data.parte}: ${escapeHtml(data.titulo)}</h1>`;
+    if (data.descripcion) {
+      html += `<p>${escapeHtml(data.descripcion)}</p>`;
+    }
+    html += `</div>`;
+
+    // Temas
+    data.temas.forEach(tema => {
+      html += renderTema(tema, data.parte);
     });
 
     container.innerHTML = html;
     renderMath(container);
   }
 
-  function renderCommand(cmd, levelId, index) {
-    const id = `cmd-${levelId}-${index}`;
-    let html = `<div class="cmd-card" id="${id}">`;
+  function renderTema(tema, parteId) {
+    const id = `tema-${parteId}-${tema.id}`;
+    let html = `<article class="tema" id="${id}">`;
 
-    html += `<div class="cmd-header" onclick="toggleCmd('${id}')">`;
-    html += `<div class="cmd-title">`;
-    if (cmd.nombre) {
-      html += `<span class="cmd-name">${escapeHtml(cmd.nombre)}</span>`;
-      if (cmd.alias) html += ` <span style="color:var(--text-dim)">— ${escapeHtml(cmd.alias)}</span>`;
-    } else {
-      html += escapeHtml(cmd.titulo || '');
+    // Header del tema
+    html += `<div class="tema-header">`;
+    html += `<div class="tema-numero">${tema.numero}</div>`;
+    html += `<div class="tema-titulo-bloque">`;
+    html += `<h2>${tema.emoji || ''} ${escapeHtml(tema.titulo)}</h2>`;
+    if (tema.subtitulo) {
+      html += `<p class="tema-subtitulo">${escapeHtml(tema.subtitulo)}</p>`;
     }
     html += `</div>`;
-
-    html += `<div class="cmd-badges">`;
-    if (cmd.basico) html += `<span class="cmd-badge badge-basic">Básico</span>`;
-    if (cmd.intermedio) html += `<span class="cmd-badge badge-inter">+ Info</span>`;
-    if (cmd.avanzado) html += `<span class="cmd-badge badge-advanced">Avanzado</span>`;
     html += `</div>`;
 
-    html += `<span class="cmd-chevron">▶</span>`;
-    html += `</div>`;
+    // Qué es
+    if (tema.que_es && tema.que_es.length > 0) {
+      html += `<section class="tema-seccion">`;
+      html += `<h3 class="seccion-titulo">💡 ¿Qué es?</h3>`;
+      tema.que_es.forEach(p => { html += p; });
+      html += `</section>`;
+    }
 
-    html += `<div class="cmd-body">`;
+    // Para qué sirve
+    if (tema.para_que_sirve && tema.para_que_sirve.length > 0) {
+      html += `<section class="tema-seccion">`;
+      html += `<h3 class="seccion-titulo">🎯 ¿Para qué sirve?</h3>`;
+      tema.para_que_sirve.forEach(p => { html += p; });
+      html += `</section>`;
+    }
 
-    if (cmd.basico) {
-      html += `<div class="cmd-layer cmd-layer-basic">`;
-      html += `<div class="cmd-layer-title">Qué es y cómo se usa</div>`;
-      html += cmd.basico;
+    // Sintaxis
+    if (tema.sintaxis) {
+      html += `<section class="tema-seccion">`;
+      html += `<h3 class="seccion-titulo">✍️ Sintaxis</h3>`;
+      html += `<pre class="bloque-sintaxis"><code>${escapeHtml(tema.sintaxis)}</code></pre>`;
+      html += `</section>`;
+    }
+
+    // Ejemplos
+    if (tema.ejemplos && tema.ejemplos.length > 0) {
+      html += `<section class="tema-seccion">`;
+      html += `<h3 class="seccion-titulo">🧪 Ejemplos</h3>`;
+      tema.ejemplos.forEach((ej, i) => {
+        html += `<div class="bloque-ejemplo">`;
+        html += `<div class="ejemplo-titulo">Ejemplo ${i + 1}: ${escapeHtml(ej.titulo)}</div>`;
+        html += `<pre class="bloque-codigo"><code>${escapeHtml(ej.codigo)}</code></pre>`;
+        if (ej.explicacion && ej.explicacion.length > 0) {
+          html += `<div class="ejemplo-explicacion">`;
+          ej.explicacion.forEach(p => { html += p; });
+          html += `</div>`;
+        }
+        html += `</div>`;
+      });
+      html += `</section>`;
+    }
+
+    // Errores comunes
+    if (tema.errores_comunes && tema.errores_comunes.length > 0) {
+      html += `<section class="tema-seccion">`;
+      html += `<h3 class="seccion-titulo">⚠️ Errores comunes</h3>`;
+      tema.errores_comunes.forEach(err => {
+        html += `<div class="bloque-error">`;
+        html += `<div class="error-linea"><span class="error-marca">❌</span><code>${escapeHtml(err.error)}</code></div>`;
+        html += `<div class="error-razon">${escapeHtml(err.razon)}</div>`;
+        html += `<div class="ok-linea"><span class="ok-marca">✅</span><code>${escapeHtml(err.correcto)}</code></div>`;
+        html += `</div>`;
+      });
+      html += `</section>`;
+    }
+
+    // Tips
+    if (tema.tips && tema.tips.length > 0) {
+      html += `<section class="tema-seccion">`;
+      html += `<h3 class="seccion-titulo">💡 Trucos y buenas prácticas</h3>`;
+      tema.tips.forEach(t => { html += t; });
+      html += `</section>`;
+    }
+
+    // Resumen
+    if (tema.resumen) {
+      html += `<div class="bloque-resumen">`;
+      html += `<strong>📌 En resumen:</strong> ${tema.resumen}`;
       html += `</div>`;
     }
-    if (cmd.intermedio) {
-      html += `<div class="cmd-layer cmd-layer-inter">`;
-      html += `<div class="cmd-layer-title">Profundizando</div>`;
-      html += cmd.intermedio;
-      html += `</div>`;
-    }
-    if (cmd.avanzado) {
-      html += `<div class="cmd-layer cmd-layer-advanced">`;
-      html += `<div class="cmd-layer-title">Nivel técnico</div>`;
-      html += cmd.avanzado;
-      html += `</div>`;
-    }
 
-    if (cmd.codigo) {
-      html += `<div class="codigo-solo-lectura">`;
-      html += `<div class="codigo-label">${escapeHtml(cmd.etiquetaCodigo || 'Ejemplo')}</div>`;
-      html += `<pre class="codigo-bloque"><code>${escapeHtml(cmd.codigo)}</code></pre>`;
-      html += `</div>`;
-    }
-
-    html += `</div>`;
-    html += `</div>`;
+    html += `</article>`;
     return html;
   }
 
-  function toggleCmd(id) {
-    const card = document.getElementById(id);
-    if (!card) return;
-    card.classList.toggle('expanded');
-    if (card.classList.contains('expanded')) renderMath(card);
+  // ============================================================
+  // NAVEGACIÓN
+  // ============================================================
+  async function showParte(parteId) {
+    const container = document.getElementById('guide-content');
+    if (!container) return;
+
+    container.innerHTML = '<div id="loading-guide">Cargando parte...</div>';
+    const data = await loadParte(parteId);
+    if (!data) {
+      container.innerHTML = `<div id="loading-guide">Error al cargar la parte ${parteId}.</div>`;
+      return;
+    }
+
+    renderParte(container, data);
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }
 
+  // ============================================================
+  // UTILIDADES
+  // ============================================================
   function escapeHtml(str) {
     return String(str)
       .replace(/&/g, '&amp;')
@@ -129,27 +217,20 @@
       .replace(/'/g, '&#039;');
   }
 
-  async function showLevel(levelId) {
-    const container = document.getElementById('guide-content');
-    if (!container) return;
-    container.innerHTML = '<div id="loading-guide">Cargando nivel...</div>';
-    const data = await loadLevel(levelId);
-    if (!data) {
-      container.innerHTML = '<div id="loading-guide">Error al cargar el nivel ' + levelId + '.</div>';
-      return;
-    }
-    currentLevel = levelId;
-    renderLevel(container, data);
+  // ============================================================
+  // INIT
+  // ============================================================
+  function init() {
+    renderSidebar();
+    showParte(1);
   }
 
-  function initGuide() { showLevel(1); }
-
-  window.showLevel = showLevel;
-  window.toggleCmd = toggleCmd;
+  window.showParte = showParte;
+  window.PARTES_GUIA = PARTES;
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', initGuide);
+    document.addEventListener('DOMContentLoaded', init);
   } else {
-    initGuide();
+    init();
   }
 })();
