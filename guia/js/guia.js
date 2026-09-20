@@ -11,8 +11,8 @@
   // Lista de partes disponibles (a medida que las crees, las añades aquí)
   const PARTES = [
     { id: 1, titulo: 'Primeros pasos', emoji: '🐣' }
-    // { id: 2, titulo: 'Tipos de datos', emoji: '🔢' },
-    // { id: 3, titulo: 'Operaciones', emoji: '➕' },
+    { id: 2, titulo: 'Tipos de datos', emoji: '🔢' },
+    { id: 3, titulo: 'Operaciones', emoji: '➕' },
     // ...
   ];
 
