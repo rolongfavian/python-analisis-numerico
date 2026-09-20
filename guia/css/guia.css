@@ -685,3 +685,35 @@ header.guide-header p {
 
   #view-bar .title { display: none; }
 }
+/* ============================================================
+   BUSCADOR — estilos adicionales
+   ============================================================ */
+.buscador-header {
+  padding: 8px 18px 6px;
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+  border-bottom: 1px solid var(--border);
+  background: var(--bg-panel);
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.buscador-hint {
+  margin-top: 1rem;
+  font-size: 0.78rem;
+  line-height: 1.8;
+}
+
+.buscador-hint code {
+  background: var(--bg-code);
+  border: 1px solid var(--border);
+  padding: 2px 6px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 0.8em;
+  color: var(--code-function);
+  margin: 0 2px;
+}
