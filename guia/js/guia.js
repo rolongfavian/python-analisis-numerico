@@ -13,6 +13,7 @@
     { id: 1, titulo: 'Primeros pasos', emoji: '🐣' }
     { id: 2, titulo: 'Tipos de datos', emoji: '🔢' },
     { id: 3, titulo: 'Operaciones', emoji: '➕' },
+    { id: 4, titulo: 'Control de flujo', emoji: '🔀' }
     // ...
   ];
 
