@@ -16,7 +16,12 @@
     { id: 4, titulo: 'Control de flujo', emoji: '🔀' },
     { id: 5, titulo: 'Colecciones', emoji: '📚' },
     { id: 6, titulo: 'Funciones', emoji: '⚙️' },
-    { id: 7, titulo: 'Módulos y librerías', emoji: '📦' }
+    { id: 7, titulo: 'Módulos y librerías', emoji: '📦' },
+    { id: 8, titulo: 'Errores y excepciones', emoji: '⚠️' },
+    { id: 9, titulo: 'Clases y objetos (POO)', emoji: '🏛️' },
+    { id: 10, titulo: 'Análisis numérico', emoji: '🧮' },
+    { id: 11, titulo: 'Archivos y datos', emoji: '📁' },
+    { id: 12, titulo: 'Recursos extra', emoji: '🎓' }
     // ...
   ];
 

@@ -1,0 +1,610 @@
+{
+  "parte": 11,
+  "titulo": "Archivos y datos",
+  "emoji": "📁",
+  "descripcion": "Los programas no viven aislados: leen y escriben archivos para guardar resultados, procesar datos y comunicarse con otros programas. Aquí aprendes a leer, escribir y manejar archivos de texto, CSV y JSON.",
+  "temas": [
+    {
+      "id": "abrir-archivos",
+      "numero": "1",
+      "titulo": "Abrir y cerrar archivos",
+      "emoji": "📂",
+      "subtitulo": "La puerta de entrada a los datos del disco",
+      "que_es": [
+        "<p>Un <strong>archivo</strong> es un conjunto de datos guardados en el disco, con un nombre y una extensión. Python puede leerlos, escribirlos y modificarlos.</p>",
+        "<p>Para trabajar con un archivo, primero hay que <strong>abrirlo</strong>. Eso crea un objeto de archivo que puedes leer o escribir. Cuando terminas, hay que <strong>cerrarlo</strong> para liberar recursos y garantizar que los datos se guarden.</p>",
+        "<p>Hay varios modos de apertura: lectura (<code>\"r\"</code>), escritura (<code>\"w\"</code>), añadir (<code>\"a\"</code>), y lectura/escritura (<code>\"r+\"</code>).</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Leer y escribir archivos es esencial para:</p>",
+        "<ul><li><strong>Guardar resultados</strong>: que no se pierdan al cerrar el programa.</li><li><strong>Leer datos externos</strong>: CSV, JSON, TXT.</li><li><strong>Procesar información</strong>: logs, configuraciones, reportes.</li><li><strong>Comunicar programas</strong>: unos escriben, otros leen.</li></ul>",
+        "<p>En análisis numérico, se usa para guardar historiales de iteraciones, tablas de resultados, configuraciones de experimentos.</p>"
+      ],
+      "sintaxis": "# Forma tradicional (manual)\nf = open(\"archivo.txt\", \"r\")\n# ... usar f ...\nf.close()\n\n# Forma recomendada (with)\nwith open(\"archivo.txt\", \"r\") as f:\n    # ... usar f ...\n    pass\n# al salir del bloque, se cierra solo\n\n# Modos:\n# \"r\"  → leer (error si no existe)\n# \"w\"  → escribir (borra si existe, crea si no)\n# \"a\"  → añadir (escribe al final)\n# \"r+\" → leer y escribir\n# \"b\"  → binario (rb, wb, etc.)",
+      "ejemplos": [
+        {
+          "titulo": "Abrir y cerrar manualmente",
+          "codigo": "f = open(\"datos.txt\", \"w\")\nf.write(\"Hola\\n\")\nf.write(\"Mundo\\n\")\nf.close()\n\nprint(\"Archivo escrito y cerrado\")\n\n# Ahora leerlo\nf = open(\"datos.txt\", \"r\")\ncontenido = f.read()\nf.close()\n\nprint(contenido)",
+          "explicacion": [
+            "<p>Con <code>open</code> abres el archivo. Con <code>close</code> lo cierras.</p>",
+            "<p>Si olvidas cerrarlo, los datos pueden no guardarse bien o el archivo queda bloqueado.</p>"
+          ]
+        },
+        {
+          "titulo": "Forma recomendada: with",
+          "codigo": "with open(\"datos.txt\", \"w\") as f:\n    f.write(\"Hola\\n\")\n    f.write(\"Mundo\\n\")\n\n# El archivo se cierra automáticamente aquí\n\nwith open(\"datos.txt\", \"r\") as f:\n    contenido = f.read()\n\nprint(contenido)",
+          "explicacion": [
+            "<p>Con <code>with</code>, Python cierra el archivo automáticamente al salir del bloque.</p>",
+            "<p>Incluso si hay un error dentro del bloque, el archivo se cierra. Es la forma recomendada.</p>"
+          ]
+        },
+        {
+          "titulo": "Modo 'a': añadir sin borrar",
+          "codigo": "with open(\"log.txt\", \"w\") as f:\n    f.write(\"Inicio del programa\\n\")\n\nwith open(\"log.txt\", \"a\") as f:\n    f.write(\"Paso 1 completado\\n\")\n\nwith open(\"log.txt\", \"a\") as f:\n    f.write(\"Paso 2 completado\\n\")\n\nwith open(\"log.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p>El modo <code>\"w\"</code> borra el archivo si ya existe. El modo <code>\"a\"</code> añade al final sin borrar.</p>",
+            "<p>Muy útil para logs: vas añadiendo líneas sin perder lo anterior.</p>"
+          ]
+        },
+        {
+          "titulo": "Manejo de errores al abrir",
+          "codigo": "try:\n    with open(\"no_existe.txt\", \"r\") as f:\n        contenido = f.read()\nexcept FileNotFoundError:\n    print(\"El archivo no existe\")\nexcept PermissionError:\n    print(\"No tienes permisos\")",
+          "explicacion": [
+            "<p>Si el archivo no existe (modo <code>\"r\"</code>), Python lanza <code>FileNotFoundError</code>.</p>",
+            "<p>Es importante capturar estos errores para que el programa no se caiga.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Olvidar cerrar el archivo",
+          "razon": "Los datos pueden no guardarse o el archivo queda bloqueado.",
+          "correcto": "Usa with, que cierra solo."
+        },
+        {
+          "error": "Abrir con \"w\" un archivo que querías leer",
+          "razon": "El modo \"w\" borra el contenido si el archivo existe.",
+          "correcto": "\"r\" para leer, \"w\" para escribir desde cero, \"a\" para añadir."
+        },
+        {
+          "error": "Abrir con \"r\" un archivo que no existe",
+          "razon": "Da FileNotFoundError.",
+          "correcto": "Verifica antes o usa try/except."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> siempre usa <code>with</code>. Es la forma recomendada y evita olvidos.</p>",
+        "<p>💡 <strong>Truco 2:</strong> el modo <code>\"w\"</code> borra sin preguntar. Ten cuidado.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, guarda resultados en archivos para no recalcular todo cada vez.</p>"
+      ],
+      "resumen": "Se abren archivos con open(modo). El modo \"r\" lee, \"w\" escribe (borra), \"a\" añade. Siempre se cierran con with, que lo hace automáticamente y maneja errores."
+    },
+    {
+      "id": "leer-archivos",
+      "numero": "2",
+      "titulo": "Leer archivos",
+      "emoji": "📖",
+      "subtitulo": "Las tres formas de leer un archivo",
+      "que_es": [
+        "<p>Una vez abierto un archivo en modo lectura, tienes varias formas de acceder a su contenido:</p>",
+        "<ul><li><code>f.read()</code> → todo el contenido como un string.</li><li><code>f.readline()</code> → una línea, cada vez que la llamas.</li><li><code>f.readlines()</code> → todas las líneas como una lista.</li></ul>",
+        "<p>También puedes iterar directamente sobre el archivo: <code>for linea in f:</code>. Es la forma más eficiente para archivos grandes.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Leer archivos se usa para:</p>",
+        "<ul><li><strong>Procesar logs</strong>: analizar línea por línea.</li><li><strong>Cargar configuraciones</strong>: leer parámetros.</li><li><strong>Leer datos experimentales</strong>: resultados previos.</li><li><strong>Parsear CSV</strong>: tablas de datos.</li></ul>"
+      ],
+      "sintaxis": "with open(\"archivo.txt\", \"r\") as f:\n    todo = f.read()           # todo el contenido\n    \nwith open(\"archivo.txt\", \"r\") as f:\n    primera = f.readline()    # primera línea\n    segunda = f.readline()    # segunda línea\n    \nwith open(\"archivo.txt\", \"r\") as f:\n    lineas = f.readlines()    # lista de líneas\n    \nwith open(\"archivo.txt\", \"r\") as f:\n    for linea in f:           # iterar línea a línea\n        print(linea.strip())",
+      "ejemplos": [
+        {
+          "titulo": "read(): todo de una vez",
+          "codigo": "with open(\"datos.txt\", \"w\") as f:\n    f.write(\"Línea 1\\n\")\n    f.write(\"Línea 2\\n\")\n    f.write(\"Línea 3\\n\")\n\nwith open(\"datos.txt\", \"r\") as f:\n    contenido = f.read()\n    print(contenido)\n    print(f\"Longitud: {len(contenido)} caracteres\")",
+          "explicacion": [
+            "<p><code>read()</code> carga todo el archivo en memoria como un solo string.</p>",
+            "<p>Bien para archivos pequeños. Malo para archivos enormes (puede agotar la memoria).</p>"
+          ]
+        },
+        {
+          "titulo": "readlines(): lista de líneas",
+          "codigo": "with open(\"datos.txt\", \"r\") as f:\n    lineas = f.readlines()\n\nprint(lineas)\nfor i, linea in enumerate(lineas, 1):\n    print(f\"{i}: {linea.strip()}\")",
+          "explicacion": [
+            "<p><code>readlines()</code> devuelve una lista con todas las líneas.</p>",
+            "<p>Cada línea incluye el <code>\\n</code> al final. Usa <code>.strip()</code> para quitarlo.</p>"
+          ]
+        },
+        {
+          "titulo": "Iterar: la forma eficiente",
+          "codigo": "with open(\"datos.txt\", \"r\") as f:\n    for i, linea in enumerate(f, 1):\n        print(f\"{i}: {linea.rstrip()}\")",
+          "explicacion": [
+            "<p>Iterar sobre el archivo carga una línea a la vez, no todo el archivo.</p>",
+            "<p>Es la forma ideal para archivos grandes o logs.</p>",
+            "<p><code>rstrip()</code> quita el <code>\\n</code> del final (y otros espacios).</p>"
+          ]
+        },
+        {
+          "titulo": "Procesar un archivo de números",
+          "codigo": "with open(\"numeros.txt\", \"w\") as f:\n    for n in [1.5, 2.7, 3.14, 42.0, -8.5]:\n        f.write(f\"{n}\\n\")\n\n# Leer y procesar\nsuma = 0\ncantidad = 0\nwith open(\"numeros.txt\", \"r\") as f:\n    for linea in f:\n        try:\n            numero = float(linea.strip())\n            suma += numero\n            cantidad += 1\n        except ValueError:\n            continue\n\nif cantidad > 0:\n    print(f\"Suma: {suma}\")\n    print(f\"Promedio: {suma/cantidad:.4f}\")",
+          "explicacion": [
+            "<p>Este es el patrón típico: leer líneas, convertirlas al tipo correcto, acumular.</p>",
+            "<p>El <code>try/except</code> maneja líneas que no son números (comentarios, vacías).</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar read() con archivos enormes",
+          "razon": "Carga todo en memoria. Puede agotarla.",
+          "correcto": "Iterar con for o usar readline()."
+        },
+        {
+          "error": "Olvidar strip() en cada línea",
+          "razon": "Cada línea viene con \\n al final. Los números no se convierten bien.",
+          "correcto": "linea.strip() o linea.rstrip()"
+        },
+        {
+          "error": "Leer un archivo después de cerrarlo",
+          "razon": "ValueError: I/O operation on closed file.",
+          "correcto": "Leer dentro del with."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> para archivos grandes, itera con <code>for linea in f</code>, no uses <code>read()</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> usa <code>.strip()</code> o <code>.rstrip()</code> siempre que proceses líneas.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si el archivo tiene números, convierte cada línea con <code>float()</code> o <code>int()</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, guarda resultados por línea para poder reprocesarlos después.</p>"
+      ],
+      "resumen": "Se lee con read() (todo), readline() (una línea) o readlines() (lista). Iterar con for es lo más eficiente. Usa strip() para quitar saltos de línea. Convierte los strings al tipo necesario."
+    },
+    {
+      "id": "escribir-archivos",
+      "numero": "3",
+      "titulo": "Escribir archivos",
+      "emoji": "✍️",
+      "subtitulo": "Guardar datos en el disco",
+      "que_es": [
+        "<p>Escribir en un archivo es análogo a leer: abres en modo <code>\"w\"</code> (o <code>\"a\"</code>) y usas <code>f.write()</code>.</p>",
+        "<p>El método <code>write()</code> acepta un string. Si quieres escribir números, primero hay que convertirlos con <code>str()</code> o con f-strings.</p>",
+        "<p>También existe <code>writelines()</code> para escribir una lista de strings de una sola vez.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Escribir archivos se usa para:</p>",
+        "<ul><li><strong>Guardar resultados</strong>: que persistan entre ejecuciones.</li><li><strong>Generar reportes</strong>: informes con formato.</li><li><strong>Logs</strong>: registrar lo que hace el programa.</li><li><strong>Exportar datos</strong>: para otros programas.</li></ul>"
+      ],
+      "sintaxis": "with open(\"archivo.txt\", \"w\") as f:\n    f.write(\"texto\\n\")\n    f.write(str(numero) + \"\\n\")\n    f.write(f\"Valor: {x:.4f}\\n\")\n\n# Escribir una lista de strings\nwith open(\"archivo.txt\", \"w\") as f:\n    f.writelines([\"linea 1\\n\", \"linea 2\\n\", \"linea 3\\n\"])",
+      "ejemplos": [
+        {
+          "titulo": "Escribir texto",
+          "codigo": "with open(\"saludo.txt\", \"w\") as f:\n    f.write(\"Hola, mundo\\n\")\n    f.write(\"Esto es un archivo de texto.\\n\")\n\nwith open(\"saludo.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p><code>write()</code> escribe el string tal cual. No añade <code>\\n</code> automáticamente: hay que incluirlo.</p>"
+          ]
+        },
+        {
+          "titulo": "Escribir números y resultados",
+          "codigo": "resultados = [\n    (\"iter1\", 1.5, 0.25),\n    (\"iter2\", 1.4167, 0.0833),\n    (\"iter3\", 1.4142, 0.0025),\n]\n\nwith open(\"resultados.txt\", \"w\") as f:\n    f.write(\"Iteración    Valor         Error\\n\")\n    f.write(\"-\" * 40 + \"\\n\")\n    for nombre, x, err in resultados:\n        f.write(f\"{nombre:<12} {x:<13.4f} {err:.4e}\\n\")\n\nwith open(\"resultados.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p>Las f-strings con formato (<code>:{x:&lt;12}</code>) permiten alinear columnas.</p>",
+            "<p>Este es el patrón para generar tablas de resultados numéricos.</p>"
+          ]
+        },
+        {
+          "titulo": "Escribir con writelines",
+          "codigo": "lineas = [\n    \"Ana,25,Madrid\\n\",\n    \"Luis,30,Barcelona\\n\",\n    \"Eva,28,Valencia\\n\"\n]\n\nwith open(\"personas.txt\", \"w\") as f:\n    f.writelines(lineas)\n\nwith open(\"personas.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p><code>writelines()</code> escribe una lista de strings de golpe.</p>",
+            "<p>Ojo: no añade saltos de línea. Cada string debe incluirlos si los quieres.</p>"
+          ]
+        },
+        {
+          "titulo": "Añadir con modo 'a'",
+          "codigo": "import datetime\n\ndef log(mensaje):\n    timestamp = datetime.datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")\n    with open(\"log.txt\", \"a\") as f:\n        f.write(f\"[{timestamp}] {mensaje}\\n\")\n\nlog(\"Programa iniciado\")\nlog(\"Paso 1 completado\")\nlog(\"Programa terminado\")\n\nwith open(\"log.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p>El modo <code>\"a\"</code> añade al final, sin borrar lo anterior.</p>",
+            "<p>Añadir timestamps es muy útil para logs.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "f.write(42)  con número",
+          "razon": "write() solo acepta strings.",
+          "correcto": "f.write(str(42))   o   f.write(f\"{42}\\n\")"
+        },
+        {
+          "error": "Olvidar \\n al final de cada write",
+          "razon": "Todo queda en una sola línea sin separación.",
+          "correcto": "Incluye \\n al final de cada línea."
+        },
+        {
+          "error": "Abrir con \"w\" cuando querías añadir",
+          "razon": "El contenido anterior se borra.",
+          "correcto": "Usa \"a\" para añadir."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> write() no añade salto de línea. Inclúyelo tú.</p>",
+        "<p>💡 <strong>Truco 2:</strong> usa f-strings con formato para tablas alineadas.</p>",
+        "<p>💡 <strong>Truco 3:</strong> el modo \"a\" es ideal para logs y resultados acumulativos.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, guarda cada iteración en una línea para poder graficar después.</p>"
+      ],
+      "resumen": "Se escribe con f.write() en modo \"w\" (borra) o \"a\" (añade). Solo acepta strings. Incluye \\n para las líneas. Usa f-strings para formatear. writelines() escribe listas de strings."
+    },
+    {
+      "id": "with",
+      "numero": "4",
+      "titulo": "with — El context manager",
+      "emoji": "🎁",
+      "subtitulo": "La forma correcta de manejar archivos",
+      "que_es": [
+        "<p><code>with</code> es una estructura especial de Python que garantiza que los recursos se liberen correctamente al terminar un bloque, incluso si ocurre un error dentro.</p>",
+        "<p>Cuando usas <code>with open(...) as f:</code>, Python:</p>",
+        "<ul><li>Abre el archivo.</li><li>Ejecuta el bloque.</li><li>Cierra el archivo automáticamente al salir, pase lo que pase.</li></ul>",
+        "<p>Es equivalente a <code>try/finally</code>, pero mucho más limpio.</p>"
+      ],
+      "para_que_sirve": [
+        "<p><code>with</code> se usa para:</p>",
+        "<ul><li><strong>Archivos</strong>: cerrarlos automáticamente.</li><li><strong>Conexiones de red</strong>: cerrarlas al terminar.</li><li><strong>Bases de datos</strong>: cerrar conexiones y transacciones.</li><li><strong>Locks</strong>: liberar cerrojos en programas concurrentes.</li></ul>"
+      ],
+      "sintaxis": "with open(\"archivo.txt\", \"r\") as f:\n    # usar f\n    pass\n# al salir, f se cierra automáticamente\n\n# Múltiples archivos\nwith open(\"entrada.txt\") as f_in, open(\"salida.txt\", \"w\") as f_out:\n    for linea in f_in:\n        f_out.write(linea.upper())",
+      "ejemplos": [
+        {
+          "titulo": "with vs try/finally",
+          "codigo": "# Forma larga (try/finally)\nf = open(\"datos.txt\", \"w\")\ntry:\n    f.write(\"Hola\\n\")\nfinally:\n    f.close()\n\n# Forma corta (with) — equivalente\nwith open(\"datos.txt\", \"w\") as f:\n    f.write(\"Hola\\n\")",
+          "explicacion": [
+            "<p>El <code>with</code> hace lo mismo que el bloque <code>try/finally</code>, pero más limpio.</p>",
+            "<p>Si algo falla dentro del with, el archivo se cierra igual.</p>"
+          ]
+        },
+        {
+          "titulo": "Copiar un archivo línea a línea",
+          "codigo": "with open(\"original.txt\", \"w\") as f:\n    f.write(\"Hola mundo\\n\")\n    f.write(\"Segunda línea\\n\")\n\nwith open(\"original.txt\", \"r\") as f_in, open(\"copia.txt\", \"w\") as f_out:\n    for linea in f_in:\n        f_out.write(linea)\n\nwith open(\"copia.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p>Puedes abrir varios archivos a la vez en el mismo with, separados por comas.</p>",
+            "<p>Ambos se cierran al final del bloque.</p>"
+          ]
+        },
+        {
+          "titulo": "Context manager propio",
+          "codigo": "class Temporizador:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    \n    def __enter__(self):\n        import time\n        self.inicio = time.perf_counter()\n        return self\n    \n    def __exit__(self, exc_type, exc_val, exc_tb):\n        import time\n        dt = (time.perf_counter() - self.inicio) * 1000\n        print(f\"{self.nombre}: {dt:.2f} ms\")\n        return False   # no suprime excepciones\n\nwith Temporizador(\"Cálculo\"):\n    suma = sum(range(1000000))\n    print(f\"Suma: {suma}\")",
+          "explicacion": [
+            "<p>Cualquier objeto con <code>__enter__</code> y <code>__exit__</code> puede usarse con with.</p>",
+            "<p><code>__enter__</code> se ejecuta al entrar al bloque. <code>__exit__</code>, al salir.</p>",
+            "<p>Así puedes crear tus propios context managers para recursos personalizados.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar el archivo fuera del with",
+          "razon": "Ya está cerrado. Da ValueError.",
+          "correcto": "Todo el procesamiento dentro del bloque."
+        },
+        {
+          "error": "Devolver el archivo abierto desde una función",
+          "razon": "El with lo cierra al salir. El archivo queda inutilizable.",
+          "correcto": "Devuelve el contenido, no el objeto."
+        },
+        {
+          "error": "Múltiples with anidados innecesariamente",
+          "razon": "Es más limpio usar varios archivos en un solo with.",
+          "correcto": "with open(a) as f, open(b) as g:"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa with siempre que manejes recursos: archivos, conexiones, etc.</p>",
+        "<p>💡 <strong>Truco 2:</strong> puedes abrir varios archivos a la vez en el mismo with.</p>",
+        "<p>💡 <strong>Truco 3:</strong> los objetos con <code>__enter__</code> y <code>__exit__</code> también funcionan con with. Puedes crear los tuyos.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, un context manager propio para medir tiempos o guardar resultados es muy útil.</p>"
+      ],
+      "resumen": "with garantiza que los recursos se liberen al terminar el bloque. Cierra archivos automáticamente, incluso si hay errores. Equivale a try/finally pero más limpio. Puedes abrir varios archivos a la vez."
+    },
+    {
+      "id": "csv",
+      "numero": "5",
+      "titulo": "Archivos CSV",
+      "emoji": "📊",
+      "subtitulo": "Tablas de datos en texto plano",
+      "que_es": [
+        "<p><strong>CSV</strong> (Comma-Separated Values) es un formato para guardar tablas en texto plano. Cada línea es una fila, y los valores se separan por comas (u otro delimitador).</p>",
+        "<p>Ejemplo:</p>",
+        "<pre>nombre,edad,ciudad\nAna,25,Madrid\nLuis,30,Barcelona</pre>",
+        "<p>Python incluye el módulo <code>csv</code> para leer y escribir este formato. Maneja casos complicados (valores con comas, comillas, saltos de línea).</p>"
+      ],
+      "para_que_sirve": [
+        "<p>CSV se usa para:</p>",
+        "<ul><li><strong>Exportar datos de Excel</strong>: es su formato estándar.</li><li><strong>Compartir datos</strong>: simple y compatible con todo.</li><li><strong>Procesar tablas</strong>: análisis de resultados experimentales.</li><li><strong>Intercambio entre programas</strong>: lenguaje común.</li></ul>",
+        "<p>En análisis numérico, es útil para guardar tablas de iteraciones o experimentos comparativos.</p>"
+      ],
+      "sintaxis": "import csv\n\n# Leer\nwith open(\"datos.csv\", \"r\") as f:\n    reader = csv.reader(f)\n    for fila in reader:\n        print(fila)   # fila es una lista de strings\n\n# Leer como diccionarios\nwith open(\"datos.csv\", \"r\") as f:\n    reader = csv.DictReader(f)\n    for fila in reader:\n        print(fila)   # fila es un dict\n\n# Escribir\nwith open(\"datos.csv\", \"w\", newline=\"\") as f:\n    writer = csv.writer(f)\n    writer.writerow([\"Ana\", 25, \"Madrid\"])\n    writer.writerow([\"Luis\", 30, \"Barcelona\"])",
+      "ejemplos": [
+        {
+          "titulo": "Escribir CSV",
+          "codigo": "import csv\n\ndatos = [\n    [\"nombre\", \"edad\", \"ciudad\"],\n    [\"Ana\", 25, \"Madrid\"],\n    [\"Luis\", 30, \"Barcelona\"],\n    [\"Eva\", 28, \"Valencia\"]\n]\n\nwith open(\"personas.csv\", \"w\", newline=\"\") as f:\n    writer = csv.writer(f)\n    writer.writerows(datos)\n\nwith open(\"personas.csv\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p><code>writer.writerow(fila)</code> escribe una fila. <code>writer.writerows(filas)</code> escribe varias.</p>",
+            "<p>El parámetro <code>newline=\"\"</code> es importante para evitar saltos de línea dobles en Windows.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer CSV como listas",
+          "codigo": "with open(\"personas.csv\", \"r\") as f:\n    reader = csv.reader(f)\n    encabezado = next(reader)   # leer la primera fila\n    print(\"Columnas:\", encabezado)\n    \n    for fila in reader:\n        print(fila)\n        nombre, edad, ciudad = fila\n        print(f\"  {nombre} tiene {edad} años y vive en {ciudad}\")",
+          "explicacion": [
+            "<p><code>csv.reader</code> devuelve filas como listas de strings.</p>",
+            "<p><code>next(reader)</code> lee la primera fila (encabezados).</p>",
+            "<p>Los valores numéricos vienen como strings. Hay que convertirlos con <code>int()</code> o <code>float()</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer CSV como diccionarios",
+          "codigo": "with open(\"personas.csv\", \"r\") as f:\n    reader = csv.DictReader(f)\n    for fila in reader:\n        print(fila)\n        print(f\"  {fila['nombre']} - {fila['edad']} años\")",
+          "explicacion": [
+            "<p><code>DictReader</code> usa la primera fila como nombres de columna.</p>",
+            "<p>Cada fila es un diccionario. Accedes a los valores por nombre de columna.</p>",
+            "<p>Más legible que <code>reader</code>, sobre todo si hay muchas columnas.</p>"
+          ]
+        },
+        {
+          "titulo": "Ejemplo completo: procesar CSV numérico",
+          "codigo": "import csv\n\n# Crear datos de iteraciones\niteraciones = [\n    [\"iter\", \"x\", \"error\"],\n    [1, 1.5, 1.0],\n    [2, 1.4167, 0.0833],\n    [3, 1.4142, 0.0025],\n    [4, 1.4142, 0.000002]\n]\n\nwith open(\"iteraciones.csv\", \"w\", newline=\"\") as f:\n    writer = csv.writer(f)\n    writer.writerows(iteraciones)\n\n# Leer y calcular estadísticas\nwith open(\"iteraciones.csv\", \"r\") as f:\n    reader = csv.DictReader(f)\n    errores = []\n    for fila in reader:\n        errores.append(float(fila[\"error\"]))\n\nprint(f\"Errores: {errores}\")\nprint(f\"Error final: {errores[-1]:.2e}\")\nprint(f\"Reducción total: {errores[0]/errores[-1]:.0f}x\")",
+          "explicacion": [
+            "<p>Este es el patrón completo: escribir datos tabulares, luego leerlos y procesarlos.</p>",
+            "<p>Los valores vienen como strings; hay que convertirlos con <code>float()</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Olvidar newline=\"\" al escribir",
+          "razon": "En Windows se añade un \\r\\n extra. Filas dobles.",
+          "correcto": "open(..., \"w\", newline=\"\")"
+        },
+        {
+          "error": "Usar los valores como números sin convertir",
+          "razon": "csv.reader devuelve strings. Las operaciones numéricas fallan.",
+          "correcto": "float(fila[1])   o   int(fila[0])"
+        },
+        {
+          "error": "Asumir que el separador es siempre coma",
+          "razon": "Algunos países usan punto y coma.",
+          "correcto": "csv.reader(f, delimiter=\";\")"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>DictReader</code> es más legible cuando tienes encabezados.</p>",
+        "<p>💡 <strong>Truco 2:</strong> convierte los valores al tipo adecuado (<code>float</code>, <code>int</code>) al procesarlos.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si los datos son muy grandes, usa <code>pandas.read_csv()</code>, mucho más rápido.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, CSV es ideal para comparar métodos en tablas.</p>"
+      ],
+      "resumen": "El módulo csv lee y escribe archivos CSV. reader devuelve listas, DictReader devuelve diccionarios. Al escribir, usa newline=\"\". Los valores vienen como strings: conviértelos."
+    },
+    {
+      "id": "json",
+      "numero": "6",
+      "titulo": "Archivos JSON",
+      "emoji": "🔧",
+      "subtitulo": "El formato estándar para intercambiar datos",
+      "que_es": [
+        "<p><strong>JSON</strong> (JavaScript Object Notation) es un formato de texto para guardar datos estructurados: diccionarios, listas, números, strings, booleanos.</p>",
+        "<p>Es el formato estándar en APIs y aplicaciones web. Python tiene el módulo <code>json</code> para leerlo y escribirlo.</p>",
+        "<p>Un JSON se ve igual que un diccionario de Python, con algunas diferencias:</p>",
+        "<ul><li>Las claves siempre son strings.</li><li>No hay tuplas, sets ni comentarios.</li><li>Los booleanos son <code>true</code> y <code>false</code> (minúscula).</li></ul>"
+      ],
+      "para_que_sirve": [
+        "<p>JSON se usa para:</p>",
+        "<ul><li><strong>Archivos de configuración</strong>: parámetros de programas.</li><li><strong>APIs web</strong>: intercambio de datos entre servicios.</li><li><strong>Guardar estructuras</strong>: listas de diccionarios.</li><li><strong>Compartir datos</strong>: simple y universal.</li></ul>"
+      ],
+      "sintaxis": "import json\n\n# Leer\nwith open(\"datos.json\", \"r\") as f:\n    datos = json.load(f)   # devuelve dict/list\n\n# Escribir\nwith open(\"datos.json\", \"w\") as f:\n    json.dump(datos, f, indent=2, ensure_ascii=False)\n\n# Convertir string ↔ objeto\ntexto = json.dumps(datos)          # objeto → string\nobjeto = json.loads(texto)         # string → objeto",
+      "ejemplos": [
+        {
+          "titulo": "Escribir JSON",
+          "codigo": "import json\n\ndatos = {\n    \"nombre\": \"Ana\",\n    \"edad\": 25,\n    \"ciudades\": [\"Madrid\", \"Barcelona\"],\n    \"activo\": True,\n    \"altura\": 1.68\n}\n\nwith open(\"persona.json\", \"w\") as f:\n    json.dump(datos, f, indent=2, ensure_ascii=False)\n\nwith open(\"persona.json\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p><code>json.dump(datos, f)</code> escribe el diccionario al archivo en formato JSON.</p>",
+            "<p><code>indent=2</code> lo hace legible con 2 espacios de indentación.</p>",
+            "<p><code>ensure_ascii=False</code> preserva acentos y caracteres no-ASCII.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer JSON",
+          "codigo": "with open(\"persona.json\", \"r\") as f:\n    datos = json.load(f)\n\nprint(type(datos))            # <class 'dict'>\nprint(datos[\"nombre\"])        # Ana\nprint(datos[\"ciudades\"][0])  # Madrid\nprint(datos[\"activo\"])        # True",
+          "explicacion": [
+            "<p><code>json.load(f)</code> lee el archivo y devuelve el objeto Python correspondiente: dict, list, etc.</p>",
+            "<p>Accedes a los datos como si fuera un diccionario normal.</p>"
+          ]
+        },
+        {
+          "titulo": "JSON de configuración",
+          "codigo": "# Crear archivo de configuración\nconfig = {\n    \"metodo\": \"biseccion\",\n    \"tol\": 1e-8,\n    \"max_iter\": 100,\n    \"intervalo\": [1, 2]\n}\n\nwith open(\"config.json\", \"w\") as f:\n    json.dump(config, f, indent=2)\n\n# Leer y usar\nwith open(\"config.json\", \"r\") as f:\n    config = json.load(f)\n\nprint(f\"Método: {config['metodo']}\")\nprint(f\"Tolerancia: {config['tol']}\")\nprint(f\"Intervalo: {config['intervalo']}\")\n\n# Uso típico\nif config[\"metodo\"] == \"biseccion\":\n    a, b = config[\"intervalo\"]\n    tol = config[\"tol\"]\n    print(f\"Configurando bisección con a={a}, b={b}, tol={tol}\")",
+          "explicacion": [
+            "<p>Este es el patrón típico: guardar los parámetros de un programa en un JSON externo.</p>",
+            "<p>Así puedes cambiar la configuración sin modificar el código.</p>"
+          ]
+        },
+        {
+          "titulo": "JSON de resultados numéricos",
+          "codigo": "resultados = {\n    \"metodo\": \"newton\",\n    \"raiz\": 1.4142135623730951,\n    \"iteraciones\": 4,\n    \"historial\": [\n        {\"k\": 1, \"x\": 1.5, \"error\": 0.085786},\n        {\"k\": 2, \"x\": 1.416667, \"error\": 0.002453},\n        {\"k\": 3, \"x\": 1.414216, \"error\": 2.12e-6},\n        {\"k\": 4, \"x\": 1.414214, \"error\": 1.59e-12}\n    ]\n}\n\nwith open(\"resultados.json\", \"w\") as f:\n    json.dump(resultados, f, indent=2)\n\n# Leer y analizar\nwith open(\"resultados.json\", \"r\") as f:\n    r = json.load(f)\n\nprint(f\"Método: {r['metodo']}\")\nprint(f\"Raíz: {r['raiz']:.12f}\")\nprint(f\"Iteraciones: {r['iteraciones']}\")\nprint(\"Historial:\")\nfor h in r[\"historial\"]:\n    print(f\"  k={h['k']}, x={h['x']:.6f}, err={h['error']:.2e}\")",
+          "explicacion": [
+            "<p>JSON permite guardar estructuras anidadas: diccionarios con listas de diccionarios.</p>",
+            "<p>Perfecto para guardar resultados completos: método, raíz, historial de iteraciones.</p>",
+            "<p>Luego se puede cargar y analizar.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "json.dump con tuplas",
+          "razon": "JSON no tiene tuplas. Se convierten a listas.",
+          "correcto": "Convierte a lista antes si importa el tipo."
+        },
+        {
+          "error": "Olvidar ensure_ascii=False",
+          "razon": "Los acentos se convierten a \\uXXXX. Ilegible.",
+          "correcto": "json.dump(datos, f, ensure_ascii=False)"
+        },
+        {
+          "error": "Abrir el JSON en modo binario",
+          "razon": "json.load espera modo texto.",
+          "correcto": "open(..., \"r\")   (sin la \"b\")"
+        },
+        {
+          "error": "Modificar el JSON a mano y meter comentarios",
+          "razon": "JSON no admite comentarios. Da error al cargar.",
+          "correcto": "Sin comentarios. Si necesitas comentarios, usa YAML o TOML."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa <code>indent=2</code> para hacer el JSON legible.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>ensure_ascii=False</code> preserva acentos y caracteres especiales.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>json.loads</code> y <code>json.dumps</code> (con s) trabajan con strings, no archivos.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, guarda los parámetros de experimentos en JSON para reproducirlos después.</p>"
+      ],
+      "resumen": "El módulo json lee (json.load) y escribe (json.dump) archivos JSON. Es el formato estándar para intercambio de datos. Usa indent=2 y ensure_ascii=False para que sea legible. Guarda dicts, lists, números, strings, booleanos."
+    },
+    {
+      "id": "errores-archivos",
+      "numero": "7",
+      "titulo": "Manejo de errores con archivos",
+      "emoji": "🛡️",
+      "subtitulo": "Qué puede fallar y cómo manejarlo",
+      "que_es": [
+        "<p>Trabajar con archivos está lleno de cosas que pueden fallar: el archivo no existe, no tienes permisos, está en uso por otro programa, se llena el disco...</p>",
+        "<p>Por eso es importante manejar los errores con <code>try/except</code> para que el programa no se caiga de forma fea.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Manejar errores de archivos sirve para:</p>",
+        "<ul><li><strong>Programas robustos</strong>: no se caen ante cualquier problema.</li><li><strong>Mensajes útiles</strong>: al usuario le queda claro qué pasó.</li><li><strong>Reintentos</strong>: si el problema es temporal, se puede volver a intentar.</li><li><strong>Fallbacks</strong>: usar valores por defecto si no se puede leer un archivo.</li></ul>"
+      ],
+      "sintaxis": "try:\n    with open(\"archivo.txt\", \"r\") as f:\n        contenido = f.read()\nexcept FileNotFoundError:\n    # el archivo no existe\nexcept PermissionError:\n    # no tienes permisos\nexcept IsADirectoryError:\n    # es una carpeta, no un archivo\nexcept UnicodeDecodeError:\n    # el archivo no es texto válido\nfinally:\n    # limpieza (opcional)",
+      "ejemplos": [
+        {
+          "titulo": "Errores comunes al leer",
+          "codigo": "def leer_archivo(ruta):\n    try:\n        with open(ruta, \"r\") as f:\n            return f.read()\n    except FileNotFoundError:\n        return f\"Error: el archivo {ruta} no existe\"\n    except PermissionError:\n        return f\"Error: sin permisos para leer {ruta}\"\n    except IsADirectoryError:\n        return f\"Error: {ruta} es una carpeta, no un archivo\"\n    except UnicodeDecodeError:\n        return f\"Error: {ruta} no es un archivo de texto válido\"\n\nprint(leer_archivo(\"no_existe.txt\"))\nprint(leer_archivo(\"/\"))",
+          "explicacion": [
+            "<p>Cada tipo de error tiene su propio <code>except</code>.</p>",
+            "<p>Así se da un mensaje específico al usuario.</p>"
+          ]
+        },
+        {
+          "titulo": "Fallback: usar valor por defecto",
+          "codigo": "def cargar_configuracion(ruta=\"config.json\"):\n    config_default = {\n        \"tol\": 1e-8,\n        \"max_iter\": 100,\n        \"metodo\": \"biseccion\"\n    }\n    \n    try:\n        with open(ruta, \"r\") as f:\n            return json.load(f)\n    except FileNotFoundError:\n        print(f\"Aviso: no se encontró {ruta}. Usando valores por defecto.\")\n        return config_default\n    except json.JSONDecodeError:\n        print(f\"Aviso: {ruta} no es JSON válido. Usando valores por defecto.\")\n        return config_default\n\nconfig = cargar_configuracion()\nprint(config)",
+          "explicacion": [
+            "<p>Si el archivo no existe o está corrupto, se usan valores por defecto.</p>",
+            "<p>Es un patrón muy común: el programa funciona aunque falle la configuración externa.</p>"
+          ]
+        },
+        {
+          "titulo": "Validar antes de escribir",
+          "codigo": "import os\n\ndef guardar_seguro(ruta, contenido):\n    # Verificar si la carpeta existe\n    carpeta = os.path.dirname(ruta)\n    if carpeta and not os.path.exists(carpeta):\n        print(f\"Creando carpeta {carpeta}...\")\n        try:\n            os.makedirs(carpeta)\n        except OSError as e:\n            print(f\"No se pudo crear la carpeta: {e}\")\n            return False\n    \n    # Verificar si el archivo existe\n    if os.path.exists(ruta):\n        print(f\"Aviso: {ruta} ya existe. Se sobreescribirá.\")\n    \n    try:\n        with open(ruta, \"w\") as f:\n            f.write(contenido)\n        return True\n    except PermissionError:\n        print(f\"Sin permisos para escribir en {ruta}\")\n        return False\n    except OSError as e:\n        print(f\"Error al escribir: {e}\")\n        return False\n\nguardar_seguro(\"datos/salida.txt\", \"Hola\")",
+          "explicacion": [
+            "<p>Antes de escribir, verifica que la carpeta exista, créala si hace falta, y avisa si el archivo ya está.</p>",
+            "<p>Es más robusto que intentar escribir directamente.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "No capturar FileNotFoundError",
+          "razon": "El programa se cae con un traceback feo.",
+          "correcto": "try/except para capturar y manejar."
+        },
+        {
+          "error": "Capturar Exception genérico",
+          "razon": "Oculta errores no relacionados.",
+          "correcto": "Captura solo los errores específicos que esperas."
+        },
+        {
+          "error": "Asumir que la carpeta existe",
+          "razon": "Si no existe, falla al escribir.",
+          "correcto": "os.makedirs(carpeta, exist_ok=True)"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> captura errores específicos: <code>FileNotFoundError</code>, <code>PermissionError</code>, <code>UnicodeDecodeError</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> usa fallbacks: valores por defecto si el archivo no se puede leer.</p>",
+        "<p>💡 <strong>Truco 3:</strong> verifica si la carpeta existe antes de escribir. Créala si hace falta.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, guarda resultados en varios formatos por si alguno falla.</p>"
+      ],
+      "resumen": "Los archivos pueden fallar por muchas razones. Captura FileNotFoundError, PermissionError, etc. Usa fallbacks: valores por defecto si el archivo no existe. Verifica carpetas antes de escribir."
+    },
+    {
+      "id": "buenas-practicas-archivos",
+      "numero": "8",
+      "titulo": "Buenas prácticas con archivos",
+      "emoji": "✅",
+      "subtitulo": "Cómo manejar archivos de forma profesional",
+      "que_es": [
+        "<p>Trabajar con archivos tiene sus trucos. Aquí verás las prácticas que usa la comunidad Python para que el código sea limpio, robusto y eficiente.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Seguir buenas prácticas te da:</p>",
+        "<ul><li><strong>Código robusto</strong>: no se cae ante problemas de archivos.</li><li><strong>Legibilidad</strong>: cualquiera entiende qué hace tu código.</li><li><strong>Eficiencia</strong>: maneja archivos grandes sin agotar memoria.</li><li><strong>Portabilidad</strong>: funciona en Windows, Linux y Mac.</li></ul>"
+      ],
+      "sintaxis": "# Buenas prácticas resumidas:\n# 1. Usa with siempre\n# 2. Rutas con os.path o pathlib\n# 3. Modo \"a\" para logs\n# 4. Iterar en lugar de read() para archivos grandes\n# 5. Captura errores específicos\n# 6. Convierte tipos al leer\n# 7. Cierra explícitamente cuando no uses with",
+      "ejemplos": [
+        {
+          "titulo": "Rutas portables con pathlib",
+          "codigo": "from pathlib import Path\n\n# Rutas portables (funciona en cualquier sistema)\ncarpeta = Path(\"datos\")\narchivo = carpeta / \"resultados.txt\"\n\n# Crear carpeta si no existe\ncarpeta.mkdir(exist_ok=True)\n\n# Escribir\nwith archivo.open(\"w\") as f:\n    f.write(\"Hola desde pathlib\\n\")\n\n# Leer\nwith archivo.open(\"r\") as f:\n    print(f.read())\n\n# Verificar existencia\nprint(f\"¿Existe? {archivo.exists()}\")\nprint(f\"Tamaño: {archivo.stat().st_size} bytes\")",
+          "explicacion": [
+            "<p><code>pathlib</code> es la forma moderna de manejar rutas. Usa <code>/</code> para unir, no <code>\\</code> ni <code>/</code> manual.</p>",
+            "<p>Funciona igual en Windows, Linux y Mac.</p>"
+          ]
+        },
+        {
+          "titulo": "Iterar vs read() para archivos grandes",
+          "codigo": "# MAL: read() carga todo en memoria\n# with open(\"log_gigante.txt\") as f:\n#     for linea in f.read().split(\"\\n\"):\n#         ...\n\n# BIEN: iterar una línea a la vez\nwith open(\"log_gigante.txt\", \"r\") as f:\n    contador = 0\n    for linea in f:\n        if \"ERROR\" in linea:\n            contador += 1\n\nprint(f\"Errores encontrados: {contador}\")",
+          "explicacion": [
+            "<p>Iterar sobre el archivo carga una línea a la vez. No importa si el archivo es de 10 MB o 10 GB.</p>",
+            "<p><code>read()</code> carga todo en memoria. Para archivos grandes, puede fallar.</p>"
+          ]
+        },
+        {
+          "titulo": "Log con timestamp y modo 'a'",
+          "codigo": "from datetime import datetime\n\ndef log(mensaje, archivo=\"app.log\"):\n    timestamp = datetime.now().strftime(\"%Y-%m-%d %H:%M:%S\")\n    with open(archivo, \"a\") as f:\n        f.write(f\"[{timestamp}] {mensaje}\\n\")\n\nlog(\"Aplicación iniciada\")\nlog(\"Cargando datos\")\nlog(\"Datos cargados: 100 registros\")\nlog(\"Aplicación terminada\")\n\n# Leer el log\nwith open(\"app.log\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p>El patrón clásico: cada llamada añade una línea al log con timestamp.</p>",
+            "<p>El modo <code>\"a\"</code> garantiza que no se borra lo anterior.</p>",
+            "<p>El archivo se crea si no existe.</p>"
+          ]
+        },
+        {
+          "titulo": "Guardar resultados con formato consistente",
+          "codigo": "def guardar_tabla(resultados, archivo=\"resultados.txt\"):\n    with open(archivo, \"w\") as f:\n        f.write(f\"{'Iter':<6} {'x':<15} {'Error':<12}\\n\")\n        f.write(\"-\" * 40 + \"\\n\")\n        for k, x, err in resultados:\n            f.write(f\"{k:<6} {x:<15.8f} {err:<12.3e}\\n\")\n\n# Datos de ejemplo\nhist = [(1, 1.5, 0.25), (2, 1.4167, 0.083), (3, 1.4142, 0.0025)]\nguardar_tabla(hist)\n\nwith open(\"resultados.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p>Las f-strings con formato alinean las columnas.</p>",
+            "<p><code>{x:&lt;15.8f}</code> significa: alinear a la izquierda, 15 caracteres de ancho, 8 decimales.</p>",
+            "<p>Las tablas quedan limpias y profesionales.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Construir rutas con strings",
+          "razon": "No funciona igual en Windows y Linux.",
+          "correcto": "Usa pathlib.Path o os.path.join."
+        },
+        {
+          "error": "Usar read() con archivos grandes",
+          "razon": "Puede agotar la memoria.",
+          "correcto": "Iterar con for."
+        },
+        {
+          "error": "No cerrar archivos cuando no usas with",
+          "razon": "Los datos pueden no guardarse.",
+          "correcto": "Usa with. Si no puedes, cierra con f.close()."
+        },
+        {
+          "error": "Abrir el mismo archivo varias veces en un bucle",
+          "razon": "Ineficiente. Abre una vez y procesa todo.",
+          "correcto": "Abre al inicio, procesa, cierra al final."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa <code>pathlib</code> para rutas portables y limpias.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para archivos grandes, itera en lugar de leerlo todo.</p>",
+        "<p>💡 <strong>Truco 3:</strong> los logs se escriben con modo \"a\" y timestamp.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, guarda resultados tabulados con formato consistente para reutilizarlos después.</p>"
+      ],
+      "resumen": "Usa with, pathlib para rutas, modo \"a\" para logs, iterar para archivos grandes, capturar errores específicos. Formatea tablas con f-strings alineadas."
+    }
+  ]
+}
