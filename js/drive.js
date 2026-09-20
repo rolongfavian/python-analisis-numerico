@@ -272,6 +272,181 @@
     }
   }
 
+// nueva funcion generar Ipynb
+async function generarIpynb() {
+  const editor = (typeof editorsMap !== 'undefined') ? editorsMap['env-editor'] : null;
+  if (!editor) {
+    showToast('Editor no encontrado', true);
+    return;
+  }
+
+  const codigo = editor.getValue();
+  if (!codigo.trim()) {
+    showToast('El editor está vacío', true);
+    return;
+  }
+
+  const fnInput = document.getElementById('env-filename');
+  let nombre = (fnInput && fnInput.value) ? fnInput.value : 'ejercicio';
+  nombre = nombre.replace(/\.\w+$/, '');
+  if (!nombre) nombre = 'ejercicio';
+
+  // Generar el .ipynb
+  const ipynb = window.buildIpynbDesdeCodigo
+    ? window.buildIpynbDesdeCodigo(codigo, nombre)
+    : {
+        cells: [{ cell_type: 'code', source: codigo.split('\n') }],
+        metadata: {},
+        nbformat: 4,
+        nbformat_minor: 5
+      };
+
+  const contenido = JSON.stringify(ipynb, null, 1);
+  const nombreIpynb = nombre + '.ipynb';
+
+  // ------------------------------------------------------------
+  // MODO INVITADO: solo puede descargar
+  // ------------------------------------------------------------
+  if (guestMode || !driveToken) {
+    const respuesta = confirm(
+      `Vas a generar "${nombreIpynb}".\n\n` +
+      `Como estás en modo invitado (sin Google Drive), solo puedes descargarlo.\n\n` +
+      `¿Descargar el archivo ahora?`
+    );
+
+    if (!respuesta) {
+      showToast('Generación cancelada');
+      return;
+    }
+
+    const blob = new Blob([contenido], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nombreIpynb;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showToast('Descargado: ' + nombreIpynb);
+    return;
+  }
+
+  // ------------------------------------------------------------
+  // MODO CONECTADO: preguntar qué hacer
+  // ------------------------------------------------------------
+  const opcion = confirm(
+    `Vas a generar "${nombreIpynb}".\n\n` +
+    `Estás conectado a Google Drive. ¿Qué quieres hacer?\n\n` +
+    `Aceptar  →  Subir a Drive\n` +
+    `Cancelar →  Descargar al dispositivo`
+  );
+
+  if (opcion) {
+    // Subir a Drive
+    await subirIpynbADrive(contenido, nombreIpynb);
+  } else {
+    // Descargar
+    const blob = new Blob([contenido], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = nombreIpynb;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+
+    showToast('Descargado: ' + nombreIpynb);
+  }
+}
+
+// Helper: subir el .ipynb a Drive
+async function subirIpynbADrive(contenido, nombreIpynb) {
+  const parentId = driveFolderId;
+  if (!parentId) {
+    showToast('No se encontró la carpeta de Drive', true);
+    return;
+  }
+
+  const out = document.getElementById('env-output');
+  if (out) out.innerText = 'Subiendo a Drive…';
+
+  try {
+    // Buscar si ya existe
+    const q = encodeURIComponent(
+      `name='${nombreIpynb}' and '${parentId}' in parents and trashed=false`
+    );
+    const buscar = await fetch(
+      `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
+      { headers: { 'Authorization': 'Bearer ' + driveToken } }
+    );
+    const buscarData = await buscar.json();
+    let fileId = buscarData.files && buscarData.files.length > 0
+      ? buscarData.files[0].id
+      : null;
+
+    if (fileId) {
+      // Actualizar
+      const res = await fetch(
+        `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Authorization': 'Bearer ' + driveToken,
+            'Content-Type': 'application/json'
+          },
+          body: contenido
+        }
+      );
+      if (!res.ok) throw new Error('No se pudo actualizar');
+    } else {
+      // Crear
+      const boundary = 'foo_bar';
+      const metadata = {
+        name: nombreIpynb,
+        mimeType: 'application/json',
+        parents: [parentId]
+      };
+      const body =
+        `--${boundary}\r\n` +
+        `Content-Type: application/json\r\n\r\n` +
+        `${JSON.stringify(metadata)}\r\n` +
+        `--${boundary}\r\n` +
+        `Content-Type: application/json\r\n\r\n` +
+        `${contenido}\r\n` +
+        `--${boundary}--`;
+
+      const res = await fetch(
+        'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+        {
+          method: 'POST',
+          headers: {
+            'Authorization': 'Bearer ' + driveToken,
+            'Content-Type': `multipart/related; boundary=${boundary}`
+          },
+          body
+        }
+      );
+      if (!res.ok) throw new Error('No se pudo crear');
+      const data = await res.json();
+      fileId = data.id;
+    }
+
+    if (out) out.innerText = '✅ Subido a Drive: ' + nombreIpynb;
+    showToast('Subido a Drive: ' + nombreIpynb);
+    refreshFileList();
+
+  } catch (e) {
+    if (out) out.innerText = 'Error al subir: ' + e.message;
+    showToast('Error al subir a Drive', true);
+  }
+}
+
+// Exponer
+window.generarIpynb = generarIpynb;
+window.subirIpynbADrive = subirIpynbADrive;
   // ============================================================
   // SESIÓN
   // ============================================================
