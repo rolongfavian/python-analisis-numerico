@@ -15,7 +15,8 @@
     { id: 3, titulo: 'Operaciones', emoji: '➕' },
     { id: 4, titulo: 'Control de flujo', emoji: '🔀' },
     { id: 5, titulo: 'Colecciones', emoji: '📚' },
-    { id: 6, titulo: 'Funciones', emoji: '⚙️' }
+    { id: 6, titulo: 'Funciones', emoji: '⚙️' },
+    { id: 7, titulo: 'Módulos y librerías', emoji: '📦' }
     // ...
   ];
 
