@@ -14,6 +14,7 @@
     { id: 2, titulo: 'Tipos de datos', emoji: '🔢' },
     { id: 3, titulo: 'Operaciones', emoji: '➕' },
     { id: 4, titulo: 'Control de flujo', emoji: '🔀' }
+    { id: 5, titulo: 'Colecciones', emoji: '📚' }
     // ...
   ];
 
