@@ -1,0 +1,583 @@
+{
+  "parte": 2,
+  "titulo": "Tipos de datos",
+  "emoji": "🔢",
+  "descripcion": "En Python, cada valor tiene un tipo: no es lo mismo un número que un texto, ni un booleano que un decimal. Conocer los tipos es fundamental para saber qué puedes hacer con cada valor y qué no.",
+  "temas": [
+    {
+      "id": "que-son-tipos",
+      "numero": "1",
+      "titulo": "¿Qué es un tipo de dato?",
+      "emoji": "🏷️",
+      "subtitulo": "La categoría a la que pertenece cada valor",
+      "que_es": [
+        "<p>En Python, cada valor tiene un <strong>tipo</strong>. El tipo es la categoría a la que pertenece ese valor y determina qué operaciones se pueden hacer con él.</p>",
+        "<p>Por ejemplo: el número <code>5</code> y el texto <code>\"5\"</code> se ven parecidos, pero son <strong>completamente distintos</strong> para Python. El primero es un entero (int), el segundo es un texto (str). Con el primero puedes sumar, restar, multiplicar. Con el segundo, solo unir, repetir o transformar.</p>",
+        "<p>Cuando Python ve un valor, automáticamente le asigna un tipo según cómo esté escrito. No tienes que decirle nada. Esto se llama <strong>tipado dinámico</strong>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Conocer los tipos es esencial porque:</p>",
+        "<ul><li><strong>Determina qué puedes hacer</strong>: con números sumas, con textos concatenas.</li><li><strong>Evita errores</strong>: muchos errores vienen de mezclar tipos incompatibles.</li><li><strong>Controla el comportamiento</strong>: <code>\"3\" + \"4\"</code> da <code>\"34\"</code> (texto), pero <code>3 + 4</code> da <code>7</code> (número).</li><li><strong>Optimiza el código</strong>: cada tipo tiene su coste.</li></ul>",
+        "<p>Los tipos más comunes en Python son: <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code>, <code>None</code>, y luego los tipos compuestos como <code>list</code>, <code>tuple</code>, <code>dict</code>, <code>set</code>.</p>"
+      ],
+      "sintaxis": "type(valor)   # devuelve el tipo del valor",
+      "ejemplos": [
+        {
+          "titulo": "Ver el tipo de varios valores",
+          "codigo": "print(type(5))\nprint(type(3.14))\nprint(type(\"hola\"))\nprint(type(True))\nprint(type(None))",
+          "explicacion": [
+            "<p>La función <code>type()</code> te dice a qué tipo pertenece un valor:</p>",
+            "<ul><li><code>&lt;class 'int'&gt;</code> → entero</li><li><code>&lt;class 'float'&gt;</code> → decimal</li><li><code>&lt;class 'str'&gt;</code> → texto</li><li><code>&lt;class 'bool'&gt;</code> → booleano</li><li><code>&lt;class 'NoneType'&gt;</code> → ausencia de valor</li></ul>",
+            "<p>Python dice <code>&lt;class 'int'&gt;</code> en vez de simplemente <code>int</code> porque todo en Python es un objeto, y cada tipo es una clase.</p>"
+          ]
+        },
+        {
+          "titulo": "La diferencia entre números y textos",
+          "codigo": "print(5 + 5)       # 10 (suma de números)\nprint(\"5\" + \"5\")   # \"55\" (unir textos)\n\nprint(5 * 3)       # 15 (multiplicar)\nprint(\"5\" * 3)     # \"555\" (repetir texto)",
+          "explicacion": [
+            "<p>Los mismos operadores se comportan distinto según el tipo:</p>",
+            "<ul><li><code>+</code> con números suma, con textos une.</li><li><code>*</code> con números multiplica, con texto y número repite.</li></ul>",
+            "<p><strong>Cuidado:</strong> <code>\"5\" + 5</code> da error porque mezclas tipos. Python no convierte solo.</p>"
+          ]
+        },
+        {
+          "titulo": "Cómo cambia el tipo una operación",
+          "codigo": "a = 10    # int\nb = 3     # int\n\nprint(a / b)      # 3.333... (float)\nprint(type(a / b))\n\nprint(a // b)     # 3 (int)\nprint(type(a // b))",
+          "explicacion": [
+            "<p>Algunas operaciones cambian el tipo del resultado:</p>",
+            "<ul><li><code>/</code> siempre devuelve float, aunque los operandos sean int.</li><li><code>//</code> devuelve int si ambos operandos son int.</li></ul>",
+            "<p>Esto es importante: nunca asumas que una operación devuelve el mismo tipo que sus operandos.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "\"5\" + 5",
+          "razon": "No se puede unir texto con número. Python da TypeError.",
+          "correcto": "\"5\" + str(5)   o   5 + int(\"5\")"
+        },
+        {
+          "error": "print(type(5))  →  esperando solo 'int'",
+          "razon": "Python devuelve <class 'int'>, no int a secas. Es una representación de objeto.",
+          "correcto": "Acepta que devuelve <class 'X'> y usa .__name__ si quieres solo el nombre:\nprint(type(5).__name__)  →  'int'"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>print(type(x).__name__)</code> te da solo el nombre del tipo, sin <code>&lt;class '...'&gt;</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> puedes verificar si un valor es de un tipo con <code>isinstance(x, int)</code>. Devuelve True o False.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, casi todo son <code>float</code>. Los <code>int</code> se usan para contadores (iteraciones, índices).</p>"
+      ],
+      "resumen": "Cada valor en Python tiene un tipo que determina qué puedes hacer con él. Los más comunes son int, float, str, bool y None. Se consultan con type()."
+    },
+    {
+      "id": "int",
+      "numero": "2",
+      "titulo": "int — Números enteros",
+      "emoji": "🔢",
+      "subtitulo": "Números sin decimales, para contar cosas",
+      "que_es": [
+        "<p>Un <code>int</code> (integer, entero) es un número <strong>sin parte decimal</strong>. Puede ser positivo, negativo o cero.</p>",
+        "<p>Python reconoce automáticamente un int cuando escribes un número sin punto decimal. <code>5</code>, <code>-10</code>, <code>0</code>, <code>1000000</code> son int.</p>",
+        "<p>Una característica especial de Python es que sus enteros <strong>no tienen límite de tamaño</strong>. Puedes escribir <code>2**1000</code> y Python lo calcula exacto (con 300 dígitos). En otros lenguajes eso desbordaría, pero Python no.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los enteros se usan cuando necesitas contar o numerar cosas:</p>",
+        "<ul><li><strong>Contar iteraciones</strong>: cuántas veces repite un bucle.</li><li><strong>Índices</strong>: posición en listas, arrays, strings.</li><li><strong>Cantidades exactas</strong>: número de elementos, personas, cosas.</li><li><strong>Edades, años, días</strong>: valores enteros por naturaleza.</li></ul>"
+      ],
+      "sintaxis": "x = 5\ny = -10\nz = 0\ngrande = 2**100    # enteros grandes, sin límite",
+      "ejemplos": [
+        {
+          "titulo": "Operaciones con enteros",
+          "codigo": "a = 17\nb = 5\n\nprint(a + b)    # 22\nprint(a - b)    # 12\nprint(a * b)    # 85\nprint(a / b)    # 3.4  ← ¡float!\nprint(a // b)   # 3    ← entero\nprint(a % b)    # 2    ← resto\nprint(a ** 2)   # 289  ← potencia",
+          "explicacion": [
+            "<p>Con enteros puedes hacer las operaciones aritméticas básicas:</p>",
+            "<ul><li><code>+</code> suma, <code>-</code> resta, <code>*</code> multiplica.</li><li><code>/</code> divide, pero <strong>siempre devuelve float</strong>.</li><li><code>//</code> división entera, descarta decimales.</li><li><code>%</code> módulo, el resto de la división.</li><li><code>**</code> potencia.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "División entera y módulo en la práctica",
+          "codigo": "total_segundos = 3725\n\nminutos = total_segundos // 60\nsegundos = total_segundos % 60\n\nprint(minutos, \"minutos y\", segundos, \"segundos\")",
+          "explicacion": [
+            "<p>Un ejemplo clásico: convertir segundos a minutos y segundos.</p>",
+            "<ul><li><code>3725 // 60</code> = 62 → los minutos enteros.</li><li><code>3725 % 60</code> = 5 → los segundos sobrantes.</li></ul>",
+            "<p>La relación es: <code>total = 60 * (total // 60) + (total % 60)</code>. Se cumple siempre.</p>"
+          ]
+        },
+        {
+          "titulo": "Enteros muy grandes",
+          "codigo": "factorial_20 = 1\nfor i in range(1, 21):\n    factorial_20 *= i\n\nprint(factorial_20)\nprint(type(factorial_20))",
+          "explicacion": [
+            "<p>20! = 2.432.902.008.176.640.000. Es un número enorme, pero Python lo maneja como int sin problema.</p>",
+            "<p>Otros lenguajes usarían <code>long</code> o similar. Python simplemente funciona.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "5 / 2    esperando 2",
+          "razon": "La división / siempre devuelve float. Si quieres entero, usa //.",
+          "correcto": "5 // 2   →  2"
+        },
+        {
+          "error": "int(\"3.14\")",
+          "razon": "int() no acepta strings con decimales. Da ValueError.",
+          "correcto": "int(float(\"3.14\"))   →  3"
+        },
+        {
+          "error": "int(3.99)",
+          "razon": "No da error, pero int() trunca, no redondea. Da 3, no 4.",
+          "correcto": "round(3.99)   →  4"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> puedes usar <code>_</code> para separar miles: <code>1_000_000</code> es igual a <code>1000000</code>, pero más legible.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>divmod(a, b)</code> devuelve una tupla con el cociente y el resto: <code>divmod(17, 5)</code> → <code>(3, 2)</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, usa int para <code>max_iter</code>, <code>k</code> (iteración), y float para <code>tol</code>, <code>error</code>, <code>raiz</code>.</p>"
+      ],
+      "resumen": "int es un número sin decimales. Python no tiene límite de tamaño para enteros. Se usa para contar, indexar y valores exactos."
+    },
+    {
+      "id": "float",
+      "numero": "3",
+      "titulo": "float — Números decimales",
+      "emoji": "🔬",
+      "subtitulo": "Números con parte decimal, con precisión limitada",
+      "que_es": [
+        "<p>Un <code>float</code> (floating point, punto flotante) es un número <strong>con parte decimal</strong>. Se escribe con un punto: <code>3.14</code>, <code>-0.5</code>, <code>2.0</code>.</p>",
+        "<p>Python usa el estándar <strong>IEEE 754</strong> para representar floats en binario. Esto significa que <strong>no todos los decimales se pueden representar exactamente</strong>: algunos se aproximan.</p>",
+        "<p>Por ejemplo: <code>0.1</code> en binario es infinito, así que Python lo guarda como <code>0.1000000000000000055…</code>. Cuando sumas <code>0.1 + 0.2</code>, el resultado no es exactamente <code>0.3</code>, sino <code>0.30000000000000004</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los floats se usan para representar:</p>",
+        "<ul><li><strong>Medidas</strong>: altura, peso, temperatura.</li><li><strong>Cálculos científicos</strong>: prácticamente todo el análisis numérico.</li><li><strong>Resultados de divisiones</strong>: <code>4 / 2</code> da <code>2.0</code> (float).</li><li><strong>Porcentajes, promedios, estadísticas</strong>.</li></ul>",
+        "<p>En análisis numérico vas a usar floats en absolutamente todo: aproximaciones, errores, tolerancias, coordenadas de puntos, etc.</p>"
+      ],
+      "sintaxis": "x = 3.14\ny = -0.5\nz = 2.0\ntol = 1e-8       # 0.00000001\npi = 3.141592653589793",
+      "ejemplos": [
+        {
+          "titulo": "La famosa imprecisión de los floats",
+          "codigo": "a = 0.1 + 0.2\nprint(a)\nprint(a == 0.3)",
+          "explicacion": [
+            "<p>Este es el ejemplo clásico. <code>0.1 + 0.2</code> no da exactamente <code>0.3</code>, sino <code>0.30000000000000004</code>.</p>",
+            "<p>Y por eso <code>a == 0.3</code> devuelve <strong>False</strong>. Los floats casi nunca son exactos.</p>",
+            "<p>Esto no es un error de Python. Todas las computadoras tienen este problema. Es la forma en que se representan los números reales en binario.</p>"
+          ]
+        },
+        {
+          "titulo": "Cómo comparar floats correctamente",
+          "codigo": "import math\n\na = 0.1 + 0.2\nb = 0.3\n\n# Mal:\nprint(a == b)                  # False\n\n# Bien:\nprint(abs(a - b) < 1e-10)      # True\nprint(math.isclose(a, b))      # True",
+          "explicacion": [
+            "<p>Nunca compares floats con <code>==</code>. Usa una <strong>tolerancia</strong>:</p>",
+            "<ul><li><code>abs(a - b) &lt; 1e-10</code> → si la diferencia es menor que la tolerancia, se consideran iguales.</li><li><code>math.isclose(a, b)</code> → función estándar de Python que hace lo mismo.</li></ul>",
+            "<p>Esta es una idea clave en análisis numérico: siempre trabajamos con tolerancias, no con igualdades exactas.</p>"
+          ]
+        },
+        {
+          "titulo": "El épsilon de la máquina",
+          "codigo": "import sys\n\nprint(sys.float_info.epsilon)\nprint(sys.float_info.max)\nprint(sys.float_info.min)",
+          "explicacion": [
+            "<p>Python te da información sobre los límites de los floats:</p>",
+            "<ul><li><code>epsilon</code>: la diferencia más pequeña detectable entre 1.0 y el siguiente float. Vale ~2.22e-16.</li><li><code>max</code>: el float más grande posible. ~1.8e308.</li><li><code>min</code>: el float positivo más pequeño. ~2.2e-308.</li></ul>",
+            "<p>El épsilon es importante: define el límite de precisión de cualquier cálculo con floats.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "0.1 + 0.2 == 0.3",
+          "razon": "Los floats no son exactos. Casi siempre da False.",
+          "correcto": "abs(0.1 + 0.2 - 0.3) < 1e-10"
+        },
+        {
+          "error": "x = 1,5",
+          "razon": "En Python el separador decimal es el punto (.), no la coma.",
+          "correcto": "x = 1.5"
+        },
+        {
+          "error": "round(2.5)  esperando 3",
+          "razon": "Python usa redondeo bancario: redondea al par más cercano. round(2.5) da 2, round(3.5) da 4.",
+          "correcto": "Para redondeo tradicional, usa math.floor(x + 0.5)."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>float(\"3.14\")</code> convierte texto a float. <code>float(5)</code> convierte int a float.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para formatear la salida: <code>print(f\"{x:.4f}\")</code> muestra 4 decimales.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si necesitas precisión exacta (contabilidad, por ejemplo), usa <code>decimal</code> o <code>fractions</code>. Pero para análisis numérico, floats son lo estándar.</p>",
+        "<p>💡 <strong>Regla de oro:</strong> nunca uses <code>==</code> con floats. Siempre <code>abs(a - b) &lt; tol</code>.</p>"
+      ],
+      "resumen": "float es un número con decimales. Tiene precisión limitada (~15-17 dígitos). Nunca se compara con ==, siempre con tolerancia."
+    },
+    {
+      "id": "str",
+      "numero": "4",
+      "titulo": "str — Texto",
+      "emoji": "📝",
+      "subtitulo": "Cadenas de caracteres, para comunicarte con el usuario",
+      "que_es": [
+        "<p>Un <code>str</code> (string, cadena) es una <strong>secuencia de caracteres</strong>: letras, números, símbolos, espacios. Se escribe entre comillas simples o dobles.</p>",
+        "<p>Los strings son <strong>inmutables</strong>: una vez creados, no se pueden modificar. Si quieres cambiar uno, tienes que crear uno nuevo a partir del original.</p>",
+        "<p>Pueden contener cualquier cosa: <code>\"hola\"</code>, <code>'123'</code>, <code>\"Hola, mundo!\"</code>, <code>\"😀\"</code>, <code>\"\"</code> (vacío).</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los strings son la forma principal de comunicarse con el usuario:</p>",
+        "<ul><li><strong>Mensajes</strong>: mostrar resultados, avisos, errores.</li><li><strong>Nombres de archivos</strong>: <code>\"datos.csv\"</code>.</li><li><strong>Etiquetas</strong>: identificar cosas en diccionarios.</li><li><strong>Documentación</strong>: explicar qué hace una función.</li><li><strong>Entrada del usuario</strong>: <code>input()</code> siempre devuelve un string.</li></ul>"
+      ],
+      "sintaxis": "s1 = 'texto con comillas simples'\ns2 = \"texto con comillas dobles\"\ns3 = \"\"\"texto\nmultilínea\"\"\"\n\n# Métodos comunes\ns.upper()      # MAYÚSCULAS\ns.lower()      # minúsculas\ns.strip()      # quitar espacios\ns.split()      # dividir\ns.replace(a,b) # reemplazar",
+      "ejemplos": [
+        {
+          "titulo": "Crear y concatenar strings",
+          "codigo": "nombre = \"Ana\"\nsaludo = \"Hola, \" + nombre\nprint(saludo)\n\nprint(\"ab\" * 3)",
+          "explicacion": [
+            "<p>Se pueden unir con <code>+</code> y repetir con <code>*</code>:</p>",
+            "<ul><li><code>\"Hola, \" + \"Ana\"</code> → <code>\"Hola, Ana\"</code>.</li><li><code>\"ab\" * 3</code> → <code>\"ababab\"</code>.</li></ul>",
+            "<p>Pero <code>\"Hola\" + 5</code> da error. No se pueden mezclar tipos.</p>"
+          ]
+        },
+        {
+          "titulo": "f-strings: la forma moderna",
+          "codigo": "nombre = \"Ana\"\nedad = 25\n\nprint(f\"{nombre} tiene {edad} años\")\nprint(f\"El año que viene tendrá {edad + 1}\")",
+          "explicacion": [
+            "<p>Las <strong>f-strings</strong> son strings precedidos de <code>f</code>. Dentro, cualquier cosa entre <code>{}</code> se evalúa como código:</p>",
+            "<ul><li><code>{nombre}</code> → el valor de la variable.</li><li><code>{edad + 1}</code> → incluso cálculos.</li></ul>",
+            "<p>Son la forma recomendada en Python moderno. Las usarás mucho.</p>"
+          ]
+        },
+        {
+          "titulo": "Acceder a caracteres y rebanar",
+          "codigo": "s = \"Python\"\n\nprint(s[0])       # P\nprint(s[-1])      # n\nprint(s[0:3])     # Pyt\nprint(s[2:])      # thon\nprint(len(s))     # 6",
+          "explicacion": [
+            "<p>Los strings son secuencias y se pueden indexar:</p>",
+            "<ul><li><code>s[0]</code> → primer carácter (los índices empiezan en 0).</li><li><code>s[-1]</code> → último carácter (índices negativos van del final).</li><li><code>s[0:3]</code> → rebanada del 0 al 2 (el 3 no se incluye).</li><li><code>s[2:]</code> → desde el 2 hasta el final.</li><li><code>len(s)</code> → longitud.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Métodos útiles",
+          "codigo": "s = \"  Hola Mundo  \"\n\nprint(s.strip())        # \"Hola Mundo\"\nprint(s.upper())        # \"  HOLA MUNDO  \"\nprint(s.lower())        # \"  hola mundo  \"\nprint(s.replace(\"o\", \"0\"))\nprint(\"Mundo\" in s)     # True",
+          "explicacion": [
+            "<p>Los strings tienen muchos métodos incorporados:</p>",
+            "<ul><li><code>.strip()</code> → quita espacios al inicio y al final.</li><li><code>.upper()</code> / <code>.lower()</code> → cambia mayúsculas.</li><li><code>.replace(a, b)</code> → reemplaza todas las apariciones.</li><li><code>in</code> → verifica si un texto está contenido.</li></ul>",
+            "<p>Ojo: los métodos <strong>no modifican</strong> el string original (son inmutables). Devuelven uno nuevo.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "\"Hola\" + 5",
+          "razon": "No se puede unir texto con número.",
+          "correcto": "\"Hola\" + str(5)   o   f\"Hola {5}\""
+        },
+        {
+          "error": "s = 'Ana\"",
+          "razon": "Comillas desbalanceadas. Abres con simple y cierras con doble.",
+          "correcto": "s = 'Ana'   o   s = \"Ana\""
+        },
+        {
+          "error": "s[100]",
+          "razon": "Índice fuera de rango. Da IndexError.",
+          "correcto": "s[-1] para el último, o verifica len(s) primero."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>\\n</code> es salto de línea, <code>\\t</code> es tabulación.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para strings con comillas dentro, usa el otro tipo: <code>\"Él dijo 'hola'\"</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>\"a,b,c\".split(\",\")</code> → <code>['a', 'b', 'c']</code>. Muy útil para parsear.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, usa f-strings para mostrar resultados: <code>print(f\"Iter {k}: x = {x:.8f}\")</code>.</p>"
+      ],
+      "resumen": "str es una cadena de caracteres inmutable. Se crea con comillas. Tiene muchos métodos (.upper, .strip, .split, .replace). Las f-strings son la forma moderna de mezclar variables con texto."
+    },
+    {
+      "id": "bool",
+      "numero": "5",
+      "titulo": "bool — Verdadero o falso",
+      "emoji": "✅",
+      "subtitulo": "El tipo más simple: solo dos valores posibles",
+      "que_es": [
+        "<p>Un <code>bool</code> (booleano) solo puede tener <strong>dos valores</strong>: <code>True</code> (verdadero) o <code>False</code> (falso). Se escriben con mayúscula inicial.</p>",
+        "<p>Se obtienen de comparaciones: <code>5 > 3</code> da <code>True</code>, <code>5 < 3</code> da <code>False</code>. También se pueden escribir directamente.</p>",
+        "<p>Aunque parezca simple, los booleanos son la base de todas las decisiones en un programa: si esto es verdad, haz aquello; si no, haz esto otro.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los booleanos se usan en:</p>",
+        "<ul><li><strong>Condicionales</strong>: <code>if edad >= 18:</code>.</li><li><strong>Bucles</strong>: <code>while activo:</code>.</li><li><strong>Verificar condiciones</strong>: <code>if x in lista:</code>.</li><li><strong>Flags</strong>: variables que indican si algo ocurrió o no.</li></ul>",
+        "<p>En análisis numérico: <code>convergio = True</code>, <code>es_estable = False</code>, etc.</p>"
+      ],
+      "sintaxis": "a = True\nb = False\n\n# Se obtienen de comparaciones\nprint(5 > 3)      # True\nprint(5 == 5)     # True\nprint(5 != 5)     # False",
+      "ejemplos": [
+        {
+          "titulo": "Comparaciones que devuelven bool",
+          "codigo": "print(5 > 3)      # True\nprint(5 < 3)      # False\nprint(5 == 5)     # True\nprint(5 != 5)     # False\nprint(\"a\" < \"b\")  # True\nprint(5 >= 5)     # True",
+          "explicacion": [
+            "<p>Los operadores de comparación devuelven booleanos:</p>",
+            "<ul><li><code>&gt;</code> mayor, <code>&lt;</code> menor.</li><li><code>&gt;=</code> mayor o igual, <code>&lt;=</code> menor o igual.</li><li><code>==</code> igual, <code>!=</code> distinto.</li></ul>",
+            "<p>También funcionan con strings: <code>\"a\" &lt; \"b\"</code> → True (orden alfabético).</p>"
+          ]
+        },
+        {
+          "titulo": "Operadores lógicos",
+          "codigo": "a = True\nb = False\n\nprint(a and b)    # False\nprint(a or b)     # True\nprint(not a)      # False\n\nprint(5 > 3 and 2 < 4)   # True\nprint(5 > 3 or 2 > 4)    # True",
+          "explicacion": [
+            "<p>Se pueden combinar booleanos con operadores lógicos:</p>",
+            "<ul><li><code>and</code> → True solo si ambos son True.</li><li><code>or</code> → True si al menos uno es True.</li><li><code>not</code> → invierte.</li></ul>",
+            "<p>Son la base de las condiciones compuestas: <code>if edad >= 18 and tiene_id:</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Truthiness: qué se considera True o False",
+          "codigo": "print(bool(0))      # False\nprint(bool(1))      # True\nprint(bool(\"\"))     # False\nprint(bool(\"hola\")) # True\nprint(bool([]))     # False\nprint(bool([1, 2])) # True\nprint(bool(None))   # False",
+          "explicacion": [
+            "<p>Muchos valores se comportan como True o False en un contexto booleano:</p>",
+            "<ul><li><strong>Falsos</strong>: 0, 0.0, \"\", [], {}, None, False.</li><li><strong>Verdaderos</strong>: todo lo demás.</li></ul>",
+            "<p>Esto se llama <strong>truthiness</strong> y permite escribir <code>if lista:</code> en vez de <code>if len(lista) > 0:</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "x = true",
+          "razon": "True y False van con mayúscula inicial. Python distingue mayúsculas.",
+          "correcto": "x = True"
+        },
+        {
+          "error": "5 = 5",
+          "razon": "El operador de comparación es ==, no =. El = solo asigna.",
+          "correcto": "5 == 5"
+        },
+        {
+          "error": "if x = 5:",
+          "razon": "En un if usa ==, no =.",
+          "correcto": "if x == 5:"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>bool(x)</code> convierte cualquier valor a True o False.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en análisis numérico, un flag puede indicar convergencia: <code>convergio = False</code>, y luego <code>convergio = True</code> cuando <code>error &lt; tol</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> no escribas <code>if x == True:</code>. Escribe <code>if x:</code>. Más limpio.</p>"
+      ],
+      "resumen": "bool tiene solo dos valores: True y False. Se obtienen de comparaciones o se escriben directamente. Son la base de las decisiones en el código."
+    },
+    {
+      "id": "none",
+      "numero": "6",
+      "titulo": "None — Ausencia de valor",
+      "emoji": "🚫",
+      "subtitulo": "El valor especial que significa \"nada\"",
+      "que_es": [
+        "<p><code>None</code> es un valor especial que significa <strong>\"nada\"</strong>, <strong>\"sin valor\"</strong>, <strong>\"vacío\"</strong>. No es 0, no es <code>False</code>, no es un string vacío. Es literalmente la ausencia de valor.</p>",
+        "<p>Es el único valor de su tipo (<code>NoneType</code>). Solo existe un <code>None</code> en todo Python. Esto se llama <strong>singleton</strong>.</p>",
+        "<p>Se escribe con mayúscula inicial y sin comillas.</p>"
+      ],
+      "para_que_sirve": [
+        "<p><code>None</code> se usa en varias situaciones:</p>",
+        "<ul><li><strong>Inicializar variables</strong> antes de darles valor real.</li><li><strong>Indicar que una función no devolvió nada</strong>.</li><li><strong>Representar \"no encontrado\"</strong> en búsquedas.</li><li><strong>Valores por defecto</strong> en parámetros.</li><li><strong>Marcar estados</strong>: \"todavía no calculado\".</li></ul>"
+      ],
+      "sintaxis": "x = None\n\n# Comparar siempre con 'is'\nif x is None:\n    print(\"x no tiene valor\")",
+      "ejemplos": [
+        {
+          "titulo": "Inicializar una variable sin valor",
+          "codigo": "resultado = None\nprint(resultado)\nprint(type(resultado))\n\nif resultado is None:\n    print(\"Aún no se ha calculado\")",
+          "explicacion": [
+            "<p>Creas la variable pero le das <code>None</code> hasta tener el valor real.</p>",
+            "<p>Se compara con <code>is</code> (identidad), no con <code>==</code>. Como <code>None</code> es único, <code>is None</code> es siempre lo correcto.</p>"
+          ]
+        },
+        {
+          "titulo": "Función que no devuelve nada",
+          "codigo": "def saludar(nombre):\n    print(\"Hola,\", nombre)\n\nresultado = saludar(\"Ana\")\nprint(resultado)  # None",
+          "explicacion": [
+            "<p>Una función sin <code>return</code> devuelve <code>None</code> implícitamente.</p>",
+            "<p>Es muy común confundir esto. Si una función no devuelve nada útil, guardar su resultado en una variable da <code>None</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Buscar en una lista y no encontrar",
+          "codigo": "def buscar(lista, valor):\n    for i, x in enumerate(lista):\n        if x == valor:\n            return i\n    return None\n\nindice = buscar([10, 20, 30], 20)\nprint(indice)   # 1\n\nindice = buscar([10, 20, 30], 99)\nprint(indice)   # None",
+          "explicacion": [
+            "<p>La función devuelve el índice si encuentra el valor, o <code>None</code> si no lo encuentra.</p>",
+            "<p>El código que la usa puede verificar: <code>if indice is None:</code> → \"no encontrado\".</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "x == None",
+          "razon": "Funciona, pero no es la forma recomendada. La buena práctica es usar 'is'.",
+          "correcto": "x is None"
+        },
+        {
+          "error": "x = none",
+          "razon": "None va con mayúscula. Python distingue mayúsculas.",
+          "correcto": "x = None"
+        },
+        {
+          "error": "print(None + 5)",
+          "razon": "No se puede sumar None con números. Da TypeError.",
+          "correcto": "Verifica antes: if x is not None: x + 5"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>None</code> es falsy: <code>if not x:</code> es True si x es None.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en análisis numérico, <code>None</code> puede marcar \"sin convergencia\": <code>raiz = None</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si una función puede devolver 0 o None, ten cuidado: <code>if resultado:</code> es False en ambos casos. Usa <code>if resultado is not None:</code>.</p>"
+      ],
+      "resumen": "None es el valor que significa \"nada\". Es único. Se compara con 'is', no con '=='. Sirve para inicializar, marcar ausencia o indicar \"no encontrado\"."
+    },
+    {
+      "id": "conversiones",
+      "numero": "7",
+      "titulo": "Conversiones entre tipos",
+      "emoji": "🔄",
+      "subtitulo": "Cómo pasar de un tipo a otro",
+      "que_es": [
+        "<p>A veces tienes un valor de un tipo y necesitas otro. Python tiene funciones para <strong>convertir</strong> entre tipos: <code>int()</code>, <code>float()</code>, <code>str()</code>, <code>bool()</code>.</p>",
+        "<p>Estas conversiones se llaman <strong>casting</strong>. No todas son posibles ni todas preservan la información (por ejemplo, convertir un float a int pierde los decimales).</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Convertir tipos es muy común:</p>",
+        "<ul><li><strong>De texto a número</strong>: <code>int(input(...))</code>.</li><li><strong>De número a texto</strong>: <code>str(x)</code> para concatenar.</li><li><strong>De float a int</strong>: descartar decimales.</li><li><strong>De int a float</strong>: forzar división decimal.</li><li><strong>De cualquier cosa a bool</strong>: verificar si algo \"tiene valor\".</li></ul>"
+      ],
+      "sintaxis": "int(x)      # convertir a entero\nfloat(x)    # convertir a decimal\nstr(x)      # convertir a texto\nbool(x)     # convertir a True/False",
+      "ejemplos": [
+        {
+          "titulo": "Convertir texto a número",
+          "codigo": "s = \"42\"\nn = int(s)\nprint(n + 8)\n\nf = float(\"3.14\")\nprint(f * 2)",
+          "explicacion": [
+            "<p>Los strings numéricos se convierten con <code>int()</code> o <code>float()</code>:</p>",
+            "<ul><li><code>int(\"42\")</code> → <code>42</code></li><li><code>float(\"3.14\")</code> → <code>3.14</code></li></ul>",
+            "<p>Si el texto no es un número válido (<code>int(\"abc\")</code>), da <code>ValueError</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Convertir número a texto",
+          "codigo": "n = 25\ns = str(n)\nprint(\"Tengo \" + s + \" años\")\nprint(f\"Tengo {n} años\")",
+          "explicacion": [
+            "<p>Para unir un número con texto, tienes que convertirlo antes:</p>",
+            "<ul><li><code>str(25)</code> → <code>\"25\"</code></li><li>Ahora sí puedes hacer <code>\"Tengo \" + \"25\"</code>.</li></ul>",
+            "<p>Alternativa moderna: f-strings, que lo convierten solos.</p>"
+          ]
+        },
+        {
+          "titulo": "int() no redondea, trunca",
+          "codigo": "print(int(3.9))     # 3\nprint(int(3.1))     # 3\nprint(int(-3.9))    # -3 (hacia cero)\n\nprint(round(3.9))   # 4\nprint(round(3.1))   # 3",
+          "explicacion": [
+            "<p>Ojo: <code>int()</code> <strong>no redondea</strong>, corta los decimales. El resultado es el entero más cercano hacia cero.</p>",
+            "<ul><li><code>int(3.9)</code> → 3 (no 4)</li><li><code>int(-3.9)</code> → -3 (no -4)</li></ul>",
+            "<p>Para redondear, usa <code>round()</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Convertir a bool",
+          "codigo": "print(bool(0))      # False\nprint(bool(1))      # True\nprint(bool(\"\"))     # False\nprint(bool(\"a\"))    # True\nprint(bool([]))     # False\nprint(bool([1]))    # True",
+          "explicacion": [
+            "<p><code>bool(x)</code> convierte cualquier valor a True o False según su \"truthiness\".</p>",
+            "<ul><li>Valores \"vacíos\" → False.</li><li>Valores con contenido → True.</li></ul>",
+            "<p>Útil para verificar si algo tiene contenido sin comparar con <code>len()</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "int(\"3.14\")",
+          "razon": "int() no acepta strings con decimales. Da ValueError.",
+          "correcto": "int(float(\"3.14\"))   →  3"
+        },
+        {
+          "error": "int(3.99)  esperando 4",
+          "razon": "int() trunca, no redondea. Da 3.",
+          "correcto": "round(3.99)   →  4"
+        },
+        {
+          "error": "float(\"\")",
+          "razon": "No se puede convertir un texto vacío a número.",
+          "correcto": "Verifica antes: if s: f = float(s)"
+        },
+        {
+          "error": "int(\"1,000\")",
+          "razon": "La coma no se interpreta como separador de miles. Da error.",
+          "correcto": "int(\"1000\")   o   int(\"1_000\".replace(\"_\", \"\"))"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> siempre verifica antes de convertir strings del usuario:</p>",
+        "<pre class='cmd-sintaxis'>try:\n    n = int(input(\"Número: \"))\nexcept ValueError:\n    print(\"No es un número\")</pre>",
+        "<p>💡 <strong>Truco 2:</strong> <code>float(\"1e3\")</code> funciona y da 1000.0. Python entiende notación científica.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, casi todo se convierte a float. <code>x = float(x)</code> para asegurarte.</p>"
+      ],
+      "resumen": "Las conversiones se hacen con int(), float(), str() y bool(). int() trunca (no redondea). Las conversiones pueden fallar si el valor no es compatible."
+    },
+    {
+      "id": "type-e-isinstance",
+      "numero": "8",
+      "titulo": "type() e isinstance() — Verificar tipos",
+      "emoji": "🔍",
+      "subtitulo": "Cómo saber de qué tipo es un valor",
+      "que_es": [
+        "<p>En Python a veces necesitas saber qué tipo tiene un valor. Hay dos funciones para esto:</p>",
+        "<ul><li><code>type(x)</code> → devuelve el tipo exacto del valor.</li><li><code>isinstance(x, T)</code> → devuelve True si x es de tipo T (o de una subclase).</li></ul>",
+        "<p>La diferencia principal: <code>isinstance</code> respeta la herencia, <code>type</code> no. Para verificar tipos, casi siempre quieres <code>isinstance</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Verificar tipos sirve para:</p>",
+        "<ul><li><strong>Validar entradas</strong>: comprobar que el usuario dio un número, no un texto.</li><li><strong>Adaptar el comportamiento</strong>: hacer una cosa si es lista, otra si es string.</li><li><strong>Depurar</strong>: descubrir por qué falla una operación.</li><li><strong>Documentar</strong>: dejar claro qué tipo espera una función.</li></ul>"
+      ],
+      "sintaxis": "type(x)\nisinstance(x, tipo)\n\n# Ejemplos\nprint(type(5))                    # <class 'int'>\nprint(isinstance(5, int))         # True\nprint(isinstance(5, float))       # False",
+      "ejemplos": [
+        {
+          "titulo": "type() devuelve el tipo",
+          "codigo": "print(type(5))\nprint(type(3.14))\nprint(type(\"hola\"))\nprint(type(True))\nprint(type(None))\nprint(type([1, 2]))\nprint(type({\"a\": 1}))",
+          "explicacion": [
+            "<p><code>type(x)</code> devuelve un objeto que representa el tipo. Se imprime como <code>&lt;class 'nombre'&gt;</code>.</p>",
+            "<p>Si quieres solo el nombre del tipo, usa <code>type(x).__name__</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "isinstance() verifica pertenencia",
+          "codigo": "print(isinstance(5, int))       # True\nprint(isinstance(5, float))     # False\nprint(isinstance(5.0, float))   # True\nprint(isinstance(5.0, int))     # False\nprint(isinstance(\"hola\", str))  # True\nprint(isinstance([1,2], list))  # True",
+          "explicacion": [
+            "<p><code>isinstance(x, T)</code> devuelve True si <code>x</code> es de tipo <code>T</code>.</p>",
+            "<p>Es la forma recomendada de verificar tipos, sobre todo porque funciona con la herencia (una subclase también cuenta como su padre).</p>"
+          ]
+        },
+        {
+          "titulo": "Verificar varios tipos a la vez",
+          "codigo": "x = 5\nprint(isinstance(x, (int, float)))   # True\n\ny = \"hola\"\nprint(isinstance(y, (int, float)))   # False",
+          "explicacion": [
+            "<p>Puedes pasar una tupla de tipos a <code>isinstance</code>. Devuelve True si el valor es de cualquiera de ellos.</p>",
+            "<p>Útil para verificar \"es un número de cualquier tipo\".</p>"
+          ]
+        },
+        {
+          "titulo": "Uso típico en validación",
+          "codigo": "def duplicar(x):\n    if isinstance(x, (int, float)):\n        return x * 2\n    else:\n        return \"Solo acepto números\"\n\nprint(duplicar(5))       # 10\nprint(duplicar(3.14))    # 6.28\nprint(duplicar(\"hola\"))  # Solo acepto números",
+          "explicacion": [
+            "<p>Este patrón se usa mucho para validar argumentos:</p>",
+            "<ul><li>Si el valor es número, haz la operación.</li><li>Si no, devuelve un mensaje de error.</li></ul>",
+            "<p>Es mejor que dejar que el código falle con un TypeError confuso.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "type(x) == int",
+          "razon": "Funciona, pero type() no respeta la herencia. Mejor usar isinstance.",
+          "correcto": "isinstance(x, int)"
+        },
+        {
+          "error": "print(type(5) == \"int\")",
+          "razon": "type(5) devuelve un objeto, no un string. Comparar con \"int\" da False.",
+          "correcto": "print(type(5).__name__ == \"int\")   o   isinstance(5, int)"
+        },
+        {
+          "error": "if isinstance(x, 'int'):",
+          "razon": "El tipo debe ser la clase int, no el string 'int'.",
+          "correcto": "if isinstance(x, int):"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>type(x).__name__</code> da solo el nombre del tipo como string: <code>\"int\"</code>, <code>\"float\"</code>, etc.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en Python, casi nunca necesitas verificar tipos. Es más \"pythonico\" intentar la operación y capturar el error. Pero cuando sí lo necesitas, usa <code>isinstance</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para depurar, imprime <code>type(x)</code> o <code>type(x).__name__</code> cuando no sepas por qué algo falla.</p>"
+      ],
+      "resumen": "type(x) devuelve el tipo exacto. isinstance(x, T) verifica pertenencia respetando la herencia. Para verificar tipos, casi siempre usa isinstance."
+    }
+  ]
+}
