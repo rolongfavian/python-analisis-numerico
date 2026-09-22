@@ -1,7 +1,7 @@
 {
   "titulo": "Cómo usar esta página",
   "emoji": "📚",
-  "descripcion": "Una guía rápida para aprovechar al máximo todos los recursos de esta web: la navegación, el buscador, el motor de Python y la tienda de extensiones.",
+  "descripcion": "Una guía rápida para aprovechar al máximo todos los recursos de esta web: la navegación, el buscador, el motor de Python y el IDLE.",
   "secciones": [
     {
       "titulo": "🧭 Navegación",
@@ -13,11 +13,15 @@
     },
     {
       "titulo": "⚙️ Motor de Python",
-      "contenido": "<p>Los ejemplos con código tienen un botón <strong>▶ Ejecutar</strong>. Al pulsarlo, el código se ejecuta en tu navegador y verás el resultado debajo.</p><p>La primera vez que abras la web, verás una <strong>barra de progreso</strong> arriba que indica que Python se está cargando. Mientras tanto, puedes leer toda la guía.</p><p>Si el código tiene errores de sintaxis, verás <strong>subrayado rojo ondulado</strong> y un icono ⚠ en el margen izquierdo. Pasa el ratón por encima para ver el mensaje.</p>"
+      "contenido": "<p>Los ejemplos con código tienen un botón <strong>▶ Ejecutar</strong>. Al pulsarlo, el código se ejecuta en tu navegador y verás el resultado debajo.</p><p>Usamos <strong>Skulpt</strong>, un intérprete de Python escrito en JavaScript. Es muy ligero (~1.5 MB) y carga en 1-2 segundos.</p><p>Si el código tiene errores, verás un mensaje en el panel de salida explicando qué falló.</p>"
     },
     {
-      "titulo": "🛒 Tienda de extensiones",
-      "contenido": "<p>Python por defecto viene con muchas funciones, pero si necesitas librerías como <strong>NumPy</strong> o <strong>Matplotlib</strong>, puedes instalarlas desde la tienda.</p><p>Cuando instalas una extensión:</p><ol><li>Te aparece un <strong>aviso de descarga</strong> con recomendación de Wi-Fi.</li><li>Si confirmas, los archivos se <strong>cachean en tu navegador</strong>.</li><li>La extensión se carga en memoria y ya puedes usarla.</li></ol><p>Si borras el caché del navegador, la extensión aparecerá como <strong>\"pendiente de reinstalar\"</strong> en la tienda, y tú decides cuándo volver a descargarla. <strong>No se reinstala sola.</strong></p>"
+      "titulo": "📦 ¿Qué puedo usar en los ejemplos?",
+      "contenido": "<p>Skulpt soporta el <strong>Python estándar</strong>:</p><ul><li><strong>Fundamentos</strong>: variables, números, strings, listas, tuplas, sets, diccionarios.</li><li><strong>Control de flujo</strong>: <code>if</code>, <code>for</code>, <code>while</code>, <code>break</code>, <code>continue</code>.</li><li><strong>Funciones y clases</strong>: <code>def</code>, <code>lambda</code>, <code>class</code>, herencia.</li><li><strong>Excepciones</strong>: <code>try</code>, <code>except</code>, <code>raise</code>.</li><li><strong>Módulos estándar</strong>: <code>math</code>, <code>random</code>, <code>json</code>, <code>datetime</code>, <code>time</code>, <code>re</code>.</li></ul><p><strong>Lo que NO se puede usar:</strong></p><ul><li><code>numpy</code>, <code>pandas</code>, <code>matplotlib</code>, <code>scipy</code> u otras librerías externas.</li><li>Operaciones con archivos reales (solo simuladas con strings).</li></ul><p>Por eso, todos los ejemplos del curso están escritos solo con Python estándar. La parte de <strong>análisis numérico</strong> usa listas, bucles y aritmética básica: suficiente para bisección, Newton, matrices y más.</p>"
+    },
+    {
+      "titulo": "🐍 IDLE · Python libre",
+      "contenido": "<p>Si quieres escribir tu propio código, pulsa el botón <strong>🐍 IDLE</strong> de la barra superior (o <strong>Ctrl+Alt+I</strong>). Se abre un editor con:</p><ul><li><strong>Barra de archivos</strong>: crea notebooks <code>.ipynb</code> o archivos <code>.py</code>.</li><li><strong>Editor CodeMirror</strong> con autocompletado.</li><li><strong>Botón Ejecutar</strong> para ver la salida.</li><li><strong>Convertir</strong>: cambia entre <code>.py</code> y <code>.ipynb</code>.</li><li><strong>Descargar</strong>: guarda el archivo en tu dispositivo.</li></ul><p>Todo se guarda automáticamente en tu navegador, así que puedes cerrar la pestaña y volver después.</p>"
     },
     {
       "titulo": "🌓 Tema claro y oscuro",
@@ -25,7 +29,7 @@
     },
     {
       "titulo": "💾 Guardar tu progreso",
-      "contenido": "<p>Esta web <strong>no guarda tu progreso automáticamente</strong>. Cada vez que vuelves, empiezas de cero.</p><p>Si quieres llevar un registro de lo que aprendes, te recomendamos:</p><ul><li>Descargar los ejemplos que más te interesen.</li><li>Anotar tus dudas en un cuaderno aparte.</li><li>Practicar cada tema por tu cuenta en tu editor favorito.</li></ul>"
+      "contenido": "<p>Esta web <strong>no guarda tu progreso automáticamente</strong>. Cada vez que vuelves, empiezas de cero.</p><p>Si quieres llevar un registro de lo que aprendes, te recomendamos:</p><ul><li>Descargar los ejemplos que más te interesen.</li><li>Anotar tus dudas en un cuaderno aparte.</li><li>Usar el IDLE para practicar y guardar tus pruebas.</li></ul>"
     },
     {
       "titulo": "🚀 Sugerencias de uso",
