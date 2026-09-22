@@ -24,7 +24,7 @@
       "ejemplos": [
         {
           "titulo": "Primera clase: Punto",
-          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\np = Punto(3, 4)\nprint(p.x)   # 3\nprint(p.y)   # 4",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\np = Punto(3, 4)\nprint(p.x)\nprint(p.y)",
           "explicacion": [
             "<p><code>class Punto</code> define la clase. <code>__init__</code> es el constructor: se ejecuta al crear el objeto.</p>",
             "<p><code>self</code> es la referencia al objeto. <code>self.x = x</code> guarda el valor en el objeto.</p>",
@@ -33,7 +33,7 @@
         },
         {
           "titulo": "Dos objetos, dos estados",
-          "codigo": "p1 = Punto(1, 2)\np2 = Punto(5, 7)\n\nprint(p1.x, p1.y)   # 1 2\nprint(p2.x, p2.y)   # 5 7",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\np1 = Punto(1, 2)\np2 = Punto(5, 7)\n\nprint(p1.x, p1.y)\nprint(p2.x, p2.y)",
           "explicacion": [
             "<p>Cada objeto tiene sus propios valores. No se pisan.</p>",
             "<p>Son instancias independientes de la misma clase.</p>"
@@ -41,7 +41,7 @@
         },
         {
           "titulo": "Constructor con valores por defecto",
-          "codigo": "class Punto:\n    def __init__(self, x=0, y=0):\n        self.x = x\n        self.y = y\n\np1 = Punto()\np2 = Punto(5)\np3 = Punto(5, 7)\n\nprint(p1.x, p1.y)   # 0 0\nprint(p2.x, p2.y)   # 5 0\nprint(p3.x, p3.y)   # 5 7",
+          "codigo": "class Punto:\n    def __init__(self, x=0, y=0):\n        self.x = x\n        self.y = y\n\np1 = Punto()\np2 = Punto(5)\np3 = Punto(5, 7)\n\nprint(p1.x, p1.y)\nprint(p2.x, p2.y)\nprint(p3.x, p3.y)",
           "explicacion": [
             "<p>Puedes dar valores por defecto en el constructor, como en las funciones.</p>",
             "<p>Así <code>Punto()</code> crea el origen (0, 0).</p>"
@@ -53,11 +53,6 @@
           "error": "def __init__(x, y):  sin self",
           "razon": "El primer parámetro siempre es self. Sin él, Python no sabe a qué objeto se refiere.",
           "correcto": "def __init__(self, x, y):"
-        },
-        {
-          "error": "Punto(3, 4)  esperando que se llame __init__ automáticamente sin más",
-          "razon": "Sí se llama automáticamente, pero no puedes olvidar el constructor. Python llama a __init__ al crear.",
-          "correcto": "Correcto: __init__ se ejecuta al crear el objeto."
         },
         {
           "error": "Usar p.x = 10  fuera del constructor",
@@ -98,7 +93,7 @@
       "ejemplos": [
         {
           "titulo": "Método simple",
-          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def mostrar(self):\n        print(f\"({self.x}, {self.y})\")\n\np = Punto(3, 4)\np.mostrar()   # (3, 4)",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def mostrar(self):\n        print(f\"({self.x}, {self.y})\")\n\np = Punto(3, 4)\np.mostrar()",
           "explicacion": [
             "<p><code>mostrar</code> es un método. Se llama con <code>p.mostrar()</code>.</p>",
             "<p>Dentro, accede a <code>self.x</code> y <code>self.y</code>.</p>",
@@ -107,7 +102,7 @@
         },
         {
           "titulo": "Método con parámetros",
-          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def distancia_a(self, otro):\n        dx = self.x - otro.x\n        dy = self.y - otro.y\n        return (dx**2 + dy**2) ** 0.5\n\np1 = Punto(0, 0)\np2 = Punto(3, 4)\nprint(p1.distancia_a(p2))   # 5.0",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def distancia_a(self, otro):\n        dx = self.x - otro.x\n        dy = self.y - otro.y\n        return (dx**2 + dy**2) ** 0.5\n\np1 = Punto(0, 0)\np2 = Punto(3, 4)\nprint(p1.distancia_a(p2))",
           "explicacion": [
             "<p><code>distancia_a</code> recibe otro punto como argumento.</p>",
             "<p>Calcula la distancia euclidiana entre los dos.</p>",
@@ -116,7 +111,7 @@
         },
         {
           "titulo": "Método que modifica el estado",
-          "codigo": "class Contador:\n    def __init__(self):\n        self.valor = 0\n    \n    def incrementar(self):\n        self.valor += 1\n    \n    def reiniciar(self):\n        self.valor = 0\n\nc = Contador()\nc.incrementar()\nc.incrementar()\nprint(c.valor)   # 2\nc.reiniciar()\nprint(c.valor)   # 0",
+          "codigo": "class Contador:\n    def __init__(self):\n        self.valor = 0\n    \n    def incrementar(self):\n        self.valor += 1\n    \n    def reiniciar(self):\n        self.valor = 0\n\nc = Contador()\nc.incrementar()\nc.incrementar()\nprint(c.valor)\nc.reiniciar()\nprint(c.valor)",
           "explicacion": [
             "<p>Los métodos pueden modificar los atributos del objeto.</p>",
             "<p>Aquí <code>incrementar</code> y <code>reiniciar</code> cambian <code>self.valor</code>.</p>"
@@ -150,9 +145,9 @@
         }
       ],
       "tips": [
-        "<p>💡 <strong>Truco 1:</strong> los métodos que no necesitan <code>self</code> se pueden marcar como <code>@staticmethod</code>, pero casi nunca hace falta.</p>",
-        "<p>💡 <strong>Truco 2:</strong> los métodos con nombre descriptivo son como una API del objeto: <code>p.distancia_a(q)</code>, <code>v.norma()</code>, <code>m.determinante()</code>.</p>",
-        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, encapsular un método en una clase permite guardar historial, iteraciones, error final, etc.</p>"
+        "<p>💡 <strong>Truco 1:</strong> los métodos con nombre descriptivo son como una API del objeto: <code>p.distancia_a(q)</code>, <code>v.norma()</code>, <code>m.determinante()</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en análisis numérico, encapsular un método en una clase permite guardar historial, iteraciones, error final, etc.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si un método no modifica el estado, considera devolver un valor nuevo en lugar de modificar <code>self</code>.</p>"
       ],
       "ejercicios": [
         "Añade un método `mostrar` a la clase Punto.",
@@ -182,7 +177,7 @@
       "ejemplos": [
         {
           "titulo": "__str__ y __repr__",
-          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n    \n    def __repr__(self):\n        return f\"Punto({self.x}, {self.y})\"\n\np = Punto(3, 4)\nprint(p)          # (3, 4)\nprint(repr(p))    # Punto(3, 4)",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n    \n    def __repr__(self):\n        return f\"Punto({self.x}, {self.y})\"\n\np = Punto(3, 4)\nprint(p)\nprint(repr(p))",
           "explicacion": [
             "<p><code>__str__</code> es para el usuario final. Se usa con <code>print()</code>.</p>",
             "<p><code>__repr__</code> es para el desarrollador. Se usa en la consola y en listas.</p>",
@@ -191,7 +186,7 @@
         },
         {
           "titulo": "__eq__: comparación por valor",
-          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __eq__(self, otro):\n        return self.x == otro.x and self.y == otro.y\n\np1 = Punto(3, 4)\np2 = Punto(3, 4)\np3 = Punto(5, 6)\n\nprint(p1 == p2)   # True\nprint(p1 == p3)   # False\n\n# Sin __eq__, p1 == p2 sería False (compara identidad)",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __eq__(self, otro):\n        return self.x == otro.x and self.y == otro.y\n\np1 = Punto(3, 4)\np2 = Punto(3, 4)\np3 = Punto(5, 6)\n\nprint(p1 == p2)\nprint(p1 == p3)",
           "explicacion": [
             "<p>Sin <code>__eq__</code>, dos objetos se comparan por identidad (misma dirección de memoria).</p>",
             "<p>Con <code>__eq__</code>, los comparas por valor, como quieras.</p>"
@@ -199,7 +194,7 @@
         },
         {
           "titulo": "__add__: sumar objetos",
-          "codigo": "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __add__(self, otro):\n        return Vector(self.x + otro.x, self.y + otro.y)\n    \n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nv3 = v1 + v2\nprint(v3)   # (4, 6)",
+          "codigo": "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __add__(self, otro):\n        return Vector(self.x + otro.x, self.y + otro.y)\n    \n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nv3 = v1 + v2\nprint(v3)",
           "explicacion": [
             "<p><code>__add__</code> define qué pasa cuando usas <code>+</code> con dos objetos.</p>",
             "<p>Devuelve un nuevo vector con la suma componente a componente.</p>",
@@ -208,7 +203,7 @@
         },
         {
           "titulo": "__len__ y __getitem__",
-          "codigo": "class MiLista:\n    def __init__(self, datos):\n        self.datos = datos\n    \n    def __len__(self):\n        return len(self.datos)\n    \n    def __getitem__(self, i):\n        return self.datos[i]\n\nml = MiLista([10, 20, 30, 40])\nprint(len(ml))       # 4\nprint(ml[0])         # 10\nprint(ml[2])         # 30\nprint(ml[-1])        # 40\n\nfor x in ml:\n    print(x)",
+          "codigo": "class MiLista:\n    def __init__(self, datos):\n        self.datos = datos\n    \n    def __len__(self):\n        return len(self.datos)\n    \n    def __getitem__(self, i):\n        return self.datos[i]\n\nml = MiLista([10, 20, 30, 40])\nprint(len(ml))\nprint(ml[0])\nprint(ml[2])\nprint(ml[-1])\n\nfor x in ml:\n    print(x)",
           "explicacion": [
             "<p>Con <code>__len__</code>, <code>len(ml)</code> funciona.</p>",
             "<p>Con <code>__getitem__</code>, puedes indexar y recorrer con for.</p>",
@@ -224,27 +219,27 @@
         },
         {
           "error": "__eq__ sin __hash__",
-          "razon": "Si defines __eq__, el objeto deja de ser hashable por defecto. Útil si vas a usar sets o dicts.",
+          "razon": "Si defines __eq__, el objeto deja de ser hashable por defecto.",
           "correcto": "Añade __hash__ si necesitas usar el objeto como clave."
         },
         {
           "error": "Pensar que __repr__ es igual que __str__",
-          "razon": "Sirven para cosas distintas. __repr__ debe ser una expresión válida que recree el objeto.",
+          "razon": "Sirven para cosas distintas.",
           "correcto": "__repr__ → Punto(3, 4)\n__str__ → (3, 4)"
         }
       ],
       "tips": [
         "<p>💡 <strong>Truco 1:</strong> define <code>__repr__</code> en todas tus clases. Ayuda mucho al depurar.</p>",
-        "<p>💡 <strong>Truco 2:</strong> <code>__repr__</code> idealmente debe ser <code>Clase(args)</code>, para que <code>eval()</code> lo reconstruya.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>__repr__</code> idealmente debe ser <code>Clase(args)</code>.</p>",
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>__str__</code> en una clase <code>Punto</code> o <code>Vector</code> mejora mucho los prints.</p>",
         "<p>💡 <strong>Truco 4:</strong> <code>__add__</code> y <code>__mul__</code> permiten que tus vectores se comporten como vectores matemáticos.</p>"
       ],
       "ejercicios": [
-        "Añade `__str__` a la clase Punto para que imprima '(x, y)'.",
-        "Añade `__repr__` para que se vea 'Punto(x, y)'.",
-        "Añade `__eq__` para comparar por valor.",
-        "Añade `__add__` para sumar dos puntos.",
-        "Añade `__len__` a una clase que envuelva una lista."
+        "Añade __str__ a la clase Punto para que imprima '(x, y)'.",
+        "Añade __repr__ para que se vea 'Punto(x, y)'.",
+        "Añade __eq__ para comparar por valor.",
+        "Añade __add__ para sumar dos puntos.",
+        "Añade __len__ a una clase que envuelva una lista."
       ],
       "resumen": "Los dunders son métodos especiales que Python llama automáticamente. __str__ y __repr__ controlan la representación. __eq__ la igualdad. __add__ la suma. Haz que tus objetos se comporten como nativos."
     },
@@ -267,7 +262,7 @@
       "ejemplos": [
         {
           "titulo": "Atributo de clase compartido",
-          "codigo": "class Circulo:\n    PI = 3.14159   # atributo de clase\n    \n    def __init__(self, radio):\n        self.radio = radio   # atributo de instancia\n\nc1 = Circulo(5)\nc2 = Circulo(10)\n\nprint(c1.radio)     # 5\nprint(c2.radio)     # 10\nprint(Circulo.PI)   # 3.14159\nprint(c1.PI)        # 3.14159 (también accesible)",
+          "codigo": "class Circulo:\n    PI = 3.14159   # atributo de clase\n    \n    def __init__(self, radio):\n        self.radio = radio   # atributo de instancia\n\nc1 = Circulo(5)\nc2 = Circulo(10)\n\nprint(c1.radio)\nprint(c2.radio)\nprint(Circulo.PI)\nprint(c1.PI)",
           "explicacion": [
             "<p><code>PI</code> es igual para todos los círculos. Por eso es de clase.</p>",
             "<p><code>radio</code> es distinto en cada círculo. Por eso es de instancia.</p>"
@@ -275,7 +270,7 @@
         },
         {
           "titulo": "Contador de instancias",
-          "codigo": "class Persona:\n    contador = 0\n    \n    def __init__(self, nombre):\n        self.nombre = nombre\n        Persona.contador += 1\n\np1 = Persona(\"Ana\")\np2 = Persona(\"Luis\")\np3 = Persona(\"Eva\")\n\nprint(Persona.contador)   # 3\nprint(p1.nombre)          # Ana",
+          "codigo": "class Persona:\n    contador = 0\n    \n    def __init__(self, nombre):\n        self.nombre = nombre\n        Persona.contador += 1\n\np1 = Persona(\"Ana\")\np2 = Persona(\"Luis\")\np3 = Persona(\"Eva\")\n\nprint(Persona.contador)\nprint(p1.nombre)",
           "explicacion": [
             "<p>Cada vez que se crea una persona, el contador de clase aumenta.</p>",
             "<p>Todas las instancias comparten <code>Persona.contador</code>.</p>"
@@ -283,7 +278,7 @@
         },
         {
           "titulo": "Cuidado: modificar un atributo de clase desde una instancia",
-          "codigo": "class Config:\n    debug = False\n\nc1 = Config()\nc2 = Config()\n\nc1.debug = True   # crea un ATRIBUTO DE INSTANCIA, no modifica el de clase\n\nprint(c1.debug)         # True\nprint(c2.debug)         # False\nprint(Config.debug)     # False\n\n# Para modificar el de clase:\nConfig.debug = True\nprint(c2.debug)         # True (ahora sí)",
+          "codigo": "class Config:\n    debug = False\n\nc1 = Config()\nc2 = Config()\n\nc1.debug = True\n\nprint(c1.debug)\nprint(c2.debug)\nprint(Config.debug)\n\nConfig.debug = True\nprint(c2.debug)",
           "explicacion": [
             "<p>Asignar <code>c1.debug = True</code> crea un atributo de instancia que <strong>oculta</strong> el de clase solo para ese objeto.</p>",
             "<p>Para modificar el atributo de clase, usa <code>Config.debug = True</code>.</p>",
@@ -336,7 +331,7 @@
       "ejemplos": [
         {
           "titulo": "Herencia básica",
-          "codigo": "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    \n    def hablar(self):\n        return \"...\"\n\nclass Perro(Animal):\n    def hablar(self):\n        return \"Guau\"\n\nclass Gato(Animal):\n    def hablar(self):\n        return \"Miau\"\n\nperro = Perro(\"Rex\")\ngato = Gato(\"Michi\")\n\nprint(perro.nombre, perro.hablar())   # Rex Guau\nprint(gato.nombre, gato.hablar())     # Michi Miau",
+          "codigo": "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    \n    def hablar(self):\n        return \"...\"\n\nclass Perro(Animal):\n    def hablar(self):\n        return \"Guau\"\n\nclass Gato(Animal):\n    def hablar(self):\n        return \"Miau\"\n\nperro = Perro(\"Rex\")\ngato = Gato(\"Michi\")\n\nprint(perro.nombre, perro.hablar())\nprint(gato.nombre, gato.hablar())",
           "explicacion": [
             "<p><code>Perro</code> y <code>Gato</code> heredan de <code>Animal</code>.</p>",
             "<p>Reutilizan el atributo <code>nombre</code> y el método <code>__init__</code>.</p>",
@@ -345,7 +340,7 @@
         },
         {
           "titulo": "Usar super()",
-          "codigo": "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    \n    def descripcion(self):\n        return f\"Un animal llamado {self.nombre}\"\n\nclass Perro(Animal):\n    def __init__(self, nombre, raza):\n        super().__init__(nombre)   # llama al __init__ del padre\n        self.raza = raza\n    \n    def descripcion(self):\n        base = super().descripcion()\n        return f\"{base}, de raza {self.raza}\"\n\np = Perro(\"Rex\", \"Labrador\")\nprint(p.descripcion())   # Un animal llamado Rex, de raza Labrador",
+          "codigo": "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    \n    def descripcion(self):\n        return f\"Un animal llamado {self.nombre}\"\n\nclass Perro(Animal):\n    def __init__(self, nombre, raza):\n        super().__init__(nombre)\n        self.raza = raza\n    \n    def descripcion(self):\n        base = super().descripcion()\n        return f\"{base}, de raza {self.raza}\"\n\np = Perro(\"Rex\", \"Labrador\")\nprint(p.descripcion())",
           "explicacion": [
             "<p><code>super()</code> llama al método del padre. Así no repites código.</p>",
             "<p>En <code>__init__</code>, <code>super().__init__(nombre)</code> inicializa la parte del padre.</p>",
@@ -413,7 +408,7 @@
       "ejemplos": [
         {
           "titulo": "Atributos públicos, protegidos y privados",
-          "codigo": "class Cuenta:\n    def __init__(self, saldo):\n        self.saldo = saldo          # público\n        self._moneda = \"EUR\"        # protegido (convención)\n        self.__pin = \"1234\"         # privado (name mangling)\n\nc = Cuenta(100)\nprint(c.saldo)          # 100\nprint(c._moneda)        # EUR (accesible, pero no deberías)\n# print(c.__pin)        # AttributeError\nprint(c._Cuenta__pin)   # '1234'  ← se puede acceder, Python no lo prohíbe",
+          "codigo": "class Cuenta:\n    def __init__(self, saldo):\n        self.saldo = saldo          # público\n        self._moneda = \"EUR\"        # protegido (convención)\n        self.__pin = \"1234\"         # privado (name mangling)\n\nc = Cuenta(100)\nprint(c.saldo)\nprint(c._moneda)\nprint(c._Cuenta__pin)",
           "explicacion": [
             "<p>Python no bloquea el acceso, solo usa convenciones:</p>",
             "<ul><li><code>nombre</code> → público.</li><li><code>_nombre</code> → protegido (no lo toques).</li><li><code>__nombre</code> → privado (Python renombra a <code>_Clase__nombre</code>).</li></ul>",
@@ -422,7 +417,7 @@
         },
         {
           "titulo": "Property: getter y setter",
-          "codigo": "class Circulo:\n    def __init__(self, radio):\n        self._radio = radio\n    \n    @property\n    def radio(self):\n        return self._radio\n    \n    @radio.setter\n    def radio(self, valor):\n        if valor <= 0:\n            raise ValueError(\"El radio debe ser positivo\")\n        self._radio = valor\n    \n    @property\n    def area(self):\n        # Propiedad calculada, sin setter\n        return 3.14159 * self._radio ** 2\n\nc = Circulo(5)\nprint(c.radio)   # 5\nprint(c.area)    # 78.53975\n\nc.radio = 10\nprint(c.area)    # 314.159\n\n# c.radio = -1   # ValueError",
+          "codigo": "class Circulo:\n    def __init__(self, radio):\n        self._radio = radio\n    \n    @property\n    def radio(self):\n        return self._radio\n    \n    @radio.setter\n    def radio(self, valor):\n        if valor <= 0:\n            raise ValueError(\"El radio debe ser positivo\")\n        self._radio = valor\n    \n    @property\n    def area(self):\n        return 3.14159 * self._radio ** 2\n\nc = Circulo(5)\nprint(c.radio)\nprint(c.area)\n\nc.radio = 10\nprint(c.area)",
           "explicacion": [
             "<p><code>@property</code> convierte un método en un atributo de solo lectura.</p>",
             "<p><code>@radio.setter</code> define qué pasa al asignar.</p>",
@@ -432,7 +427,7 @@
         },
         {
           "titulo": "Propiedad calculada en análisis numérico",
-          "codigo": "class Resultado:\n    def __init__(self, raiz, iteraciones):\n        self.raiz = raiz\n        self.iteraciones = iteraciones\n    \n    @property\n    def convergencia(self):\n        if self.iteraciones < 5:\n            return \"rápida\"\n        elif self.iteraciones < 15:\n            return \"normal\"\n        else:\n            return \"lenta\"\n\nr1 = Resultado(1.5213797, 3)\nr2 = Resultado(1.5213797, 20)\n\nprint(r1.convergencia)   # rápida\nprint(r2.convergencia)   # lenta",
+          "codigo": "class Resultado:\n    def __init__(self, raiz, iteraciones):\n        self.raiz = raiz\n        self.iteraciones = iteraciones\n    \n    @property\n    def convergencia(self):\n        if self.iteraciones < 5:\n            return \"rápida\"\n        elif self.iteraciones < 15:\n            return \"normal\"\n        else:\n            return \"lenta\"\n\nr1 = Resultado(1.5213797, 3)\nr2 = Resultado(1.5213797, 20)\n\nprint(r1.convergencia)\nprint(r2.convergencia)",
           "explicacion": [
             "<p>La propiedad <code>convergencia</code> se calcula al vuelo según las iteraciones.</p>",
             "<p>El usuario accede como si fuera un atributo: <code>r1.convergencia</code>.</p>"
@@ -467,7 +462,7 @@
         "Comprueba que __privado no es accesible directamente.",
         "Añade un @property a una clase tuya.",
         "Añade un @setter que valide que el valor sea positivo.",
-        "Crea una propiedad calculada como `area` o `longitud`."
+        "Crea una propiedad calculada como area o longitud."
       ],
       "resumen": "En Python la privacidad es convención. _ protegido, __ privado. @property convierte métodos en atributos. @setter valida asignaciones. Úsalas para controlar el acceso."
     }

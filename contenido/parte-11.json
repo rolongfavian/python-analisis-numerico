@@ -2,7 +2,7 @@
   "parte": 11,
   "titulo": "Errores y excepciones",
   "emoji": "⚠️",
-  "descripcion": "Los errores son inevitables. Lo importante es entenderlos y saber manejarlos. En esta parte aprenderás a leer los mensajes de error, a distinguir tipos de excepciones y a escribir código que no se rompa cuando algo falla. Es la diferencia entre un programa frágil y uno robusto.",
+  "descripcion": "Los errores son inevitables. Lo importante es entenderlos y saber manejarlos. En esta parte aprenderás a leer los mensajes de error, a distinguir tipos de excepciones y a escribir código que no se rompa cuando algo falla.",
   "temas": [
     {
       "id": "tipos-errores",
@@ -19,11 +19,11 @@
         "<p>Conocer los tipos de errores te permite:</p>",
         "<ul><li><strong>Depurar más rápido</strong>: identificar qué falló.</li><li><strong>Leer el traceback</strong>: entender el mensaje de error.</li><li><strong>Prevenir</strong>: escribir código que no falle.</li><li><strong>Manejar</strong>: decidir qué hacer cuando algo falla.</li></ul>"
       ],
-      "sintaxis": "# Los errores más comunes:\n\nSyntaxError          # el código está mal escrito\nNameError            # variable no definida\nTypeError            # tipo incorrecto\nValueError           # valor inválido\nIndexError           # índice fuera de rango\nKeyError             # clave no encontrada\nZeroDivisionError    # división entre cero\nFileNotFoundError    # archivo no encontrado\nAttributeError       # atributo no existe\nImportError          # módulo no encontrado",
+      "sintaxis": "# Los errores más comunes:\n\nSyntaxError          # el código está mal escrito\nNameError            # variable no definida\nTypeError            # tipo incorrecto\nValueError           # valor inválido\nIndexError           # índice fuera de rango\nKeyError             # clave no encontrada\nZeroDivisionError    # división entre cero\nAttributeError       # atributo no existe\nImportError          # módulo no encontrado",
       "ejemplos": [
         {
           "titulo": "SyntaxError: el código no se entiende",
-          "codigo": "# print(\"Hola\"   ← falta cerrar comilla\n# print(\"Hola\"   ← falta paréntesis\n# if x = 5:      ← debería ser ==\n\n# Python no ejecuta nada, da error antes de empezar",
+          "codigo": "# print(\"Hola\"   ← falta cerrar comilla\n# print(\"Hola\"   ← falta paréntesis\n# if x = 5:      ← debería ser ==\n\n# Python no ejecuta nada, da error antes de empezar\nprint(\"Si ves este mensaje, el código SÍ es válido\")",
           "explicacion": [
             "<p>Los <code>SyntaxError</code> se detectan <strong>al compilar</strong>, antes de ejecutar. Ni una línea se ejecuta.</p>",
             "<p>Suelen ser fáciles de arreglar: falta un paréntesis, una comilla, dos puntos, etc.</p>"
@@ -31,15 +31,16 @@
         },
         {
           "titulo": "NameError: variable no definida",
-          "codigo": "# print(variable_que_no_existe)\n# NameError: name 'variable_que_no_existe' is not defined\n\n# Otro caso:\nx = 5\nprint(y)   # NameError: name 'y' is not defined",
+          "codigo": "try:\n    print(variable_que_no_existe)\nexcept NameError as e:\n    print(f\"NameError capturado: {e}\")\n\n# Otro caso:\nx = 5\nprint(\"x vale\", x)",
           "explicacion": [
             "<p>Usas una variable que no está definida.</p>",
-            "<p>Suele pasar cuando te equivocas en el nombre o cuando usas una variable antes de crearla.</p>"
+            "<p>Suele pasar cuando te equivocas en el nombre o cuando usas una variable antes de crearla.</p>",
+            "<p>Aquí lo capturamos con try/except para que el programa no se rompa.</p>"
           ]
         },
         {
           "titulo": "TypeError: tipo incorrecto",
-          "codigo": "# print(\"Hola\" + 5)\n# TypeError: can only concatenate str (not \"int\") to str\n\n# print(len(5))\n# TypeError: object of type 'int' has no len()",
+          "codigo": "try:\n    print(\"Hola\" + 5)\nexcept TypeError as e:\n    print(f\"TypeError capturado: {e}\")\n\ntry:\n    print(len(5))\nexcept TypeError as e:\n    print(f\"TypeError capturado: {e}\")",
           "explicacion": [
             "<p>Estás mezclando tipos incompatibles.</p>",
             "<p>El mensaje te dice exactamente qué tipo esperaba y cuál recibió.</p>"
@@ -47,7 +48,7 @@
         },
         {
           "titulo": "ValueError: valor inválido",
-          "codigo": "# int(\"abc\")\n# ValueError: invalid literal for int() with base 10: 'abc'\n\n# import math\n# math.sqrt(-1)\n# ValueError: math domain error",
+          "codigo": "try:\n    int(\"abc\")\nexcept ValueError as e:\n    print(f\"ValueError capturado: {e}\")\n\ntry:\n    import math\n    math.sqrt(-1)\nexcept ValueError as e:\n    print(f\"ValueError capturado: {e}\")",
           "explicacion": [
             "<p>El tipo es correcto, pero el valor no es aceptable.</p>",
             "<p>Por ejemplo, <code>int(\"abc\")</code>: pasas un string (tipo válido), pero no representa un número (valor inválido).</p>"
@@ -55,7 +56,7 @@
         },
         {
           "titulo": "IndexError y KeyError",
-          "codigo": "# lista = [1, 2, 3]\n# print(lista[10])\n# IndexError: list index out of range\n\n# dicc = {\"a\": 1}\n# print(dicc[\"b\"])\n# KeyError: 'b'",
+          "codigo": "try:\n    lista = [1, 2, 3]\n    print(lista[10])\nexcept IndexError as e:\n    print(f\"IndexError capturado: {e}\")\n\ntry:\n    dicc = {\"a\": 1}\n    print(dicc[\"b\"])\nexcept KeyError as e:\n    print(f\"KeyError capturado: {e}\")",
           "explicacion": [
             "<p><code>IndexError</code>: índice fuera del rango de una lista o string.</p>",
             "<p><code>KeyError</code>: clave no encontrada en un diccionario.</p>"
@@ -63,7 +64,7 @@
         },
         {
           "titulo": "ZeroDivisionError",
-          "codigo": "# print(10 / 0)\n# ZeroDivisionError: division by zero\n\n# print(10 % 0)\n# ZeroDivisionError: integer modulo by zero",
+          "codigo": "try:\n    print(10 / 0)\nexcept ZeroDivisionError as e:\n    print(f\"ZeroDivisionError capturado: {e}\")\n\ntry:\n    print(10 % 0)\nexcept ZeroDivisionError as e:\n    print(f\"ZeroDivisionError capturado: {e}\")",
           "explicacion": [
             "<p>Intentas dividir entre cero. Es un error clásico en análisis numérico cuando un denominador se anula.</p>"
           ]
@@ -92,20 +93,19 @@
         }
       ],
       "tips": [
-        "<p>💡 <strong>Truco 1:</strong> lee siempre el mensaje de error. Python te dice exactamente qué falló y en qué línea.</p>",
-        "<p>💡 <strong>Truco 2:</strong> el <strong>traceback</strong> se lee de abajo hacia arriba: la última línea es el error concreto, las de arriba son el camino.</p>",
-        "<p>💡 <strong>Truco 3:</strong> en esta web, el linter subraya los errores de sintaxis antes de ejecutar. Pasa el ratón por la marca ⚠ para ver el mensaje.</p>",
-        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, los errores más comunes son <code>ZeroDivisionError</code> (denominadores que se anulan) y <code>ValueError</code> (raíces de negativos).</p>"
+        "<p>💡 <strong>Truco 1:</strong> lee siempre el mensaje de error. Python te dice exactamente qué falló.</p>",
+        "<p>💡 <strong>Truco 2:</strong> envuelve con try/except los errores que esperas, para que el programa no se rompa.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, los errores más comunes son <code>ZeroDivisionError</code> (denominadores que se anulan) y <code>ValueError</code> (raíces de negativos).</p>",
+        "<p>💡 <strong>Truco 4:</strong> en esta web, los errores de sintaxis aparecen al pulsar Ejecutar.</p>"
       ],
       "ejercicios": [
-        "Provoca un SyntaxError y lee el mensaje.",
-        "Provoca un NameError y explica qué falta.",
+        "Provoca un NameError usando una variable que no existe.",
         "Provoca un TypeError sumando string y número.",
-        "Provoca un ValueError con `int('abc')`.",
+        "Provoca un ValueError con int('abc').",
         "Provoca un IndexError accediendo a lista[100].",
         "Provoca un KeyError accediendo a una clave inexistente."
       ],
-      "resumen": "Los errores se dividen en SyntaxError (antes de ejecutar) y excepciones (durante la ejecución). Los más comunes: NameError, TypeError, ValueError, IndexError, KeyError, ZeroDivisionError. Lee siempre el mensaje: te dice qué y dónde falló."
+      "resumen": "Los errores se dividen en SyntaxError (antes de ejecutar) y excepciones (durante la ejecución). Los más comunes: NameError, TypeError, ValueError, IndexError, KeyError, ZeroDivisionError."
     },
     {
       "id": "traceback",
@@ -121,43 +121,36 @@
       ],
       "para_que_sirve": [
         "<p>Saber leer el traceback es una de las habilidades más importantes de un programador. Te permite:</p>",
-        "<ul><li><strong>Localizar el error</strong>: en qué archivo y línea.</li><li><strong>Entender la causa</strong>: por qué se lanzó.</li><li><strong>Arreglarlo</strong>: con contexto para no romper otra cosa.</li></ul>"
+        "<ul><li><strong>Localizar el error</strong>: en qué línea.</li><li><strong>Entender la causa</strong>: por qué se lanzó.</li><li><strong>Arreglarlo</strong>: con contexto para no romper otra cosa.</li></ul>"
       ],
-      "sintaxis": "# Traceback típico:\n#\n# Traceback (most recent call last):\n#   File \"script.py\", line 10, in <module>\n#     main()\n#   File \"script.py\", line 7, in main\n#     resultado = dividir(10, 0)\n#   File \"script.py\", line 3, in dividir\n#     return a / b\n# ZeroDivisionError: division by zero\n\n# Se lee de abajo hacia arriba:\n# 1) Error: ZeroDivisionError: division by zero\n# 2) Lugar: script.py, línea 3, función dividir\n# 3) Cadena: main() → dividir(10, 0) → a / b",
+      "sintaxis": "# Traceback típico:\n#\n# Traceback (most recent call last):\n#   File \"script.py\", line 3, in dividir\n#     return a / b\n# ZeroDivisionError: division by zero\n\n# Se lee de abajo hacia arriba:\n# 1) Error: ZeroDivisionError\n# 2) Lugar: línea 3, función dividir\n# 3) Cadena: main() → dividir(10, 0) → a / b",
       "ejemplos": [
         {
-          "titulo": "Traceback simple",
-          "codigo": "def dividir(a, b):\n    return a / b\n\n# Provoca el error\n# dividir(10, 0)\n#\n# Traceback (most recent call last):\n#   File \"<stdin>\", line 1, in <module>\n#     dividir(10, 0)\n#   File \"<stdin>\", line 2, in dividir\n#     return a / b\n# ZeroDivisionError: division by zero",
+          "titulo": "Traceback simple (capturado)",
+          "codigo": "def dividir(a, b):\n    return a / b\n\ntry:\n    dividir(10, 0)\nexcept ZeroDivisionError as e:\n    print(f\"Error capturado: {e}\")\n    print(f\"Tipo: {type(e).__name__}\")\n    print(f\"Ocurrió en la función 'dividir'\")",
           "explicacion": [
-            "<p>El traceback te dice:</p>",
-            "<ul><li><strong>Última línea</strong>: qué error es (ZeroDivisionError).</li><li><strong>Última línea de código</strong>: dónde ocurrió (línea 2, en <code>dividir</code>).</li><li><strong>Líneas anteriores</strong>: cómo llegaste (llamada desde línea 1).</li></ul>",
-            "<p>La información está toda ahí. Solo hay que aprender a leerla.</p>"
+            "<p>Capturamos el error con try/except para ver el mensaje sin que el programa se rompa.</p>",
+            "<p><code>type(e).__name__</code> te da el nombre del tipo de error.</p>"
           ]
         },
         {
           "titulo": "Traceback con funciones anidadas",
-          "codigo": "def a():\n    return b()\n\ndef b():\n    return c()\n\ndef c():\n    return 1 / 0\n\n# a()\n#\n# Traceback (most recent call last):\n#   File \"<stdin>\", line 1, in <module>\n#     a()\n#   File \"<stdin>\", line 2, in a\n#     return b()\n#   File \"<stdin>\", line 5, in b\n#     return c()\n#   File \"<stdin>\", line 8, in c\n#     return 1 / 0\n# ZeroDivisionError: division by zero",
+          "codigo": "def a():\n    return b()\n\ndef b():\n    return c()\n\ndef c():\n    return 1 / 0\n\ntry:\n    a()\nexcept ZeroDivisionError as e:\n    print(f\"Error en la cadena a() → b() → c()\")\n    print(f\"Mensaje: {e}\")",
           "explicacion": [
-            "<p>El traceback muestra <strong>toda la cadena</strong> de llamadas:</p>",
-            "<p>main → a() → b() → c() → 1/0</p>",
-            "<p>Así puedes rastrear el error aunque la causa esté muy profunda.</p>"
+            "<p>Si el error ocurre muy dentro, el traceback muestra toda la cadena.</p>",
+            "<p>Aquí la cadena es: <code>a() → b() → c() → 1/0</code>.</p>"
           ]
         },
         {
-          "titulo": "Traceback con excepción capturada",
-          "codigo": "import traceback\n\ndef dividir(a, b):\n    return a / b\n\ntry:\n    dividir(10, 0)\nexcept ZeroDivisionError:\n    print(\"Algo falló:\")\n    traceback.print_exc()",
+          "titulo": "Imprimir tipo y mensaje del error",
+          "codigo": "def operacion(a, b):\n    return a / b\n\ntry:\n    operacion(10, 0)\nexcept Exception as e:\n    print(f\"Tipo de error: {type(e).__name__}\")\n    print(f\"Mensaje: {e}\")\n    print(f\"Argumentos: {e.args}\")",
           "explicacion": [
-            "<p>Cuando capturas una excepción con <code>except</code>, Python <strong>no imprime el traceback</strong> por defecto.</p>",
-            "<p>Si quieres verlo (útil para depurar), usa <code>traceback.print_exc()</code>.</p>"
+            "<p>Puedes capturar el error y extraer información útil:</p>",
+            "<ul><li><code>type(e).__name__</code>: nombre del tipo (ZeroDivisionError).</li><li><code>str(e)</code>: mensaje del error.</li><li><code>e.args</code>: argumentos del error.</li></ul>"
           ]
         }
       ],
       "errores_comunes": [
-        {
-          "error": "Leer el traceback de arriba hacia abajo",
-          "razon": "El error concreto está en la última línea, no en la primera.",
-          "correcto": "Lee de abajo hacia arriba: error → función → llamada."
-        },
         {
           "error": "Ignorar el mensaje de error",
           "razon": "El mensaje te dice qué pasó exactamente.",
@@ -170,18 +163,18 @@
         }
       ],
       "tips": [
-        "<p>💡 <strong>Truco 1:</strong> en el traceback, busca siempre las líneas que empiezan con <code>File</code>. Te dicen los archivos y líneas por donde pasó.</p>",
-        "<p>💡 <strong>Truco 2:</strong> si ves <code>most recent call last</code>, significa que lo último que se ejecutó está al final.</p>",
-        "<p>💡 <strong>Truco 3:</strong> usa <code>traceback.print_exc()</code> dentro de tus except para ver el error completo.</p>",
-        "<p>💡 <strong>Truco 4:</strong> en un error profundo, mira solo las últimas 3-4 líneas del traceback. Normalmente ahí está la causa.</p>"
+        "<p>💡 <strong>Truco 1:</strong> siempre imprime el mensaje de error cuando captures una excepción.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>type(e).__name__</code> te da el nombre del error, útil para diagnóstico.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>str(e)</code> te da el mensaje del error tal cual.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en un error profundo, mira la última línea del mensaje: normalmente ahí está la causa.</p>"
       ],
       "ejercicios": [
-        "Provoca un error y lee el traceback completo.",
-        "Identifica en el traceback: tipo de error, archivo, línea y función.",
-        "Crea un error dentro de una función llamada desde otra y sigue el rastro.",
-        "Usa `traceback.print_exc()` para ver el traceback dentro de un except."
+        "Provoca un error y captúralo con try/except.",
+        "Imprime el tipo de error con type(e).__name__.",
+        "Crea un error dentro de una función llamada desde otra y captúralo.",
+        "Imprime el mensaje del error con str(e)."
       ],
-      "resumen": "El traceback se lee de abajo hacia arriba. La última línea es el error concreto, las anteriores son el camino. Con práctica, se lee en segundos. Usa traceback.print_exc() para depurar."
+      "resumen": "El traceback se lee de abajo hacia arriba. La última línea es el error concreto, las anteriores son el camino. Captura los errores con try/except y muestra el mensaje."
     },
     {
       "id": "try-except",
@@ -196,13 +189,13 @@
       ],
       "para_que_sirve": [
         "<p>Se usa cuando:</p>",
-        "<ul><li><strong>Validar entradas</strong>: el usuario puede escribir cualquier cosa.</li><li><strong>Leer archivos</strong>: puede que no existan.</li><li><strong>Conectar a redes</strong>: puede fallar la conexión.</li><li><strong>Dividir</strong>: el denominador puede ser cero.</li><li><strong>Métodos numéricos</strong>: verificar convergencia sin que el programa se rompa.</li></ul>"
+        "<ul><li><strong>Validar entradas</strong>: el usuario puede escribir cualquier cosa.</li><li><strong>Dividir</strong>: el denominador puede ser cero.</li><li><strong>Métodos numéricos</strong>: verificar convergencia sin que el programa se rompa.</li></ul>"
       ],
       "sintaxis": "try:\n    # código que puede fallar\nexcept TipoDeError:\n    # qué hacer si falla\n\n# Varios tipos\ntry:\n    ...\nexcept ValueError:\n    ...\nexcept ZeroDivisionError:\n    ...",
       "ejemplos": [
         {
           "titulo": "El try/except más simple",
-          "codigo": "try:\n    x = 10 / 0\nexcept ZeroDivisionError:\n    print(\"No se puede dividir entre cero\")\n\nprint(\"El programa sigue\")\nprint(\"x =\", x if 'x' in dir() else 0)",
+          "codigo": "try:\n    x = 10 / 0\nexcept ZeroDivisionError:\n    print(\"No se puede dividir entre cero\")\n    x = None\n\nprint(\"El programa sigue\")\nprint(\"x =\", x)",
           "explicacion": [
             "<p>El bloque <code>try</code> intenta ejecutar <code>10 / 0</code>, que falla.</p>",
             "<p>El <code>except</code> captura el error y ejecuta su bloque en lugar de romper el programa.</p>",
@@ -211,7 +204,7 @@
         },
         {
           "titulo": "Capturar varios tipos de error",
-          "codigo": "def dividir(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return \"Error: no se puede dividir entre cero\"\n    except TypeError:\n        return \"Error: tipos incorrectos\"\n\nprint(dividir(10, 2))     # 5.0\nprint(dividir(10, 0))     # Error: no se puede dividir entre cero\nprint(dividir(\"a\", 2))    # Error: tipos incorrectos",
+          "codigo": "def dividir(a, b):\n    try:\n        return a / b\n    except ZeroDivisionError:\n        return \"Error: no se puede dividir entre cero\"\n    except TypeError:\n        return \"Error: tipos incorrectos\"\n\nprint(dividir(10, 2))\nprint(dividir(10, 0))\nprint(dividir(\"a\", 2))",
           "explicacion": [
             "<p>Puedes tener varios <code>except</code>, uno para cada tipo de error.</p>",
             "<p>Python ejecuta el primero que coincida con el error que ocurrió.</p>",
@@ -222,17 +215,17 @@
           "titulo": "Capturar cualquier error",
           "codigo": "try:\n    x = int(\"abc\")\nexcept Exception as e:\n    print(f\"Error: {e}\")\n    print(f\"Tipo: {type(e).__name__}\")",
           "explicacion": [
-            "<p><code>except Exception</code> captura <strong>cualquier excepción</strong> (excepto las muy graves).</p>",
+            "<p><code>except Exception</code> captura <strong>cualquier excepción</strong>.</p>",
             "<p><code>as e</code> guarda la excepción en la variable <code>e</code>, con el mensaje.</p>",
             "<p><strong>Ojo:</strong> capturar todo está bien para aplicaciones, pero en desarrollo es mejor capturar tipos específicos para no ocultar errores.</p>"
           ]
         },
         {
-          "titulo": "Uso real: validar entrada del usuario",
-          "codigo": "def pedir_numero(mensaje):\n    while True:\n        try:\n            return float(input(mensaje))\n        except ValueError:\n            print(\"Eso no es un número. Inténtalo de nuevo.\")\n\n# numero = pedir_numero(\"Dame un número: \")\n# print(f\"El doble es {numero * 2}\")",
+          "titulo": "Uso real: validar entrada",
+          "codigo": "def pedir_numero_simulado(texto):\n    # Simulamos la entrada del usuario\n    try:\n        return float(texto)\n    except ValueError:\n        print(f\"'{texto}' no es un número. Devuelvo None.\")\n        return None\n\nprint(pedir_numero_simulado(\"5\"))\nprint(pedir_numero_simulado(\"abc\"))\nprint(pedir_numero_simulado(\"3.14\"))",
           "explicacion": [
-            "<p>Este patrón pide un número hasta que el usuario escriba uno válido.</p>",
-            "<p>El <code>try/except</code> evita que el programa se rompa si el usuario escribe texto.</p>"
+            "<p>Este patrón valida un número y devuelve None si no es válido.</p>",
+            "<p>El <code>try/except</code> evita que el programa se rompa si el texto no es un número.</p>"
           ]
         }
       ],
@@ -244,7 +237,7 @@
         },
         {
           "error": "except:  (sin especificar tipo)",
-          "razon": "Captura todo, incluso errores que no quieres ocultar (KeyboardInterrupt).",
+          "razon": "Captura todo, incluso errores que no quieres ocultar.",
           "correcto": "except Exception as e:\n    print(e)"
         },
         {
@@ -269,7 +262,7 @@
         "Haz un try/except que capture ZeroDivisionError.",
         "Haz un try/except que capture ValueError al convertir texto a número.",
         "Captura varios tipos de error en la misma función.",
-        "Escribe una función que pida un número hasta que sea válido."
+        "Escribe una función que valide un número y devuelva None si falla."
       ],
       "resumen": "try/except captura errores para que el programa no se rompa. Varios except para distintos tipos. except Exception as e captura todo. Úsalo con cuidado: solo captura lo que esperas."
     },
@@ -283,12 +276,12 @@
         "<p><code>try/except</code> se puede completar con dos bloques más:</p>",
         "<ul><li><code>else</code>: se ejecuta si <strong>no hubo error</strong> en el try.</li><li><code>finally</code>: se ejecuta <strong>siempre</strong>, haya error o no.</li></ul>",
         "<p>El <code>else</code> es útil para separar lo que \"puede fallar\" de lo que \"hacer si todo va bien\".</p>",
-        "<p>El <code>finally</code> es útil para liberar recursos: cerrar archivos, conexiones, etc.</p>"
+        "<p>El <code>finally</code> es útil para limpiar recursos: cerrar archivos, conexiones, etc.</p>"
       ],
       "para_que_sirve": [
         "<p>Se usan para:</p>",
-        "<ul><li><strong>else</strong>: ejecutar código solo si el try tuvo éxito.</li><li><strong>finally</strong>: limpiar recursos, cerrar archivos, asegurar algo.</li></ul>",
-        "<p>En análisis numérico, <code>finally</code> puede cerrar un archivo de log o imprimir un resumen al final, haya convergido o no.</p>"
+        "<ul><li><strong>else</strong>: ejecutar código solo si el try tuvo éxito.</li><li><strong>finally</strong>: limpiar recursos, imprimir resumen, asegurar algo.</li></ul>",
+        "<p>En análisis numérico, <code>finally</code> puede imprimir un resumen al final del método, haya convergido o no.</p>"
       ],
       "sintaxis": "try:\n    # puede fallar\nexcept TipoError:\n    # si falla\nelse:\n    # si NO falla\nfinally:\n    # siempre, pase lo que pase",
       "ejemplos": [
@@ -306,15 +299,7 @@
           "codigo": "def dividir(a, b):\n    try:\n        resultado = a / b\n    except ZeroDivisionError:\n        print(\"Error: división entre cero\")\n        return None\n    finally:\n        print(\"Se intentó hacer la división\")\n\nprint(dividir(10, 2))\nprint(\"---\")\nprint(dividir(10, 0))",
           "explicacion": [
             "<p>El <code>finally</code> se ejecuta <strong>siempre</strong>, haya error o no, e incluso si hay un <code>return</code> dentro del try o del except.</p>",
-            "<p>Es el bloque perfecto para limpieza de recursos.</p>"
-          ]
-        },
-        {
-          "titulo": "finally para cerrar archivos",
-          "codigo": "try:\n    with open(\"datos.txt\", \"w\") as archivo:\n        archivo.write(\"Hola\")\nexcept IOError as e:\n    print(f\"Error de archivo: {e}\")\nfinally:\n    print(\"Bloque finally: limpieza completa\")",
-          "explicacion": [
-            "<p>El bloque <code>finally</code> garantiza que el mensaje final se muestre siempre, aunque falle la apertura del archivo.</p>",
-            "<p>En la práctica, <code>with open()</code> ya cierra automáticamente, pero el <code>finally</code> sirve para otras limpiezas.</p>"
+            "<p>Es el bloque perfecto para limpieza de recursos o mensajes finales.</p>"
           ]
         },
         {
@@ -346,8 +331,8 @@
       ],
       "tips": [
         "<p>💡 <strong>Truco 1:</strong> usa <code>else</code> para el código que solo tiene sentido si no hubo error.</p>",
-        "<p>💡 <strong>Truco 2:</strong> usa <code>finally</code> para limpieza garantizada: cerrar archivos, conexiones, escribir logs.</p>",
-        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>finally</code> puede servir para imprimir el resumen final del método haya convergido o no.</p>"
+        "<p>💡 <strong>Truco 2:</strong> usa <code>finally</code> para limpieza garantizada.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>finally</code> puede imprimir el resumen final del método haya convergido o no.</p>"
       ],
       "ejercicios": [
         "Usa try/except/else para validar una conversión a número.",
@@ -370,7 +355,7 @@
       ],
       "para_que_sirve": [
         "<p>Se usa para:</p>",
-        "<ul><li><strong>Validar parámetros</strong>: rechazar valores inválidos.</li><li><strong>Señalar estados imposibles</strong>: llegar a un lugar que no debería ocurrir.</li><li><strong>Implementar contratos</strong>: cada función dice qué acepta y qué no.</li><li><strong>Probar</strong>: forzar errores para verificar el manejo.</li></ul>",
+        "<ul><li><strong>Validar parámetros</strong>: rechazar valores inválidos.</li><li><strong>Señalar estados imposibles</strong>: llegar a un lugar que no debería ocurrir.</li><li><strong>Implementar contratos</strong>: cada función dice qué acepta y qué no.</li></ul>",
         "<p>En análisis numérico, <code>raise</code> es ideal para verificar condiciones matemáticas antes de calcular:</p>",
         "<pre class='cmd-sintaxis'>if f(a) * f(b) >= 0:\n    raise ValueError(\"Bolzano no se cumple\")\n</pre>"
       ],
@@ -378,7 +363,7 @@
       "ejemplos": [
         {
           "titulo": "Validar un parámetro",
-          "codigo": "def raiz_cuadrada(x):\n    if x < 0:\n        raise ValueError(\"El argumento no puede ser negativo\")\n    return x ** 0.5\n\nprint(raiz_cuadrada(16))   # 4.0\n\n# Provoca el error:\n# print(raiz_cuadrada(-4))\n# ValueError: El argumento no puede ser negativo",
+          "codigo": "def raiz_cuadrada(x):\n    if x < 0:\n        raise ValueError(\"El argumento no puede ser negativo\")\n    return x ** 0.5\n\nprint(raiz_cuadrada(16))   # 4.0\n\ntry:\n    print(raiz_cuadrada(-4))\nexcept ValueError as e:\n    print(f\"Error: {e}\")",
           "explicacion": [
             "<p>Si <code>x</code> es negativo, lanzamos un <code>ValueError</code> con un mensaje claro.</p>",
             "<p>Quien llame a la función puede capturarlo con try/except.</p>"
@@ -403,10 +388,10 @@
         },
         {
           "titulo": "raise dentro de un except",
-          "codigo": "def procesar(texto):\n    try:\n        n = int(texto)\n    except ValueError:\n        # Re-lanzar con contexto\n        raise ValueError(f\"'{texto}' no es un número válido\") from None\n\n# try:\n#     procesar(\"abc\")\n# except ValueError as e:\n#     print(e)   # 'abc' no es un número válido",
+          "codigo": "def procesar(texto):\n    try:\n        n = int(texto)\n    except ValueError:\n        raise ValueError(f\"'{texto}' no es un número válido\")\n\ntry:\n    procesar(\"abc\")\nexcept ValueError as e:\n    print(e)",
           "explicacion": [
             "<p>Puedes capturar un error y lanzar otro con más contexto.</p>",
-            "<p><code>from None</code> suprime el traceback original. <code>from e</code> lo mantiene.</p>"
+            "<p>Así el mensaje final es más claro para quien usa la función.</p>"
           ]
         }
       ],
@@ -430,9 +415,8 @@
       "tips": [
         "<p>💡 <strong>Truco 1:</strong> usa raise para validar. Si un parámetro no es válido, lanza un error con mensaje claro.</p>",
         "<p>💡 <strong>Truco 2:</strong> el mensaje debe explicar el problema y, si puedes, cómo arreglarlo.</p>",
-        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, raise es esencial para verificar Bolzano antes de empezar:</p>",
-        "<pre class='cmd-sintaxis'>if f(a) * f(b) >= 0:\n    raise ValueError(\"No hay cambio de signo en [a, b]\")\n</pre>",
-        "<p>💡 <strong>Truco 4:</strong> los tipos comunes: <code>ValueError</code> (valor inválido), <code>TypeError</code> (tipo incorrecto), <code>RuntimeError</code> (fallo en ejecución), <code>NotImplementedError</code> (pendiente).</p>"
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, raise es esencial para verificar Bolzano antes de empezar.</p>",
+        "<p>💡 <strong>Truco 4:</strong> los tipos comunes: <code>ValueError</code>, <code>TypeError</code>, <code>RuntimeError</code>, <code>NotImplementedError</code>.</p>"
       ],
       "ejercicios": [
         "Crea una función que lance ValueError si el argumento es negativo.",
@@ -441,7 +425,7 @@
         "Re-lanza una excepción con un mensaje más claro.",
         "Escribe una función que lance TypeError si el argumento no es un número."
       ],
-      "resumen": "raise lanza excepciones manualmente. Se usa para validar y señalar problemas. Usa tipos específicos (ValueError, TypeError...) y mensajes claros. En análisis numérico, verifica condiciones antes de calcular."
+      "resumen": "raise lanza excepciones manualmente. Se usa para validar y señalar problemas. Usa tipos específicos y mensajes claros. En análisis numérico, verifica condiciones antes de calcular."
     },
     {
       "id": "errores-numericos",
@@ -451,12 +435,12 @@
       "subtitulo": "Cómo manejar los fallos típicos de los métodos numéricos",
       "que_es": [
         "<p>En análisis numérico hay errores <strong>muy específicos</strong> que no aparecen en programas normales:</p>",
-        "<ul><li><strong>División entre cero</strong>: cuando un denominador se anula (típico en Newton si f'(x) = 0).</li><li><strong>Raíz de negativo</strong>: cuando un método intenta sqrt(-1).</li><li><strong>No convergencia</strong>: el método no llega al resultado esperado.</li><li><strong>Desbordamiento</strong>: números demasiado grandes para float.</li><li><strong>Pérdida de precisión</strong>: <code>0.1 + 0.2 != 0.3</code>.</li></ul>",
+        "<ul><li><strong>División entre cero</strong>: cuando un denominador se anula (típico en Newton si f'(x) = 0).</li><li><strong>Raíz de negativo</strong>: cuando un método intenta sqrt(-1).</li><li><strong>No convergencia</strong>: el método no llega al resultado esperado.</li><li><strong>Pérdida de precisión</strong>: <code>0.1 + 0.2 != 0.3</code>.</li></ul>",
         "<p>Estos errores hay que <strong>prevenirlos y manejarlos</strong>. Si no, tu programa falla a mitad de cálculo.</p>"
       ],
       "para_que_sirve": [
         "<p>Manejar estos errores te permite:</p>",
-        "<ul><li><strong>No romper el programa</strong> a mitad de una simulación larga.</li><li><strong>Informar al usuario</strong> de qué falló y por qué.</li><li><strong>Probar alternativas</strong>: probar otro intervalo, otro método, etc.</li><li><strong>Registrar</strong>: guardar el error para análisis posterior.</li></ul>"
+        "<ul><li><strong>No romper el programa</strong> a mitad de una simulación larga.</li><li><strong>Informar al usuario</strong> de qué falló y por qué.</li><li><strong>Probar alternativas</strong>: probar otro intervalo, otro método, etc.</li></ul>"
       ],
       "sintaxis": "# Patrones típicos en análisis numérico\n\n# 1) Verificar Bolzano antes de bisección\nif f(a) * f(b) >= 0:\n    raise ValueError(\"No hay cambio de signo\")\n\n# 2) Verificar derivada no nula en Newton\ndf_x = df(x)\nif abs(df_x) < 1e-12:\n    raise RuntimeError(\"Derivada casi cero\")\n\n# 3) Bucle con doble criterio\nfor k in range(max_iter):\n    # ...\n    if error < tol:\n        break\nelse:\n    raise RuntimeError(\"No convergió\")",
       "ejemplos": [
@@ -480,7 +464,7 @@
         },
         {
           "titulo": "Precisión: comparar floats con tolerancia",
-          "codigo": "def es_cero(x, tol=1e-12):\n    return abs(x) < tol\n\nprint(es_cero(1e-15))          # True\nprint(es_cero(1e-8))           # False\n\n# En el error de un método\nx = 1.4142135623730951  # sqrt(2)\nsqrt2 = 2 ** 0.5\nprint(x == sqrt2)              # True (o False según)\nprint(abs(x - sqrt2) < 1e-15)  # True (comparación con tolerancia)",
+          "codigo": "def es_cero(x, tol=1e-12):\n    return abs(x) < tol\n\nprint(es_cero(1e-15))          # True\nprint(es_cero(1e-8))           # False\n\nx = 1.4142135623730951\nsqrt2 = 2 ** 0.5\nprint(abs(x - sqrt2) < 1e-15)  # True (comparación con tolerancia)",
           "explicacion": [
             "<p>En análisis numérico, casi nunca comparas floats con <code>==</code>. Usas tolerancia:</p>",
             "<pre class='cmd-sintaxis'>abs(a - b) < tol</pre>",
