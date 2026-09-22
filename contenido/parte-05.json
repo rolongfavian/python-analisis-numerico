@@ -1,0 +1,492 @@
+{
+  "parte": 5,
+  "titulo": "Listas y tuplas",
+  "emoji": "📚",
+  "descripcion": "Una variable guarda un valor. Una lista guarda muchos. Aquí aprenderás a crear, recorrer, modificar y operar con listas (mutables) y tuplas (inmutables), las dos estructuras más usadas para guardar colecciones de datos.",
+  "temas": [
+    {
+      "id": "listas",
+      "numero": "1",
+      "titulo": "Listas — Colecciones ordenadas y mutables",
+      "emoji": "📋",
+      "subtitulo": "El tipo de colección más usado en Python",
+      "que_es": [
+        "<p>Una <strong>lista</strong> es una colección ordenada de elementos. Se escribe entre corchetes <code>[]</code>, separando los elementos por comas.</p>",
+        "<p>Las listas son <strong>mutables</strong>: puedes agregar, quitar o modificar elementos después de crearla.</p>",
+        "<p>Cada elemento tiene una posición (índice), empezando por 0. Puedes mezclar tipos: una lista puede tener números, strings, otras listas, etc. Aunque en la práctica suele tener elementos del mismo tipo.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Las listas se usan para casi todo:</p>",
+        "<ul><li><strong>Guardar secuencias</strong>: nombres, edades, temperaturas.</li><li><strong>Acumular resultados</strong>: iteraciones de un método numérico.</li><li><strong>Recorrer datos</strong>: procesar uno por uno.</li><li><strong>Representar vectores</strong> de números.</li></ul>",
+        "<p>En análisis numérico, las listas se usan para guardar aproximaciones, errores por iteración, puntos de una gráfica, etc.</p>"
+      ],
+      "sintaxis": "lista = []                    # lista vacía\nlista = [1, 2, 3]             # lista de números\nlista = [\"a\", \"b\", \"c\"]         # lista de strings\nlista = [1, \"dos\", 3.0, True]   # tipos mezclados\nlista = [[1, 2], [3, 4]]      # lista de listas (matriz)",
+      "ejemplos": [
+        {
+          "titulo": "Crear y acceder a elementos",
+          "codigo": "numeros = [10, 20, 30, 40, 50]\n\nprint(numeros[0])    # 10\nprint(numeros[2])    # 30\nprint(numeros[-1])   # 50 (último)\nprint(numeros[-2])   # 40 (penúltimo)\nprint(len(numeros))  # 5",
+          "explicacion": [
+            "<p>Los índices empiezan en 0. Los negativos cuentan desde el final:</p>",
+            "<ul><li><code>numeros[0]</code> → primer elemento.</li><li><code>numeros[-1]</code> → último.</li><li><code>numeros[-2]</code> → penúltimo.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Modificar una lista",
+          "codigo": "frutas = [\"manzana\", \"pera\", \"uva\"]\n\nfrutas[1] = \"banana\"\nprint(frutas)   # ['manzana', 'banana', 'uva']\n\nfrutas.append(\"kiwi\")   # agregar al final\nprint(frutas)\n\nfrutas.insert(0, \"mango\")  # insertar al inicio\nprint(frutas)",
+          "explicacion": [
+            "<p>Las listas se pueden modificar con índices o métodos:</p>",
+            "<ul><li><code>lista[i] = valor</code> → cambia el elemento en posición i.</li><li><code>.append(x)</code> → agrega x al final.</li><li><code>.insert(i, x)</code> → inserta x en la posición i.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Recorrer una lista",
+          "codigo": "frutas = [\"manzana\", \"pera\", \"uva\"]\n\nfor fruta in frutas:\n    print(fruta)\n\nprint(\"---\")\n\nfor i, fruta in enumerate(frutas):\n    print(f\"{i}: {fruta}\")",
+          "explicacion": [
+            "<p>La forma más simple es <code>for fruta in frutas</code>. Si necesitas el índice, usa <code>enumerate()</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Listas de números: acumular resultados",
+          "codigo": "errores = []\n\ntol = 1e-8\nerror = 1.0\nx = 2.0\n\nwhile error > tol:\n    x_nuevo = (x + 2/x) / 2\n    error = abs(x_nuevo - x)\n    errores.append(error)\n    x = x_nuevo\n\nprint(\"Errores por iteración:\")\nfor i, e in enumerate(errores):\n    print(f\"{i+1}: {e:.3e}\")",
+          "explicacion": [
+            "<p>Este patrón es muy común en análisis numérico: acumular los errores de cada iteración en una lista para luego analizarlos o graficarlos.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "lista[10]  cuando solo hay 5 elementos",
+          "razon": "Índice fuera de rango. Da IndexError.",
+          "correcto": "Verifica len(lista) primero, o usa lista[-1] para el último."
+        },
+        {
+          "error": "lista = [1, 2, 3]\nlista[5] = 10",
+          "razon": "No puedes asignar a un índice que no existe. Las listas crecen con append, no con asignación.",
+          "correcto": "lista.append(10)   o   extender la lista primero."
+        },
+        {
+          "error": "for x in lista:\n    lista.remove(x)",
+          "razon": "Modificar una lista mientras la recorres salta elementos. Comportamiento indefinido.",
+          "correcto": "for x in lista[:]:\n    lista.remove(x)\n# O crear una nueva lista filtrada."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>lista[-1]</code> es el último elemento. Muy útil.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>lista.append(x)</code> agrega uno; <code>lista.extend([a, b, c])</code> agrega varios.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para sumar todos los elementos: <code>sum(lista)</code>. Para el máximo: <code>max(lista)</code>. Para el mínimo: <code>min(lista)</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, usa listas para guardar el historial de iteraciones:</p>",
+        "<pre class='cmd-sintaxis'>historial = []\nfor k in range(max_iter):\n    # ...\n    historial.append((k, x, error))</pre>"
+      ],
+      "ejercicios": [
+        "Crea una lista con 5 frutas y muestra la primera y la última.",
+        "Añade una fruta al final con `append` y otra al principio con `insert`.",
+        "Recorre la lista con `enumerate` y muestra índice y valor.",
+        "Crea una lista vacía y añade los cuadrados de los números del 1 al 10.",
+        "Suma todos los elementos de `[10, 20, 30, 40]` con `sum`."
+      ],
+      "resumen": "Las listas son colecciones ordenadas y mutables, creadas con []. Se accede por índice, se modifican con asignación o métodos como append/insert/remove. Son la colección más usada en Python."
+    },
+    {
+      "id": "metodos-listas",
+      "numero": "2",
+      "titulo": "Métodos de listas",
+      "emoji": "🛠️",
+      "subtitulo": "Las operaciones más útiles con listas",
+      "que_es": [
+        "<p>Las listas vienen con muchos <strong>métodos</strong> incorporados: funciones que se llaman con un punto después de la lista. Sirven para agregar, quitar, buscar, ordenar y transformar.</p>",
+        "<p>Algunos métodos modifican la lista (mutables). Otros devuelven información sin modificarla.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los métodos de listas se usan a diario:</p>",
+        "<ul><li><strong>Agregar</strong>: <code>append</code>, <code>insert</code>, <code>extend</code>.</li><li><strong>Quitar</strong>: <code>remove</code>, <code>pop</code>, <code>clear</code>.</li><li><strong>Buscar</strong>: <code>index</code>, <code>count</code>.</li><li><strong>Ordenar</strong>: <code>sort</code>, <code>reverse</code>.</li><li><strong>Copiar</strong>: <code>copy</code>.</li></ul>"
+      ],
+      "sintaxis": "lista.append(x)         # agregar al final\nlista.insert(i, x)      # insertar en posición i\nlista.extend(otra)      # agregar varios\nlista.remove(x)         # eliminar la primera ocurrencia\nlista.pop()             # eliminar y devolver el último\nlista.pop(i)            # eliminar y devolver el de índice i\nlista.clear()           # vaciar\nlista.index(x)          # posición de x\nlista.count(x)          # cuántas veces aparece x\nlista.sort()            # ordenar in-place\nlista.reverse()         # invertir in-place\nlista.copy()            # copia superficial",
+      "ejemplos": [
+        {
+          "titulo": "Agregar y quitar",
+          "codigo": "lista = [1, 2, 3]\n\nlista.append(4)\nprint(lista)   # [1, 2, 3, 4]\n\nlista.insert(0, 0)\nprint(lista)   # [0, 1, 2, 3, 4]\n\nlista.extend([5, 6])\nprint(lista)   # [0, 1, 2, 3, 4, 5, 6]\n\nlista.remove(3)\nprint(lista)   # [0, 1, 2, 4, 5, 6]\n\nultimo = lista.pop()\nprint(ultimo)  # 6\nprint(lista)   # [0, 1, 2, 4, 5]",
+          "explicacion": [
+            "<p>Los métodos básicos:</p>",
+            "<ul><li><code>append</code> agrega al final.</li><li><code>insert(i, x)</code> inserta en posición i.</li><li><code>extend</code> agrega varios elementos de otra lista.</li><li><code>remove(x)</code> elimina la primera aparición de x.</li><li><code>pop()</code> elimina y devuelve el último.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Ordenar y buscar",
+          "codigo": "numeros = [3, 1, 4, 1, 5, 9, 2, 6]\n\nnumeros.sort()\nprint(numeros)   # [1, 1, 2, 3, 4, 5, 6, 9]\n\nnumeros.sort(reverse=True)\nprint(numeros)   # [9, 6, 5, 4, 3, 2, 1, 1]\n\nnumeros.reverse()\nprint(numeros)   # [1, 1, 2, 3, 4, 5, 6, 9]\n\nprint(numeros.count(1))   # 2\nprint(numeros.index(5))   # 5",
+          "explicacion": [
+            "<p><code>sort()</code> ordena en su lugar (modifica la lista). <code>reverse()</code> invierte.</p>",
+            "<p><code>count(x)</code> cuenta cuántas veces aparece x. <code>index(x)</code> devuelve la primera posición de x.</p>",
+            "<p><strong>Alternativa:</strong> <code>sorted(lista)</code> devuelve una lista nueva ordenada, sin modificar la original.</p>"
+          ]
+        },
+        {
+          "titulo": "Copiar listas (¡cuidado!)",
+          "codigo": "a = [1, 2, 3]\nb = a           # ¡NO copia, es la misma lista!\nb.append(4)\nprint(a)        # [1, 2, 3, 4]\n\nc = a.copy()    # copia real\nc.append(5)\nprint(a)        # [1, 2, 3, 4]\nprint(c)        # [1, 2, 3, 4, 5]",
+          "explicacion": [
+            "<p><strong>Error muy común:</strong> <code>b = a</code> no copia la lista, solo crea otra referencia al mismo objeto.</p>",
+            "<p>Si modificas b, también se modifica a. Para copiar de verdad, usa <code>.copy()</code> o <code>list(a)</code> o <code>a[:]</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "pop con índice",
+          "codigo": "letras = [\"a\", \"b\", \"c\", \"d\", \"e\"]\n\nprimera = letras.pop(0)\nprint(primera)   # a\nprint(letras)    # ['b', 'c', 'd', 'e']\n\nultima = letras.pop()\nprint(ultima)    # e\nprint(letras)    # ['b', 'c', 'd']",
+          "explicacion": [
+            "<p><code>pop()</code> sin argumento elimina el último. Con argumento, elimina el índice especificado.</p>",
+            "<p>Devuelve el elemento eliminado, así que puedes guardarlo.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "b = a   creyendo que copia",
+          "razon": "Solo copia la referencia. Ambas variables apuntan al mismo objeto.",
+          "correcto": "b = a.copy()   o   b = list(a)   o   b = a[:]"
+        },
+        {
+          "error": "lista.sort()  esperando la lista ordenada como valor de retorno",
+          "razon": "sort() modifica in-place y devuelve None. No puedes asignar el resultado.",
+          "correcto": "lista.sort()   # modifica\nresultado = sorted(lista)   # devuelve nueva"
+        },
+        {
+          "error": "lista.remove(x)  cuando x no existe",
+          "razon": "Da ValueError si x no está en la lista.",
+          "correcto": "if x in lista:\n    lista.remove(x)"
+        },
+        {
+          "error": "lista.pop()  en lista vacía",
+          "razon": "Da IndexError.",
+          "correcto": "if lista:\n    x = lista.pop()"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>sort()</code> modifica, <code>sorted()</code> devuelve nueva. Recuérdalo.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>lista.sort(key=abs)</code> ordena por valor absoluto. Puedes pasar una función como clave.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>lista.sort(key=lambda x: x[1])</code> ordena listas por el segundo elemento. Muy útil con pares (a, b).</p>",
+        "<p>💡 <strong>Truco 4:</strong> si solo quieres una copia para ordenarla sin tocar la original: <code>sorted(lista)</code>.</p>"
+      ],
+      "ejercicios": [
+        "Crea una lista [3, 1, 4, 1, 5] y ordénala con `sort`.",
+        "Cuenta cuántas veces aparece el 1 en la lista anterior.",
+        "Elimina el último elemento con `pop` y guárdalo en una variable.",
+        "Haz una copia real de una lista y modifica la copia sin afectar la original.",
+        "Ordena una lista de tuplas por el segundo elemento usando `key=lambda`."
+      ],
+      "resumen": "Los métodos de listas permiten agregar (append, insert, extend), quitar (remove, pop, clear), buscar (index, count) y ordenar (sort, reverse). Ojo: sort() modifica in-place; sorted() devuelve nueva. Y b = a NO copia la lista."
+    },
+    {
+      "id": "slicing-listas",
+      "numero": "3",
+      "titulo": "Slicing — Rebanar listas",
+      "emoji": "✂️",
+      "subtitulo": "Extraer sublistas con una sintaxis muy compacta",
+      "que_es": [
+        "<p>El <strong>slicing</strong> permite extraer una <strong>parte</strong> de una lista. Se usa la sintaxis <code>[inicio:fin:paso]</code>.</p>",
+        "<p>El <code>fin</code> no se incluye. Igual que en <code>range()</code>.</p>",
+        "<p>Funciona igual que con strings, pero aplicado a listas.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa para:</p>",
+        "<ul><li><strong>Extraer sublistas</strong>: los primeros 10 elementos.</li><li><strong>Invertir</strong>: <code>lista[::-1]</code>.</li><li><strong>Copiar</strong>: <code>lista[:]</code>.</li><li><strong>Saltar elementos</strong>: uno de cada dos.</li><li><strong>Procesar partes</strong>: mitad izquierda, mitad derecha.</li></ul>"
+      ],
+      "sintaxis": "lista[inicio:fin]        # del inicio al fin-1\nlista[inicio:]          # del inicio al final\nlista[:fin]             # del principio al fin-1\nlista[:]                # copia entera\nlista[::paso]           # con paso\nlista[::-1]             # invertida\nlista[inicio:fin:paso]  # todo junto",
+      "ejemplos": [
+        {
+          "titulo": "Los básicos",
+          "codigo": "n = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n\nprint(n[2:5])     # [2, 3, 4]\nprint(n[:3])      # [0, 1, 2]\nprint(n[7:])      # [7, 8, 9]\nprint(n[:])       # [0, ..., 9] (copia)\nprint(n[-3:])     # [7, 8, 9]\nprint(n[:-2])     # [0, ..., 7]",
+          "explicacion": [
+            "<ul><li><code>[2:5]</code> → del índice 2 al 4 (el 5 no se incluye).</li><li><code>[:3]</code> → del inicio al 2.</li><li><code>[7:]</code> → del 7 al final.</li><li><code>[:]</code> → copia completa.</li><li><code>[-3:]</code> → los últimos 3.</li><li><code>[:-2]</code> → todo menos los últimos 2.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Con paso",
+          "codigo": "n = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]\n\nprint(n[::2])     # [0, 2, 4, 6, 8]\nprint(n[1::2])    # [1, 3, 5, 7, 9]\nprint(n[::3])     # [0, 3, 6, 9]\nprint(n[::-1])    # [9, 8, 7, 6, 5, 4, 3, 2, 1, 0]",
+          "explicacion": [
+            "<p>El tercer argumento es el paso:</p>",
+            "<ul><li><code>[::2]</code> → uno de cada dos, empezando por el 0.</li><li><code>[1::2]</code> → uno de cada dos, empezando por el 1.</li><li><code>[::-1]</code> → inversa completa. Muy útil.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Slicing con asignación (modificar parte)",
+          "codigo": "lista = [1, 2, 3, 4, 5]\n\nlista[1:3] = [10, 20]\nprint(lista)   # [1, 10, 20, 4, 5]\n\nlista[1:3] = [100, 200, 300]\nprint(lista)   # [1, 100, 200, 300, 4, 5]",
+          "explicacion": [
+            "<p>Puedes reemplazar una porción de la lista asignándole un slice.</p>",
+            "<p>El tamaño del reemplazo puede ser distinto al del slice. La lista se ajusta.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "lista[5:2]",
+          "razon": "No da error, pero devuelve lista vacía. El inicio está después del fin.",
+          "correcto": "Verifica que inicio < fin, o usa paso negativo."
+        },
+        {
+          "error": "lista[10] en lista de 5",
+          "razon": "Esto NO es slicing, es indexación. Da IndexError.",
+          "correcto": "lista[8:10]   # devuelve lo que haya, sin error si está vacío"
+        },
+        {
+          "error": "pensar que lista[:] crea una copia profunda",
+          "razon": "Es copia superficial. Si la lista tiene listas anidadas, los objetos internos se comparten.",
+          "correcto": "import copy; copia = copy.deepcopy(lista)"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>lista[::-1]</code> invierte una lista. Se usa muchísimo.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>lista[:]</code> crea una copia superficial. Más idiomático que <code>lista.copy()</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, el slicing es útil para separar datos en entrenamiento/prueba, o para procesar partes.</p>",
+        "<p>💡 <strong>Truco 4:</strong> con numpy arrays, el slicing es aún más potente y rápido. Lo veremos más adelante.</p>"
+      ],
+      "ejercicios": [
+        "Toma [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] y muestra los elementos del 3 al 7.",
+        "Invierte la lista con `[::-1]`.",
+        "Muestra los elementos en posiciones pares.",
+        "Reemplaza los elementos del índice 2 al 4 por [100, 200].",
+        "Crea una copia de la lista con `[:]`."
+      ],
+      "resumen": "El slicing extrae partes de listas con [inicio:fin:paso]. El fin no se incluye. lista[::-1] invierte. lista[:] copia."
+    },
+    {
+      "id": "tuplas",
+      "numero": "4",
+      "titulo": "Tuplas — Colecciones inmutables",
+      "emoji": "🔒",
+      "subtitulo": "Como las listas, pero no se pueden modificar",
+      "que_es": [
+        "<p>Una <strong>tupla</strong> es una colección ordenada pero <strong>inmutable</strong>. Se escribe entre paréntesis <code>()</code>.</p>",
+        "<p>Una vez creada, no puedes agregar, quitar o modificar elementos. Si quieres cambiarla, tienes que crear una nueva.</p>",
+        "<p>Se usan para datos que no deben cambiar: coordenadas, configuraciones, valores fijos. También son un poco más rápidas y ocupan menos memoria que las listas.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Las tuplas se usan cuando:</p>",
+        "<ul><li><strong>El dato no debe cambiar</strong>: constantes, coordenadas.</li><li><strong>Quieres devolver varios valores</strong> de una función.</li><li><strong>Necesitas usar como clave</strong> de diccionario (las listas no pueden).</li><li><strong>Quieres garantizar integridad</strong>: nadie la puede modificar.</li></ul>"
+      ],
+      "sintaxis": "t = ()              # vacía\nt = (1, 2, 3)       # con paréntesis\nt = 1, 2, 3         # sin paréntesis (también funciona)\nt = (42,)           # tupla de 1 elemento (¡la coma es clave!)\nx, y = (3, 4)       # desempaquetar",
+      "ejemplos": [
+        {
+          "titulo": "Crear y acceder",
+          "codigo": "punto = (3, 4)\ncolor = (255, 128, 0)\n\nprint(punto[0])      # 3\nprint(punto[1])      # 4\nprint(len(color))    # 3\nprint(color[-1])     # 0",
+          "explicacion": [
+            "<p>Las tuplas se acceden igual que las listas (por índice), pero no se pueden modificar.</p>"
+          ]
+        },
+        {
+          "titulo": "No se pueden modificar",
+          "codigo": "punto = (3, 4)\n\n# Esto da error:\n# punto[0] = 10    # TypeError: 'tuple' object does not support item assignment",
+          "explicacion": [
+            "<p>Si intentas modificar un elemento, Python da <code>TypeError</code>.</p>",
+            "<p>Es lo que las hace útiles: garantizan que el valor no cambia.</p>"
+          ]
+        },
+        {
+          "titulo": "Desempaquetar tuplas",
+          "codigo": "punto = (3, 4)\nx, y = punto\nprint(x)   # 3\nprint(y)   # 4\n\n# Muy útil con funciones\nresultado = divmod(17, 5)   # (3, 2)\ncociente, resto = resultado\nprint(cociente, resto)",
+          "explicacion": [
+            "<p>Puedes asignar los elementos de una tupla a varias variables en una línea. Esto se llama <strong>desempaquetar</strong>.</p>",
+            "<p>Es muy común cuando una función devuelve varios valores.</p>"
+          ]
+        },
+        {
+          "titulo": "Devolver varios valores desde una función",
+          "codigo": "def estadisticas(numeros):\n    return min(numeros), max(numeros), sum(numeros)/len(numeros)\n\nminimo, maximo, promedio = estadisticas([10, 20, 30])\nprint(minimo)     # 10\nprint(maximo)     # 30\nprint(promedio)   # 20.0",
+          "explicacion": [
+            "<p>Una función sin return devuelve None. Una función con un return devuelve un valor. Una función con varios valores separados por comas devuelve una <strong>tupla</strong>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "t = (42)  esperando tupla",
+          "razon": "Esto NO es una tupla, es el número 42 entre paréntesis. Para una tupla de 1 elemento, necesitas una coma.",
+          "correcto": "t = (42,)"
+        },
+        {
+          "error": "punto[0] = 10",
+          "razon": "Las tuplas son inmutables. Da TypeError.",
+          "correcto": "Crea una nueva tupla: punto = (10, punto[1])"
+        },
+        {
+          "error": "Usar tuplas donde necesitas modificar",
+          "razon": "Si necesitas cambiar elementos, usa una lista desde el principio.",
+          "correcto": "Si el dato va a cambiar, usa list. Si no, usa tuple."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> para una tupla de 1 elemento, no olvides la coma: <code>(42,)</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> las tuplas son <strong>hashables</strong> (si sus elementos lo son), así que pueden ser claves de diccionario. Las listas no.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>a, b = b, a</code> funciona porque Python crea una tupla temporal <code>(b, a)</code> y la desempaqueta.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, las tuplas son útiles para devolver resultados múltiples: <code>return raiz, iteraciones, error</code>.</p>"
+      ],
+      "ejercicios": [
+        "Crea una tupla con tu nombre, edad y ciudad.",
+        "Desempaqueta la tupla en tres variables.",
+        "Intenta modificar un elemento de la tupla y observa el error.",
+        "Escribe una función que devuelva el mínimo y máximo de una lista como tupla.",
+        "Convierte una lista en tupla con `tuple(lista)`."
+      ],
+      "resumen": "Las tuplas son como las listas pero inmutables. Se crean con () o con comas. Se acceden por índice. Se usan para datos fijos y para devolver varios valores. Una tupla de 1 elemento necesita coma: (42,)."
+    },
+    {
+      "id": "comprensiones-listas",
+      "numero": "5",
+      "titulo": "Listas por comprensión",
+      "emoji": "⚡",
+      "subtitulo": "Crear listas en una sola línea de forma elegante",
+      "que_es": [
+        "<p>Una <strong>lista por comprensión</strong> (list comprehension) es una forma compacta de crear una lista a partir de otra, aplicando una operación o un filtro.</p>",
+        "<p>En vez de escribir 4 líneas con un for y un append, escribes 1 línea. Es más rápido y, cuando te acostumbras, más legible.</p>",
+        "<p>El formato básico es: <code>[expresion for x in iterable if condicion]</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usan cuando quieres transformar o filtrar una colección:</p>",
+        "<ul><li><strong>Transformar</strong>: elevar al cuadrado cada número.</li><li><strong>Filtrar</strong>: quedarte solo con los pares.</li><li><strong>Combinar</strong>: ambas cosas a la vez.</li><li><strong>Crear matrices</strong>: listas de listas generadas programáticamente.</li></ul>"
+      ],
+      "sintaxis": "[expresion for elemento in iterable]\n[expresion for elemento in iterable if condicion]\n[expresion1 if cond else expresion2 for elemento in iterable]",
+      "ejemplos": [
+        {
+          "titulo": "Lo básico: elevar al cuadrado",
+          "codigo": "# Versión tradicional\ncuadrados = []\nfor x in range(6):\n    cuadrados.append(x**2)\nprint(cuadrados)\n\n# Con comprensión\ncuadrados = [x**2 for x in range(6)]\nprint(cuadrados)",
+          "explicacion": [
+            "<p>Ambas versiones dan el mismo resultado: <code>[0, 1, 4, 9, 16, 25]</code>.</p>",
+            "<p>La comprensión es más corta y clara una vez te acostumbras.</p>"
+          ]
+        },
+        {
+          "titulo": "Con filtro",
+          "codigo": "pares = [x for x in range(10) if x % 2 == 0]\nprint(pares)   # [0, 2, 4, 6, 8]\n\ncuadrados_pares = [x**2 for x in range(10) if x % 2 == 0]\nprint(cuadrados_pares)   # [0, 4, 16, 36, 64]",
+          "explicacion": [
+            "<p>El <code>if</code> al final filtra qué elementos incluir.</p>",
+            "<p>Puedes combinar transformación y filtro en la misma línea.</p>"
+          ]
+        },
+        {
+          "titulo": "Sobre strings",
+          "codigo": "palabra = \"Python\"\n\nmayusculas = [c.upper() for c in palabra]\nprint(mayusculas)   # ['P', 'Y', 'T', 'H', 'O', 'N']\n\nvocales = [c for c in palabra if c.lower() in \"aeiou\"]\nprint(vocales)   # ['o']",
+          "explicacion": [
+            "<p>También funcionan con strings.</p>",
+            "<ul><li>El primero convierte cada letra a mayúscula.</li><li>El segundo filtra solo las vocales.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Condicional dentro de la expresión",
+          "codigo": "numeros = [1, 2, 3, 4, 5]\n\nresultado = [x if x % 2 == 0 else -x for x in numeros]\nprint(resultado)   # [-1, 2, -3, 4, -5]",
+          "explicacion": [
+            "<p>Cuando pones un if/else al inicio de la comprensión, se evalúa para cada elemento:</p>",
+            "<ul><li>Si es par: x.</li><li>Si es impar: -x.</li></ul>",
+            "<p><strong>Ojo:</strong> este if/else es distinto del if al final. El de al final filtra, este transforma.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "[x for x in 5]",
+          "razon": "No puedes iterar sobre un número. Necesitas una colección o range.",
+          "correcto": "[x for x in range(5)]"
+        },
+        {
+          "error": "Comprensiones muy complejas",
+          "razon": "Si la comprensión ocupa varias líneas o tiene muchos if anidados, es mejor un bucle normal.",
+          "correcto": "Usa comprensión solo si es simple. Prioriza legibilidad."
+        },
+        {
+          "error": "Modificar la lista original dentro de la comprensión",
+          "razon": "Las comprensiones crean una lista nueva. No modifican la original.",
+          "correcto": "Para modificar in-place, usa un bucle normal."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> las comprensiones son más rápidas que un bucle con append.</p>",
+        "<p>💡 <strong>Truco 2:</strong> también existen comprensiones de diccionarios (<code>{k: v for ...}</code>) y de sets (<code>{x for ...}</code>).</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, las comprensiones son útiles para generar listas de valores:</p>",
+        "<pre class='cmd-sintaxis'>errores = [abs(x - raiz) for x in aproximaciones]</pre>",
+        "<p>💡 <strong>Truco 4:</strong> si te cuesta leerla, no la uses. Un bucle claro vale más que una comprensión críptica.</p>"
+      ],
+      "ejercicios": [
+        "Crea una lista con los cuadrados del 1 al 10 usando comprensión.",
+        "Filtra los números pares del 1 al 20.",
+        "Convierte todas las letras de 'python' a mayúsculas.",
+        "Crea una lista con los cuadrados de los números impares del 1 al 10.",
+        "Convierte [1, -2, 3, -4] en [1, 2, 3, 4] usando una comprensión."
+      ],
+      "resumen": "Las comprensiones crean listas en una línea: [expresion for x in iterable if condicion]. Son rápidas y limpias, pero úsalas solo si son legibles."
+    },
+    {
+      "id": "listas-anidadas",
+      "numero": "6",
+      "titulo": "Listas anidadas (matrices)",
+      "emoji": "🧱",
+      "subtitulo": "Listas dentro de listas, como tablas o matrices",
+      "que_es": [
+        "<p>Una <strong>lista anidada</strong> es una lista que contiene otras listas. Es la forma natural de representar tablas o matrices en Python.</p>",
+        "<p>Una matriz 3×3 se ve así:</p>",
+        "<pre class='cmd-sintaxis'>matriz = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]</pre>",
+        "<p>El primer índice accede a la fila, el segundo a la columna: <code>matriz[fila][columna]</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa en análisis numérico para:</p>",
+        "<ul><li><strong>Representar matrices</strong>: sistemas de ecuaciones.</li><li><strong>Tablas de datos</strong>: filas y columnas.</li><li><strong>Recorrer estructuras complejas</strong>: con bucles anidados.</li><li><strong>Resolver Gauss-Jordan, eliminación, etc.</strong></li></ul>"
+      ],
+      "sintaxis": "matriz = [\n    [1, 2, 3],\n    [4, 5, 6]\n]\n\nmatriz[0]        # [1, 2, 3] (primera fila)\nmatriz[0][1]     # 2 (elemento de fila 0, columna 1)\n\n# Recorrer\nfor fila in matriz:\n    for elemento in fila:\n        print(elemento)",
+      "ejemplos": [
+        {
+          "titulo": "Crear y acceder a una matriz",
+          "codigo": "matriz = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]\n\nprint(matriz[0])      # [1, 2, 3]\nprint(matriz[1][2])   # 6\nprint(matriz[2][0])   # 7",
+          "explicacion": [
+            "<p><code>matriz[0]</code> devuelve la primera fila completa.</p>",
+            "<p><code>matriz[1][2]</code> devuelve el elemento en la fila 1, columna 2.</p>"
+          ]
+        },
+        {
+          "titulo": "Recorrer una matriz con bucles anidados",
+          "codigo": "matriz = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]\n\nfor i in range(len(matriz)):\n    for j in range(len(matriz[i])):\n        print(matriz[i][j], end=\" \")\n    print()",
+          "explicacion": [
+            "<p>El bucle externo recorre las filas. El interno, las columnas.</p>",
+            "<p><code>end=\" \"</code> evita el salto de línea. El <code>print()</code> final hace el salto de fila.</p>"
+          ]
+        },
+        {
+          "titulo": "Forma más limpia de recorrer",
+          "codigo": "matriz = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]\n\nfor fila in matriz:\n    for elemento in fila:\n        print(elemento, end=\" \")\n    print()",
+          "explicacion": [
+            "<p>Python permite iterar directamente sobre los elementos sin usar índices.</p>",
+            "<p>Es más limpio. Úsalo siempre que no necesites los índices.</p>"
+          ]
+        },
+        {
+          "titulo": "Crear una matriz con comprensión",
+          "codigo": "# Matriz 3x3 de ceros\nmatriz = [[0 for _ in range(3)] for _ in range(3)]\nprint(matriz)\n\n# Matriz con números del 1 al 9\nmatriz = [[i*3+j+1 for j in range(3)] for i in range(3)]\nprint(matriz)",
+          "explicacion": [
+            "<p>La comprensión anidada crea matrices completas en una línea.</p>",
+            "<p>El bucle interno crea cada fila, el externo crea la matriz.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "matriz[5][10]  en una matriz 3x3",
+          "razon": "Índices fuera de rango.",
+          "correcto": "Verifica len(matriz) y len(matriz[i]) antes de acceder."
+        },
+        {
+          "error": "matriz = [[0]*3]*3",
+          "razon": "Crea 3 referencias a la misma fila. Si modificas una, se modifican todas.",
+          "correcto": "matriz = [[0]*3 for _ in range(3)]"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> nunca crees matrices con <code>[[0]*n]*m</code>. Usa comprensión: <code>[[0]*n for _ in range(m)]</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para recorrer una matriz con índices: <code>for i, fila in enumerate(matriz): for j, x in enumerate(fila):</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, muchas operaciones con matrices se hacen mejor con numpy.</p>",
+        "<p>💡 <strong>Truco 4:</strong> si vas a hacer álgebra lineal, instala numpy desde la tienda.</p>"
+      ],
+      "ejercicios": [
+        "Crea una matriz 3x3 con números del 1 al 9.",
+        "Accede al elemento en la posición [1][1].",
+        "Recorre la matriz con bucles anidados y muestra cada elemento.",
+        "Crea una matriz 3x3 de ceros con comprensión.",
+        "Calcula la suma de todos los elementos de la matriz."
+      ],
+      "resumen": "Las listas anidadas representan tablas y matrices. Se accede con matriz[fila][columna]. Para crearlas usa comprensión anidada, nunca [[0]*n]*m."
+    }
+  ]
+}

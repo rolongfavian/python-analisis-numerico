@@ -1,95 +1,33 @@
 /* ============================================
-   ui.js — Menú, toasts, cambio de vista
-   v3 - Fix: al cambiar a Guía, asegurar que Entorno esté oculto
+   ui.js — Menú hamburguesa, toasts, admin mode, aviso descarga
+   v3 - Adaptado a la web unificada
    ============================================ */
 
 (function () {
   'use strict';
 
-  let currentView = 'guide';
-
-  // ============================================================
-  // CAMBIO DE VISTA (Guía / Entorno)
-  // ============================================================
-
-  function switchView(view) {
-    currentView = view;
-
-    // Quitar .active de TODAS las vistas y tabs
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.view-tab').forEach(t => t.classList.remove('active'));
-
-    const tabs = document.querySelectorAll('.view-tab');
-    const menuToggle = document.getElementById('menu-toggle');
-
-    if (view === 'guide') {
-      const el = document.getElementById('view-guide');
-      const envEl = document.getElementById('view-env');
-      if (el) el.classList.add('active');
-      if (envEl) envEl.classList.remove('active');  // doble seguridad
-      if (tabs[0]) tabs[0].classList.add('active');
-      if (menuToggle) menuToggle.style.display = 'flex';
-
-      document.body.classList.remove('view-env-active');
-
-      // Hacer scroll al top de la Guía
-      window.scrollTo({ top: 0, behavior: 'instant' });
-    } else {
-      const el = document.getElementById('view-env');
-      const guideEl = document.getElementById('view-guide');
-      if (el) el.classList.add('active');
-      if (guideEl) guideEl.classList.remove('active');  // doble seguridad
-      if (tabs[1]) tabs[1].classList.add('active');
-      if (menuToggle) menuToggle.style.display = 'none';
-
-      document.body.classList.add('view-env-active');
-    }
-
-    // Refrescar editores CodeMirror
-    setTimeout(() => {
-      if (typeof editorsMap !== 'undefined') {
-        Object.values(editorsMap).forEach(ed => {
-          try { ed.refresh(); } catch (e) {}
-        });
-      }
-    }, 100);
-  }
-
   // ============================================================
   // MENÚ HAMBURGUESA
   // ============================================================
-
   function toggleMenu() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
-    const btn = document.getElementById('menu-toggle');
-    if (!sidebar || !overlay || !btn) return;
+    if (!sidebar || !overlay) return;
 
     const open = sidebar.classList.toggle('open');
     overlay.classList.toggle('open', open);
-    btn.classList.toggle('open', open);
   }
 
   function closeMenu() {
     const sidebar = document.getElementById('sidebar');
     const overlay = document.getElementById('overlay');
-    const btn = document.getElementById('menu-toggle');
     if (sidebar) sidebar.classList.remove('open');
     if (overlay) overlay.classList.remove('open');
-    if (btn) btn.classList.remove('open');
-  }
-
-  function toggleGroup(id, btn) {
-    const el = document.getElementById(id);
-    if (!el) return;
-    const isOpen = el.classList.toggle('open');
-    if (btn) btn.classList.toggle('active', isOpen);
   }
 
   // ============================================================
   // TOAST
   // ============================================================
-
   let toastTimer = null;
 
   function showToast(msg, isError) {
@@ -107,45 +45,88 @@
   }
 
   // ============================================================
-  // BANNER DE CONEXIÓN
+  // MODO ADMIN
   // ============================================================
+  function esAdmin() {
+    return document.documentElement.getAttribute('data-admin') === 'true';
+  }
 
-  function actualizarBannerConexion() {
-    const banner = document.getElementById('offline-banner');
-    if (!banner) return;
-    banner.style.display = navigator.onLine ? 'none' : 'block';
+  function activarModoAdmin() {
+    document.documentElement.setAttribute('data-admin', 'true');
+
+    const driveStatus = document.getElementById('drive-status');
+    if (driveStatus) driveStatus.style.display = 'block';
+
+    const menuAdmin = document.getElementById('menu-admin');
+    if (menuAdmin) menuAdmin.style.display = 'block';
+
+    console.log('[admin] Modo administrador activado');
   }
 
   // ============================================================
-  // INICIALIZACIÓN
+  // AVISO DE DESCARGA (para la tienda)
   // ============================================================
+  let avisoDescargaCallback = null;
 
-  function init() {
-    // Al cargar, asegurarse de que solo la Guía esté activa
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    const guideEl = document.getElementById('view-guide');
-    const envEl = document.getElementById('view-env');
-    if (guideEl) guideEl.classList.add('active');
-    if (envEl) envEl.classList.remove('active');
+  function abrirAvisoDescarga(mensaje, callback) {
+    const modal = document.getElementById('modal-aviso-descarga');
+    const texto = document.getElementById('aviso-descarga-texto');
+    if (!modal) return;
 
-    document.body.classList.remove('view-env-active');
+    if (texto) texto.textContent = mensaje;
+    avisoDescargaCallback = callback;
+    modal.classList.add('open');
+  }
 
-    // Cerrar menú al tocar un enlace
-    document.querySelectorAll('.menu-group-content a').forEach(a => {
-      a.addEventListener('click', () => {
-        setTimeout(closeMenu, 100);
-      });
+  function cerrarAvisoDescarga() {
+    const modal = document.getElementById('modal-aviso-descarga');
+    if (modal) modal.classList.remove('open');
+    avisoDescargaCallback = null;
+  }
+
+  function confirmarAvisoDescarga() {
+    const cb = avisoDescargaCallback;
+    cerrarAvisoDescarga();
+    if (typeof cb === 'function') cb();
+  }
+
+  function cancelarAvisoDescarga() {
+    cerrarAvisoDescarga();
+  }
+
+  // ============================================================
+  // NAVEGACIÓN ENTRE VISTAS
+  // ============================================================
+  function mostrarVista(nombre) {
+    // Ocultar todas las vistas
+    document.querySelectorAll('.view-container').forEach(v => {
+      v.style.display = 'none';
     });
 
+    // Mostrar la que toca
+    const vista = document.getElementById('view-' + nombre);
+    if (vista) vista.style.display = '';
+  }
+
+  // ============================================================
+  // INIT
+  // ============================================================
+  function init() {
     // Escape cierra el menú
     document.addEventListener('keydown', (e) => {
-      if (e.key === 'Escape') closeMenu();
+      if (e.key === 'Escape') {
+        closeMenu();
+        // También cierra el aviso de descarga si está abierto
+        if (document.getElementById('modal-aviso-descarga')?.classList.contains('open')) {
+          cancelarAvisoDescarga();
+        }
+      }
     });
 
-    // Escuchar cambios de conexión
-    window.addEventListener('online', actualizarBannerConexion);
-    window.addEventListener('offline', actualizarBannerConexion);
-    actualizarBannerConexion();
+    // Detectar modo admin al inicio
+    if (esAdmin()) {
+      activarModoAdmin();
+    }
   }
 
   if (document.readyState === 'loading') {
@@ -157,9 +138,14 @@
   // ============================================================
   // EXPOSICIÓN GLOBAL
   // ============================================================
-  window.switchView = switchView;
   window.toggleMenu = toggleMenu;
   window.closeMenu = closeMenu;
-  window.toggleGroup = toggleGroup;
   window.showToast = showToast;
+  window.esAdmin = esAdmin;
+  window.activarModoAdmin = activarModoAdmin;
+  window.abrirAvisoDescarga = abrirAvisoDescarga;
+  window.cerrarAvisoDescarga = cerrarAvisoDescarga;
+  window.confirmarAvisoDescarga = confirmarAvisoDescarga;
+  window.cancelarAvisoDescarga = cancelarAvisoDescarga;
+  window.mostrarVista = mostrarVista;
 })();

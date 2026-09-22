@@ -1,0 +1,614 @@
+{
+  "parte": 14,
+  "titulo": "Análisis numérico",
+  "emoji": "🧮",
+  "descripcion": "Esta es la parte donde todo lo aprendido se junta. Vamos a resolver ecuaciones que no se pueden resolver a mano, usando métodos que aproximan la solución paso a paso. Es la aplicación directa de Python a las matemáticas.",
+  "temas": [
+    {
+      "id": "que-es",
+      "numero": "1",
+      "titulo": "¿Qué es el análisis numérico?",
+      "emoji": "🎯",
+      "subtitulo": "Aproximar lo que no se puede calcular exacto",
+      "que_es": [
+        "<p>El <strong>análisis numérico</strong> es la rama de las matemáticas que estudia cómo <strong>aproximar</strong> soluciones de problemas que no se pueden resolver de forma exacta.</p>",
+        "<p>Por ejemplo, la ecuación <code>x² - 2 = 0</code> sí se puede resolver a mano: <code>x = ±√2</code>. Pero <code>x⁵ + 3x² - 7x + 1 = 0</code> no tiene solución exacta con las operaciones básicas. Hay que aproximarla.</p>",
+        "<p>Los métodos numéricos calculan aproximaciones sucesivamente mejores. Empiezan con una estimación inicial y van mejorándola hasta que el error es menor que una tolerancia.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>El análisis numérico se usa en:</p>",
+        "<ul><li><strong>Ingeniería</strong>: cálculo de estructuras, fluidos, calor.</li><li><strong>Física</strong>: simulación de sistemas dinámicos.</li><li><strong>Economía</strong>: modelos financieros.</li><li><strong>Ciencia de datos</strong>: optimización, aprendizaje automático.</li><li><strong>Cualquier ecuación complicada</strong>: cuando no se puede resolver a mano.</li></ul>"
+      ],
+      "sintaxis": "# Problema típico: encontrar x tal que f(x) = 0\n# donde f es una función complicada\n\n# Ejemplo: f(x) = x³ - x - 2\nf = lambda x: x**3 - x - 2\n\n# Buscamos la raíz: x donde f(x) = 0\n# A ojo: f(1) = -2, f(2) = 4  → la raíz está en (1, 2)",
+      "ejemplos": [
+        {
+          "titulo": "Por qué no siempre se puede resolver a mano",
+          "codigo": "import math\n\n# f(x) = x³ - x - 2\n# Queremos encontrar x donde f(x) = 0\n# No hay fórmula general para cúbicas con raíces irracionales\n\nf = lambda x: x**3 - x - 2\n\nprint(f(1))   # -2\nprint(f(2))   # 4\n# Entonces la raíz está entre 1 y 2\n\n# Comprobamos con math\n# La raíz real es ≈ 1.5213797068045676\nprint(f(1.5213797068))   # ≈ 0",
+          "explicacion": [
+            "<p>La ecuación <code>x³ - x - 2 = 0</code> no tiene solución exacta \"bonita\".</p>",
+            "<p>Pero podemos ver que la raíz está en el intervalo (1, 2) porque f cambia de signo.</p>",
+            "<p>El análisis numérico nos da métodos para encontrar ese valor con la precisión que queramos.</p>"
+          ]
+        },
+        {
+          "titulo": "Los tres pasos de un método numérico",
+          "codigo": "# 1. Definir la función\nf = lambda x: x**3 - x - 2\n\n# 2. Elegir un intervalo [a, b] donde haya cambio de signo\na, b = 1, 2\n\n# 3. Aplicar el método hasta que el error sea pequeño\n#    (cada método tiene su algoritmo)\n\n# Verificar que hay raíz\nif f(a) * f(b) < 0:\n    print(f\"Hay al menos una raíz en [{a}, {b}]\")",
+          "explicacion": [
+            "<p>Casi todos los métodos de búsqueda de raíces siguen este patrón:</p>",
+            "<ol><li>Definir la función.</li><li>Elegir un intervalo o punto inicial.</li><li>Aplicar el algoritmo iterativamente.</li></ol>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Esperar resultados exactos",
+          "razon": "El análisis numérico trabaja con aproximaciones. Siempre hay error.",
+          "correcto": "Define una tolerancia y considera que el resultado es correcto dentro de ella."
+        },
+        {
+          "error": "No verificar que hay raíz en el intervalo",
+          "razon": "Si no hay cambio de signo, los métodos no convergen.",
+          "correcto": "Verifica Bolzano antes de empezar."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> el análisis numérico no busca la solución exacta, sino una aproximación suficientemente buena.</p>",
+        "<p>💡 <strong>Truco 2:</strong> casi todos los métodos iterativos siguen el mismo patrón: empezar con estimación, mejorar, comprobar, parar.</p>",
+        "<p>💡 <strong>Truco 3:</strong> el criterio de parada suele ser <code>|error| &lt; tol</code> o <code>iter &gt;= max_iter</code>.</p>"
+      ],
+      "ejercicios": [
+        "Define f(x) = x³ - x - 2 y verifica que f(1) y f(2) tienen signos opuestos.",
+        "Define g(x) = e^x - 3 y busca un intervalo donde haya raíz.",
+        "Define h(x) = x² - 5 y encuentra su raíz a ojo.",
+        "Explica por qué algunos problemas no tienen solución exacta."
+      ],
+      "resumen": "El análisis numérico aproxima soluciones. Se usa cuando no hay fórmula exacta. El patrón general: definir la función, elegir el intervalo, iterar hasta converger."
+    },
+    {
+      "id": "bolzano",
+      "numero": "2",
+      "titulo": "Teorema de Bolzano",
+      "emoji": "⚖️",
+      "subtitulo": "La condición para saber que hay una raíz",
+      "que_es": [
+        "<p>El <strong>teorema de Bolzano</strong> dice: si una función continua f cambia de signo en los extremos de un intervalo [a, b], entonces existe al menos una raíz en ese intervalo.</p>",
+        "<p>Es decir: si <code>f(a) · f(b) &lt; 0</code>, entonces hay un <code>c</code> en (a, b) donde <code>f(c) = 0</code>.</p>",
+        "<p>Es la condición matemática que permite aplicar la mayoría de los métodos de búsqueda de raíces. Si no se cumple, el método no puede garantizar encontrar nada.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa para:</p>",
+        "<ul><li><strong>Verificar</strong> que hay raíz antes de empezar.</li><li><strong>Elegir</strong> el intervalo correcto.</li><li><strong>Evitar</strong> métodos que no van a converger.</li></ul>"
+      ],
+      "sintaxis": "# Verificación de Bolzano\nif f(a) * f(b) < 0:\n    print(\"Hay una raíz en [a, b]\")\nelse:\n    print(\"No se puede garantizar que haya raíz\")\n\n# Alternativa más clara\nif f(a) * f(b) < 0:\n    # o también:\nif (f(a) > 0 and f(b) < 0) or (f(a) < 0 and f(b) > 0):\n    pass",
+      "ejemplos": [
+        {
+          "titulo": "Verificar Bolzano",
+          "codigo": "def verificar_bolzano(f, a, b):\n    fa = f(a)\n    fb = f(b)\n    if fa * fb < 0:\n        print(f\"✓ Hay raíz en ({a}, {b})\")\n        print(f\"  f({a}) = {fa:.4f}\")\n        print(f\"  f({b}) = {fb:.4f}\")\n        return True\n    elif fa * fb == 0:\n        print(\"Uno de los extremos es la raíz\")\n        return True\n    else:\n        print(f\"✗ No hay cambio de signo en ({a}, {b})\")\n        return False\n\nf = lambda x: x**3 - x - 2\nverificar_bolzano(f, 1, 2)   # ✓\nverificar_bolzano(f, 2, 3)   # ✗",
+          "explicacion": [
+            "<p>La función <code>verificar_bolzano</code> comprueba si f(a) y f(b) tienen signos distintos.</p>",
+            "<p>Si <code>f(a) · f(b) &lt; 0</code>, hay cambio de signo → hay raíz.</p>",
+            "<p>Si <code>f(a) · f(b) &gt; 0</code>, no se puede asegurar.</p>"
+          ]
+        },
+        {
+          "titulo": "Buscar un intervalo con cambio de signo",
+          "codigo": "def buscar_intervalo(f, inicio, fin, paso=0.1):\n    a = inicio\n    while a < fin:\n        b = a + paso\n        if f(a) * f(b) < 0:\n            return a, b\n        a = b\n    return None\n\nf = lambda x: x**3 - x - 2\nintervalo = buscar_intervalo(f, -5, 5)\nprint(f\"Intervalo con raíz: {intervalo}\")   # (1.5, 1.6)",
+          "explicacion": [
+            "<p>Recorre un rango con paso pequeño, buscando dónde cambia el signo.</p>",
+            "<p>Así encuentras un intervalo válido para aplicar el método.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Aplicar un método sin verificar Bolzano",
+          "razon": "Puede no converger o dar resultados incorrectos.",
+          "correcto": "Verifica f(a)·f(b) < 0 antes de empezar."
+        },
+        {
+          "error": "Confundir Bolzano con unicidad",
+          "razon": "Bolzano garantiza al menos una raíz, no que sea única.",
+          "correcto": "Si quieres unicidad, necesitas más condiciones (monotonía, etc.)."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> siempre verifica Bolzano antes de cualquier método de búsqueda de raíces.</p>",
+        "<p>💡 <strong>Truco 2:</strong> si f(a)·f(b) &gt; 0, no significa que no haya raíz. Puede haber 2 raíces en el intervalo.</p>",
+        "<p>💡 <strong>Truco 3:</strong> usa <code>raise ValueError</code> si Bolzano no se cumple, para avisar al usuario.</p>"
+      ],
+      "ejercicios": [
+        "Verifica Bolzano para f(x) = x³ - x - 2 en [1, 2].",
+        "Comprueba si hay raíz de f(x) = cos(x) - x en [0, 1].",
+        "Busca un intervalo con cambio de signo para f(x) = e^x - 3x.",
+        "Comprueba si Bolzano se cumple para f(x) = x² + 1 en [-10, 10]. ¿Qué significa?"
+      ],
+      "resumen": "Bolzano dice: si f(a) y f(b) tienen signos distintos, hay al menos una raíz en (a, b). Es la condición para aplicar métodos de búsqueda de raíces."
+    },
+    {
+      "id": "biseccion",
+      "numero": "3",
+      "titulo": "Método de bisección",
+      "emoji": "✂️",
+      "subtitulo": "El método más simple y seguro para encontrar raíces",
+      "que_es": [
+        "<p>El <strong>método de bisección</strong> encuentra una raíz dividiendo el intervalo a la mitad repetidamente.</p>",
+        "<p>El algoritmo es:</p>",
+        "<ol><li>Verificar Bolzano en [a, b].</li><li>Calcular el punto medio c = (a + b) / 2.</li><li>Si f(c) ≈ 0 o el error es pequeño, parar.</li><li>Si f(a)·f(c) &lt; 0, la raíz está en [a, c] → b = c.</li><li>Si f(c)·f(b) &lt; 0, la raíz está en [c, b] → a = c.</li><li>Repetir hasta cumplir la tolerancia.</li></ol>",
+        "<p>Siempre converge si hay cambio de signo, pero lentamente (lineal).</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Es el método más robusto y fácil de implementar. Se usa cuando:</p>",
+        "<ul><li>Necesitas garantizar convergencia.</li><li>No tienes derivada de f (Newton no sirve).</li><li>El intervalo está bien acotado.</li></ul>",
+        "<p>En análisis numérico se usa como método de referencia y como base para métodos más avanzados.</p>"
+      ],
+      "sintaxis": "def biseccion(f, a, b, tol=1e-8, max_iter=100):\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol or (b - a) / 2 < tol:\n            return c, k\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    raise RuntimeError(\"No convergió\")",
+      "ejemplos": [
+        {
+          "titulo": "Bisección paso a paso",
+          "codigo": "def biseccion_detallada(f, a, b, tol=1e-6, max_iter=20):\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    \n    print(f\"{'k':>3} {'a':>12} {'b':>12} {'c':>12} {'f(c)':>12} {'error':>12}\")\n    print(\"-\" * 70)\n    \n    for k in range(max_iter):\n        c = (a + b) / 2\n        fc = f(c)\n        error = (b - a) / 2\n        \n        print(f\"{k:>3} {a:>12.8f} {b:>12.8f} {c:>12.8f} {fc:>12.3e} {error:>12.3e}\")\n        \n        if abs(fc) < tol or error < tol:\n            return c, k\n        \n        if f(a) * fc < 0:\n            b = c\n        else:\n            a = c\n    \n    return c, max_iter\n\nf = lambda x: x**3 - x - 2\nraiz, iters = biseccion_detallada(f, 1, 2, tol=1e-8)\nprint(f\"\\nRaíz: {raiz:.10f} en {iters} iteraciones\")",
+          "explicacion": [
+            "<p>La tabla muestra cómo se reduce el intervalo en cada iteración.</p>",
+            "<p>El error se reduce a la mitad cada vez. Por eso es un método lento pero seguro.</p>",
+            "<p>En ~23 iteraciones alcanzas una precisión de 1e-8.</p>"
+          ]
+        },
+        {
+          "titulo": "Cuántas iteraciones se necesitan",
+          "codigo": "import math\n\ndef iteraciones_necesarias(b_a, tol):\n    # error inicial = (b - a) / 2\n    # después de k iteraciones: error = (b - a) / 2^(k+1)\n    # queremos (b - a) / 2^(k+1) < tol\n    # → k > log2((b - a) / tol) - 1\n    return math.ceil(math.log2(b_a / tol) - 1)\n\nprint(iteraciones_necesarias(1, 1e-8))    # ~26\nprint(iteraciones_necesarias(1, 1e-12))   # ~39\nprint(iteraciones_necesarias(0.1, 1e-8))  # ~22",
+          "explicacion": [
+            "<p>El número de iteraciones depende de:</p>",
+            "<ul><li>La longitud inicial del intervalo.</li><li>La tolerancia deseada.</li></ul>",
+            "<p>Cada iteración reduce el error a la mitad. Es convergencia lineal, con factor 1/2.</p>"
+          ]
+        },
+        {
+          "titulo": "Bisección con historial",
+          "codigo": "def biseccion(f, a, b, tol=1e-8, max_iter=100):\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    \n    historial = []\n    for k in range(max_iter):\n        c = (a + b) / 2\n        fc = f(c)\n        error = (b - a) / 2\n        historial.append((k, a, b, c, fc, error))\n        \n        if abs(fc) < tol or error < tol:\n            return c, k, historial\n        \n        if f(a) * fc < 0:\n            b = c\n        else:\n            a = c\n    \n    raise RuntimeError(f\"No convergió en {max_iter} iteraciones\")\n\nf = lambda x: x**3 - x - 2\ntry:\n    raiz, iters, hist = biseccion(f, 1, 2)\n    print(f\"Raíz: {raiz:.10f}\")\n    print(f\"Iteraciones: {iters}\")\n    print(f\"f(raíz): {f(raiz):.3e}\")\nexcept (ValueError, RuntimeError) as e:\n    print(f\"Error: {e}\")",
+          "explicacion": [
+            "<p>Guardamos el historial completo para poder analizarlo o graficarlo.</p>",
+            "<p>Este es el patrón estándar que se usa en la práctica.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "No verificar Bolzano al inicio",
+          "razon": "El método no converge y los resultados son basura.",
+          "correcto": "Verifica f(a)·f(b) < 0 antes de empezar."
+        },
+        {
+          "error": "No limitar iteraciones",
+          "razon": "Si algo falla, el bucle se cuelga.",
+          "correcto": "Usa siempre max_iter."
+        },
+        {
+          "error": "Usar |f(c)| < tol como único criterio",
+          "razon": "El error del intervalo es más confiable.",
+          "correcto": "Usa abs(f(c)) < tol o (b - a) / 2 < tol."
+        },
+        {
+          "error": "Convergencia lenta con tolerancias muy pequeñas",
+          "razon": "Necesitas muchas iteraciones.",
+          "correcto": "Si necesitas más precisión, considera Newton (más rápido)."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> bisección es el método más seguro. Siempre converge si Bolzano se cumple.</p>",
+        "<p>💡 <strong>Truco 2:</strong> es lento: cada iteración gana solo 1 bit de precisión. Con 50 iteraciones tienes precisión ~1e-15.</p>",
+        "<p>💡 <strong>Truco 3:</strong> usa bisección para verificar los resultados de métodos más rápidos como Newton.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en la práctica, combina bisección (primeras iteraciones, seguro) con Newton (cuando estás cerca, rápido).</p>"
+      ],
+      "ejercicios": [
+        "Implementa bisección para f(x) = x³ - x - 2 en [1, 2].",
+        "Imprime la tabla de iteraciones con k, a, b, c, error.",
+        "Verifica que el error se reduce a la mitad en cada iteración.",
+        "Calcula cuántas iteraciones se necesitan para tolerancia 1e-12.",
+        "Usa bisección para encontrar una raíz de cos(x) = x."
+      ],
+      "resumen": "Bisección divide el intervalo a la mitad en cada iteración. Siempre converge si Bolzano se cumple. Es lento (lineal) pero muy seguro. En ~30 iteraciones llegas a precisión de máquina."
+    },
+    {
+      "id": "newton",
+      "numero": "4",
+      "titulo": "Método de Newton-Raphson",
+      "emoji": "🎯",
+      "subtitulo": "El método más rápido para encontrar raíces",
+      "que_es": [
+        "<p>El <strong>método de Newton-Raphson</strong> (o simplemente Newton) usa la <strong>derivada</strong> para converger muy rápido.</p>",
+        "<p>La idea es aproximar la función por su recta tangente en cada punto. La intersección de esa recta con el eje x es la nueva aproximación.</p>",
+        "<p>La fórmula es:</p>",
+        "<pre class='cmd-sintaxis'>x_{k+1} = x_k - f(x_k) / f'(x_k)</pre>",
+        "<p>Convergencia <strong>cuadrática</strong>: cada iteración duplica el número de dígitos correctos. Es mucho más rápido que bisección, pero requiere la derivada.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa cuando:</p>",
+        "<ul><li>Puedes calcular la derivada de f.</li><li>Tienes una buena estimación inicial.</li><li>Necesitas convergencia rápida.</li></ul>",
+        "<p>Es el método más usado en la práctica para problemas numéricos.</p>"
+      ],
+      "sintaxis": "def newton(f, df, x0, tol=1e-10, max_iter=100):\n    x = x0\n    for k in range(max_iter):\n        if abs(df(x)) < 1e-14:\n            raise RuntimeError(\"Derivada casi cero\")\n        x_nuevo = x - f(x) / df(x)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x = x_nuevo\n    raise RuntimeError(\"No convergió\")",
+      "ejemplos": [
+        {
+          "titulo": "Newton paso a paso",
+          "codigo": "def newton_detallado(f, df, x0, tol=1e-12, max_iter=20):\n    x = x0\n    print(f\"{'k':>3} {'x':>18} {'f(x)':>15} {'error':>15}\")\n    print(\"-\" * 55)\n    \n    for k in range(max_iter):\n        fx = f(x)\n        dfx = df(x)\n        \n        if abs(dfx) < 1e-14:\n            raise RuntimeError(\"Derivada casi cero\")\n        \n        x_nuevo = x - fx / dfx\n        error = abs(x_nuevo - x)\n        \n        print(f\"{k:>3} {x_nuevo:>18.14f} {f(x_nuevo):>15.3e} {error:>15.3e}\")\n        \n        if error < tol:\n            return x_nuevo, k\n        x = x_nuevo\n    \n    return x, max_iter\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\nraiz, iters = newton_detallado(f, df, 1.5)\nprint(f\"\\nRaíz: {raiz:.15f}\")\nprint(f\"Iteraciones: {iters}\")",
+          "explicacion": [
+            "<p>La tabla muestra cómo Newton converge muy rápido:</p>",
+            "<ul><li>En 5-6 iteraciones alcanza precisión de 1e-12.</li><li>El error se reduce cuadráticamente.</li></ul>",
+            "<p>Compara con bisección, que necesitaba ~26 iteraciones para lo mismo.</p>"
+          ]
+        },
+        {
+          "titulo": "Newton con historial",
+          "codigo": "def newton(f, df, x0, tol=1e-10, max_iter=100):\n    x = x0\n    historial = []\n    for k in range(max_iter):\n        fx = f(x)\n        dfx = df(x)\n        if abs(dfx) < 1e-14:\n            raise RuntimeError(f\"Derivada casi cero en x={x}\")\n        x_nuevo = x - fx / dfx\n        error = abs(x_nuevo - x)\n        historial.append((k, x, x_nuevo, fx, error))\n        if error < tol:\n            return x_nuevo, k, historial\n        x = x_nuevo\n    raise RuntimeError(f\"No convergió en {max_iter} iteraciones\")\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\ntry:\n    raiz, iters, hist = newton(f, df, 1.5)\n    print(f\"Raíz: {raiz:.15f}\")\n    print(f\"Iteraciones: {iters}\")\n    print(f\"Error final: {hist[-1][4]:.3e}\")\nexcept RuntimeError as e:\n    print(f\"Error: {e}\")",
+          "explicacion": [
+            "<p>El historial guarda cada iteración: x actual, x nuevo, f(x), error.</p>",
+            "<p>Sirve para analizar la convergencia.</p>"
+          ]
+        },
+        {
+          "titulo": "Convergencia cuadrática",
+          "codigo": "f = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\nx = 1.5\nprint(f\"{'k':>3} {'error':>18} {'error_k/error_{k-1}²':>25}\")\nprint(\"-\" * 50)\n\nerror_prev = None\nfor k in range(8):\n    x_nuevo = x - f(x) / df(x)\n    error = abs(x_nuevo - x)\n    \n    ratio = \"\" if error_prev is None else f\"{error / error_prev**2:.4f}\"\n    print(f\"{k:>3} {error:>18.3e} {ratio:>25}\")\n    \n    error_prev = error\n    x = x_nuevo",
+          "explicacion": [
+            "<p>Si el ratio <code>error_k / error_{k-1}²</code> tiende a una constante, la convergencia es cuadrática.</p>",
+            "<p>Esto significa que cada iteración duplica los dígitos correctos.</p>",
+            "<p>Es la gran ventaja de Newton sobre bisección.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Derivada casi cero",
+          "razon": "División entre cero o valor enorme.",
+          "correcto": "Verifica abs(df(x)) > eps antes de dividir."
+        },
+        {
+          "error": "Estimación inicial muy lejos",
+          "razon": "Newton puede divergir o irse a otra raíz.",
+          "correcto": "Usa una buena estimación inicial. Si no la tienes, primero usa bisección."
+        },
+        {
+          "error": "Calcular la derivada numéricamente mal",
+          "razon": "Un h mal elegido da derivada imprecisa.",
+          "correcto": "Usa h ≈ 1e-6 para diferencias finitas. O calcula df analíticamente."
+        },
+        {
+          "error": "No limitar iteraciones",
+          "razon": "Si diverge, el bucle se cuelga.",
+          "correcto": "Usa max_iter."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> Newton converge mucho más rápido que bisección cuando funciona.</p>",
+        "<p>💡 <strong>Truco 2:</strong> siempre verifica que la derivada no sea casi cero antes de dividir.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si no tienes la derivada, calcula una aproximación numérica:</p>",
+        "<pre class='cmd-sintaxis'>def df_aprox(f, x, h=1e-6):\n    return (f(x + h) - f(x - h)) / (2 * h)</pre>",
+        "<p>💡 <strong>Truco 4:</strong> en la práctica, combina bisección (seguro) y Newton (rápido): empieza con bisección, cambia a Newton cuando estés cerca.</p>"
+      ],
+      "ejercicios": [
+        "Implementa Newton para f(x) = x³ - x - 2 con df(x) = 3x² - 1.",
+        "Calcula cuántas iteraciones necesita para tol = 1e-12.",
+        "Observa la convergencia cuadrática en la tabla.",
+        "Usa Newton para encontrar sqrt(2) (f(x) = x² - 2).",
+        "Añade verificación de derivada casi cero."
+      ],
+      "resumen": "Newton usa la derivada para converger cuadráticamente. Mucho más rápido que bisección. Requiere df(x) ≠ 0 y buena estimación inicial. En ~6 iteraciones alcanza 1e-12."
+    },
+    {
+      "id": "punto-fijo",
+      "numero": "5",
+      "titulo": "Método del punto fijo",
+      "emoji": "🔄",
+      "subtitulo": "Iterar una función hasta que se estabiliza",
+      "que_es": [
+        "<p>El <strong>método del punto fijo</strong> busca un valor <code>x*</code> tal que <code>g(x*) = x*</code>. Es decir, donde la función devuelve el mismo valor que recibe.</p>",
+        "<p>Para encontrar raíces de <code>f(x) = 0</code>, primero reescribes como <code>x = g(x)</code>. Hay muchas formas de hacerlo, y la elección afecta la convergencia.</p>",
+        "<p>El algoritmo es simple:</p>",
+        "<pre class='cmd-sintaxis'>x_{k+1} = g(x_k)</pre>",
+        "<p>Se itera hasta que <code>|x_{k+1} - x_k| &lt; tol</code>. Converge si <code>|g'(x)| &lt; 1</code> cerca de la solución.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa para:</p>",
+        "<ul><li><strong>Raíces</strong>: reescribiendo f(x) = 0 como x = g(x).</li><li><strong>Ecuaciones no lineales</strong>: cuando Newton no se puede aplicar.</li><li><strong>Problemas de estabilidad</strong>: cuando buscas un punto donde algo se estabiliza.</li></ul>"
+      ],
+      "sintaxis": "def punto_fijo(g, x0, tol=1e-10, max_iter=100):\n    x = x0\n    for k in range(max_iter):\n        x_nuevo = g(x)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x = x_nuevo\n    raise RuntimeError(\"No convergió\")",
+      "ejemplos": [
+        {
+          "titulo": "Encontrar la raíz de x³ - x - 2 = 0",
+          "codigo": "def punto_fijo_detallado(g, x0, tol=1e-10, max_iter=30):\n    x = x0\n    print(f\"{'k':>3} {'x':>18} {'g(x)':>18} {'error':>15}\")\n    print(\"-\" * 58)\n    \n    for k in range(max_iter):\n        x_nuevo = g(x)\n        error = abs(x_nuevo - x)\n        print(f\"{k:>3} {x:>18.14f} {x_nuevo:>18.14f} {error:>15.3e}\")\n        \n        if error < tol:\n            return x_nuevo, k\n        x = x_nuevo\n    \n    return x, max_iter\n\n# f(x) = x³ - x - 2 = 0\n# Reescritura 1: x = (x + 2) ^ (1/3)\ng = lambda x: (x + 2) ** (1/3)\n\nraiz, iters = punto_fijo_detallado(g, 1.5)\nprint(f\"\\nRaíz: {raiz:.14f}\")\nprint(f\"Iteraciones: {iters}\")",
+          "explicacion": [
+            "<p>Reescribimos <code>x³ - x - 2 = 0</code> como <code>x = (x + 2)^(1/3)</code>.</p>",
+            "<p>Iterando <code>x_{k+1} = (x_k + 2)^(1/3)</code> desde 1.5, llegamos a la raíz.</p>",
+            "<p>Converge porque <code>|g'(x)| &lt; 1</code> cerca de la raíz.</p>"
+          ]
+        },
+        {
+          "titulo": "Convergencia según la forma de g",
+          "codigo": "def punto_fijo(g, x0, tol=1e-10, max_iter=50):\n    x = x0\n    for k in range(max_iter):\n        x_nuevo = g(x)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x = x_nuevo\n    return None, max_iter\n\n# Varias formas de reescribir x³ - x - 2 = 0\nformas = [\n    (\"x = (x + 2)^(1/3)\",  lambda x: (x + 2) ** (1/3)),\n    (\"x = x³ - 2\",         lambda x: x**3 - 2),\n    (\"x = 2/(x² - 1)\",     lambda x: 2 / (x**2 - 1)),\n]\n\nfor nombre, g in formas:\n    try:\n        raiz, iters = punto_fijo(g, 1.5)\n        if raiz is not None:\n            print(f\"{nombre}: raíz = {raiz:.10f}, iteraciones = {iters}\")\n        else:\n            print(f\"{nombre}: no convergió\")\n    except Exception as e:\n        print(f\"{nombre}: error {e}\")",
+          "explicacion": [
+            "<p>Distintas reescrituras convergen o no según <code>|g'(x)|</code>.</p>",
+            "<p>La primera converge. Las otras pueden divergir.</p>",
+            "<p>El método del punto fijo es sensible a la elección de g.</p>"
+          ]
+        },
+        {
+          "titulo": "Criterio de convergencia",
+          "codigo": "def verificar_convergencia(dg, x, tol=1e-6):\n    \"\"\"Verifica si |g'(x)| < 1.\"\"\"\n    valor = abs(dg(x))\n    if valor < 1:\n        print(f\"✓ Convergencia garantizada: |g'({x})| = {valor:.4f}\")\n        return True\n    else:\n        print(f\"✗ No converge: |g'({x})| = {valor:.4f} ≥ 1\")\n        return False\n\n# Para g(x) = (x + 2)^(1/3)\ndg = lambda x: (1/3) * (x + 2) ** (-2/3)\nverificar_convergencia(dg, 1.5)\n\n# Para g(x) = x³ - 2\ndg2 = lambda x: 3 * x**2\nverificar_convergencia(dg2, 1.5)",
+          "explicacion": [
+            "<p>El criterio teórico de convergencia es <code>|g'(x*)| &lt; 1</code>.</p>",
+            "<p>Si se cumple, el método converge. Si no, puede divergir.</p>",
+            "<p>La elección de g es crucial.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Reescribir mal la ecuación",
+          "razon": "Algunas reescrituras no convergen.",
+          "correcto": "Verifica que |g'(x)| < 1 cerca de la solución."
+        },
+        {
+          "error": "No comprobar convergencia",
+          "razon": "El método puede divergir silenciosamente.",
+          "correcto": "Compara con la tolerancia y pon max_iter."
+        },
+        {
+          "error": "Esperar convergencia tan rápida como Newton",
+          "razon": "El punto fijo suele converger linealmente.",
+          "correcto": "Si necesitas rapidez, usa Newton."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> el punto fijo converge si <code>|g'(x)| &lt; 1</code>. Verifícalo siempre.</p>",
+        "<p>💡 <strong>Truco 2:</strong> distintas reescrituras pueden dar distintas velocidades (o no converger).</p>",
+        "<p>💡 <strong>Truco 3:</strong> el punto fijo es más flexible que Newton (no requiere derivada), pero más lento.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, el punto fijo es la base teórica de muchos métodos más avanzados.</p>"
+      ],
+      "ejercicios": [
+        "Encuentra la raíz de x³ - x - 2 = 0 con g(x) = (x + 2)^(1/3).",
+        "Prueba distintas reescrituras y compara la velocidad.",
+        "Verifica |g'(x)| < 1 para cada una.",
+        "Encuentra la raíz de cos(x) = x con g(x) = cos(x).",
+        "Implementa el método con historial de iteraciones."
+      ],
+      "resumen": "El punto fijo itera x_{k+1} = g(x_k). Converge si |g'(x)| < 1. Requiere reescribir la ecuación. Más lento que Newton pero sin derivada."
+    },
+    {
+      "id": "secante",
+      "numero": "6",
+      "titulo": "Método de la secante",
+      "emoji": "📐",
+      "subtitulo": "Newton sin derivada",
+      "que_es": [
+        "<p>El <strong>método de la secante</strong> es como Newton, pero <strong>sin derivada</strong>. En vez de usar f'(x), usa la pendiente de la recta que une dos puntos previos.</p>",
+        "<p>La fórmula es:</p>",
+        "<pre class='cmd-sintaxis'>x_{k+1} = x_k - f(x_k) * (x_k - x_{k-1}) / (f(x_k) - f(x_{k-1}))</pre>",
+        "<p>Es como la derivada numérica, pero reutilizando puntos anteriores. Convergencia superlineal (casi cuadrática), pero sin necesitar la derivada.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa cuando:</p>",
+        "<ul><li>No tienes la derivada.</li><li>No quieres calcularla numéricamente cada iteración.</li><li>Necesitas algo más rápido que bisección.</li></ul>",
+        "<p>Es un buen compromiso entre Newton (rápido pero requiere df) y bisección (seguro pero lento).</p>"
+      ],
+      "sintaxis": "def secante(f, x0, x1, tol=1e-10, max_iter=100):\n    x_prev = x0\n    x = x1\n    for k in range(max_iter):\n        fx = f(x)\n        fx_prev = f(x_prev)\n        if abs(fx - fx_prev) < 1e-14:\n            raise RuntimeError(\"Denominador cero\")\n        x_nuevo = x - fx * (x - x_prev) / (fx - fx_prev)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x_prev = x\n        x = x_nuevo\n    raise RuntimeError(\"No convergió\")",
+      "ejemplos": [
+        {
+          "titulo": "Secante paso a paso",
+          "codigo": "def secante_detallada(f, x0, x1, tol=1e-12, max_iter=20):\n    x_prev, x = x0, x1\n    print(f\"{'k':>3} {'x':>18} {'f(x)':>15} {'error':>15}\")\n    print(\"-\" * 55)\n    \n    for k in range(max_iter):\n        fx = f(x)\n        fx_prev = f(x_prev)\n        \n        if abs(fx - fx_prev) < 1e-14:\n            raise RuntimeError(\"Denominador cero\")\n        \n        x_nuevo = x - fx * (x - x_prev) / (fx - fx_prev)\n        error = abs(x_nuevo - x)\n        \n        print(f\"{k:>3} {x_nuevo:>18.14f} {f(x_nuevo):>15.3e} {error:>15.3e}\")\n        \n        if error < tol:\n            return x_nuevo, k\n        \n        x_prev, x = x, x_nuevo\n    \n    return x, max_iter\n\nf = lambda x: x**3 - x - 2\n\nraiz, iters = secante_detallada(f, 1, 2)\nprint(f\"\\nRaíz: {raiz:.15f}\")\nprint(f\"Iteraciones: {iters}\")",
+          "explicacion": [
+            "<p>Con solo dos puntos iniciales (1 y 2), el método de la secante llega a la raíz muy rápido.</p>",
+            "<p>En ~7 iteraciones alcanza precisión de 1e-12.</p>",
+            "<p>Es comparable a Newton, pero sin necesitar la derivada.</p>"
+          ]
+        },
+        {
+          "titulo": "Secante con historial",
+          "codigo": "def secante(f, x0, x1, tol=1e-10, max_iter=100):\n    x_prev, x = x0, x1\n    historial = []\n    for k in range(max_iter):\n        fx = f(x)\n        fx_prev = f(x_prev)\n        if abs(fx - fx_prev) < 1e-14:\n            raise RuntimeError(\"Denominador cero\")\n        x_nuevo = x - fx * (x - x_prev) / (fx - fx_prev)\n        error = abs(x_nuevo - x)\n        historial.append((k, x_prev, x, x_nuevo, error))\n        if error < tol:\n            return x_nuevo, k, historial\n        x_prev, x = x, x_nuevo\n    raise RuntimeError(f\"No convergió en {max_iter} iteraciones\")\n\nf = lambda x: x**3 - x - 2\ntry:\n    raiz, iters, hist = secante(f, 1, 2)\n    print(f\"Raíz: {raiz:.15f}\")\n    print(f\"Iteraciones: {iters}\")\nexcept RuntimeError as e:\n    print(f\"Error: {e}\")",
+          "explicacion": [
+            "<p>El historial permite analizar cómo converge.</p>",
+            "<p>Verás que la convergencia es muy similar a Newton.</p>"
+          ]
+        },
+        {
+          "titulo": "Comparar secante con Newton",
+          "codigo": "def newton(f, df, x0, tol=1e-12, max_iter=20):\n    x = x0\n    for k in range(max_iter):\n        if abs(df(x)) < 1e-14:\n            break\n        x_nuevo = x - f(x) / df(x)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x = x_nuevo\n    return None, max_iter\n\ndef secante(f, x0, x1, tol=1e-12, max_iter=20):\n    x_prev, x = x0, x1\n    for k in range(max_iter):\n        fx = f(x)\n        fx_prev = f(x_prev)\n        if abs(fx - fx_prev) < 1e-14:\n            break\n        x_nuevo = x - fx * (x - x_prev) / (fx - fx_prev)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x_prev, x = x, x_nuevo\n    return None, max_iter\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\nraiz_n, it_n = newton(f, df, 1.5)\nraiz_s, it_s = secante(f, 1, 2)\n\nprint(f\"Newton:  raíz = {raiz_n:.14f}, iteraciones = {it_n}\")\nprint(f\"Secante: raíz = {raiz_s:.14f}, iteraciones = {it_s}\")",
+          "explicacion": [
+            "<p>Ambos métodos llegan a la misma raíz.</p>",
+            "<p>Newton suele necesitar 1-2 iteraciones menos.</p>",
+            "<p>Pero la secante no necesita la derivada, lo cual es muy útil.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "f(x_k) ≈ f(x_{k-1})",
+          "razon": "El denominador se hace cero. División entre cero.",
+          "correcto": "Verifica abs(fx - fx_prev) > eps."
+        },
+        {
+          "error": "Elegir puntos iniciales muy cercanos",
+          "razon": "El método pierde precisión o falla.",
+          "correcto": "Elige puntos separados (aunque no demasiado)."
+        },
+        {
+          "error": "Esperar convergencia garantizada",
+          "razon": "La secante puede no converger según los puntos iniciales.",
+          "correcto": "Verifica con max_iter y usa bisección si falla."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> la secante es casi tan rápida como Newton, pero sin derivada. Muy útil.</p>",
+        "<p>💡 <strong>Truco 2:</strong> necesita dos puntos iniciales, no uno.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si tienes la derivada fácil, usa Newton. Si no, usa secante.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en la práctica, la secante es muy usada porque evita calcular derivadas.</p>"
+      ],
+      "ejercicios": [
+        "Implementa secante para f(x) = x³ - x - 2 con x0=1, x1=2.",
+        "Compara el número de iteraciones con Newton.",
+        "Añade verificación del denominador.",
+        "Usa secante para f(x) = cos(x) - x con x0=0, x1=1.",
+        "Grafica la convergencia del error (si tienes matplotlib)."
+      ],
+      "resumen": "La secante es como Newton pero sin derivada. Usa la recta entre dos puntos. Convergencia superlineal. Dos puntos iniciales. Muy usada cuando no hay derivada fácil."
+    },
+    {
+      "id": "comparacion",
+      "numero": "7",
+      "titulo": "Comparación de métodos",
+      "emoji": "📊",
+      "subtitulo": "Cuándo usar cada método",
+      "que_es": [
+        "<p>Ya conoces cuatro métodos para encontrar raíces. Cada uno tiene ventajas y desventajas. Aquí los comparamos para que sepas cuál elegir.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Elegir el método adecuado ahorra tiempo y evita problemas:</p>",
+        "<ul><li><strong>Bisección</strong>: seguro pero lento.</li><li><strong>Newton</strong>: rápido pero necesita derivada.</li><li><strong>Punto fijo</strong>: flexible pero lento y requiere buena reescritura.</li><li><strong>Secante</strong>: casi tan rápido como Newton sin derivada.</li></ul>"
+      ],
+      "sintaxis": "# Tabla resumen:\n#\n# Método    | Derivada | Convergencia | Velocidad | Garantía\n# ----------|----------|--------------|-----------|----------\n# Bisección | No       | Lineal       | Lenta     | Sí\n# Newton    | Sí       | Cuadrática   | Rápida    | No\n# Punto fijo| No       | Lineal       | Lenta     | Solo si |g'|<1\n# Secante   | No       | Superlineal  | Rápida    | No",
+      "ejemplos": [
+        {
+          "titulo": "Comparación en la práctica",
+          "codigo": "import time\n\ndef biseccion(f, a, b, tol=1e-10, max_iter=200):\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol or (b - a) / 2 < tol:\n            return c, k\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    raise RuntimeError(\"No convergió\")\n\ndef newton(f, df, x0, tol=1e-10, max_iter=100):\n    x = x0\n    for k in range(max_iter):\n        if abs(df(x)) < 1e-14:\n            raise RuntimeError(\"Derivada cero\")\n        x_nuevo = x - f(x) / df(x)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x = x_nuevo\n    raise RuntimeError(\"No convergió\")\n\ndef secante(f, x0, x1, tol=1e-10, max_iter=100):\n    x_prev, x = x0, x1\n    for k in range(max_iter):\n        fx = f(x)\n        fx_prev = f(x_prev)\n        if abs(fx - fx_prev) < 1e-14:\n            raise RuntimeError(\"Denominador cero\")\n        x_nuevo = x - fx * (x - x_prev) / (fx - fx_prev)\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, k\n        x_prev, x = x, x_nuevo\n    raise RuntimeError(\"No convergió\")\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\nprint(f\"{'Método':<15} {'Raíz':>20} {'Iteraciones':>12} {'Tiempo (ms)':>12}\")\nprint(\"-\" * 62)\n\nmetodos = [\n    (\"Bisección\", lambda: biseccion(f, 1, 2)),\n    (\"Newton\",    lambda: newton(f, df, 1.5)),\n    (\"Secante\",   lambda: secante(f, 1, 2)),\n]\n\nfor nombre, metodo in metodos:\n    t0 = time.perf_counter()\n    raiz, iters = metodo()\n    t1 = time.perf_counter()\n    print(f\"{nombre:<15} {raiz:>20.14f} {iters:>12} {(t1-t0)*1000:>12.3f}\")",
+          "explicacion": [
+            "<p>Aquí ves los números en la práctica:</p>",
+            "<ul><li><strong>Bisección</strong>: ~30 iteraciones.</li><li><strong>Newton</strong>: ~6 iteraciones.</li><li><strong>Secante</strong>: ~7 iteraciones.</li></ul>",
+            "<p>Newton y secante son muy superiores en velocidad.</p>"
+          ]
+        },
+        {
+          "titulo": "Cuándo usar cada uno",
+          "codigo": "# Reglas prácticas:\n\n# 1. ¿Tienes la derivada fácil?\n#    Sí → Newton\n#    No → Secante o Bisección\n\n# 2. ¿Necesitas garantía de convergencia?\n#    Sí → Bisección\n#    No → Newton, Secante o Punto fijo\n\n# 3. ¿Tienes buena estimación inicial?\n#    Sí → Newton\n#    No → Bisección primero, luego Newton\n\n# 4. ¿La función es complicada de evaluar?\n#    Sí → Bisección (menos evaluaciones que Newton)\n\n# 5. ¿Quieres simplicidad?\n#    Sí → Bisección\n#    No → Newton o Secante",
+          "explicacion": [
+            "<p>No hay un método universalmente mejor. Depende del problema.</p>",
+            "<p>En la práctica, se suelen combinar: empezar con bisección y cambiar a Newton cuando estés cerca.</p>"
+          ]
+        },
+        {
+          "titulo": "El mejor de ambos mundos",
+          "codigo": "def metodo_hibrido(f, df, a, b, tol=1e-10, n_biseccion=5, max_iter=50):\n    \"\"\"Bisección para acercarse, luego Newton.\"\"\"\n    # 1. Bisección para reducir el intervalo\n    for k in range(n_biseccion):\n        c = (a + b) / 2\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    \n    # 2. Newton desde el punto medio\n    x = (a + b) / 2\n    for k in range(max_iter):\n        dfx = df(x)\n        if abs(dfx) < 1e-14:\n            raise RuntimeError(\"Derivada cero\")\n        x_nuevo = x - f(x) / dfx\n        if abs(x_nuevo - x) < tol:\n            return x_nuevo, n_biseccion + k\n        x = x_nuevo\n    \n    raise RuntimeError(\"No convergió\")\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\nraiz, iters = metodo_hibrido(f, df, 1, 2)\nprint(f\"Raíz: {raiz:.15f}\")\nprint(f\"Iteraciones totales: {iters}\")",
+          "explicacion": [
+            "<p>Primero 5 iteraciones de bisección para acercarse, luego Newton desde ese punto.</p>",
+            "<p>Es el método más robusto: seguro como bisección, rápido como Newton.</p>",
+            "<p>En la práctica, se suele usar esto.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar Newton sin buena estimación inicial",
+          "razon": "Puede divergir.",
+          "correcto": "Usa bisección primero para acercarse."
+        },
+        {
+          "error": "Usar bisección cuando Newton es posible",
+          "razon": "Pierdes velocidad sin razón.",
+          "correcto": "Si tienes derivada, usa Newton."
+        },
+        {
+          "error": "No considerar el coste de evaluar f",
+          "razon": "Bisección evalúa f una vez por iteración, Newton dos.",
+          "correcto": "Para f costosa, bisección puede ser más eficiente en tiempo real."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> no hay un método mejor. Depende del problema.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en producción, se combinan: bisección → Newton.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para el aprendizaje, implementa todos. Te ayuda a entender las diferencias.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico real, bibliotecas como scipy ya tienen los mejores implementados.</p>"
+      ],
+      "ejercicios": [
+        "Implementa los 4 métodos y compáralos en f(x) = x³ - x - 2.",
+        "Cuenta las iteraciones necesarias para tol = 1e-12.",
+        "Mide el tiempo de cada uno.",
+        "Implementa el método híbrido (bisección + Newton).",
+        "Elige el método adecuado para cada uno de 3 problemas distintos."
+      ],
+      "resumen": "Bisección: seguro, lento. Newton: rápido, requiere derivada. Secante: rápido sin derivada. Punto fijo: flexible pero lento. En la práctica se combinan."
+    },
+    {
+      "id": "errores-convergencia",
+      "numero": "8",
+      "titulo": "Errores y convergencia",
+      "emoji": "📉",
+      "subtitulo": "Cómo medir y entender el error",
+      "que_es": [
+        "<p>En análisis numérico, <strong>siempre hay error</strong>. El trabajo es hacerlo tan pequeño como necesitemos, y saber cuándo parar.</p>",
+        "<p>Los tipos de error principales:</p>",
+        "<ul><li><strong>Error absoluto</strong>: |x_aprox − x_real|.</li><li><strong>Error relativo</strong>: |x_aprox − x_real| / |x_real|.</li><li><strong>Error del intervalo</strong>: (b − a) / 2 en bisección.</li><li><strong>Error de parada</strong>: |x_k − x_{k−1}|, diferencia entre iteraciones.</li></ul>",
+        "<p>Como no conocemos x_real, usamos los dos últimos como criterio de parada.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Entender el error sirve para:</p>",
+        "<ul><li><strong>Decidir cuándo parar</strong>: cuando el error es suficientemente pequeño.</li><li><strong>Evaluar la calidad</strong>: ¿cuántas cifras correctas tengo?</li><li><strong>Comparar métodos</strong>: quién reduce más rápido el error.</li><li><strong>Detectar divergencia</strong>: si el error crece, hay problema.</li></ul>"
+      ],
+      "sintaxis": "# Error absoluto (si conoces el valor real)\nerror_abs = abs(x_aprox - x_real)\n\n# Error relativo\nerror_rel = error_abs / abs(x_real)\n\n# Error de parada (no necesitas el valor real)\nerror_parada = abs(x_nuevo - x_actual)\n\n# Criterio de parada típico\nif error_parada < tol:\n    parar",
+      "ejemplos": [
+        {
+          "titulo": "Error absoluto y relativo",
+          "codigo": "import math\n\n# Valor real de sqrt(2)\nx_real = math.sqrt(2)\n\n# Aproximaciones\naprox = [1, 1.4, 1.41, 1.414, 1.4142, 1.41421]\n\nprint(f\"{'Aprox':>12} {'Error abs':>15} {'Error rel':>15} {'Dígitos':>10}\")\nprint(\"-\" * 55)\n\nfor x in aprox:\n    e_abs = abs(x - x_real)\n    e_rel = e_abs / abs(x_real)\n    digitos = -math.log10(e_rel) if e_rel > 0 else float('inf')\n    print(f\"{x:>12.6f} {e_abs:>15.3e} {e_rel:>15.3e} {digitos:>10.2f}\")",
+          "explicacion": [
+            "<p>El error absoluto te dice cuánto te desvías en unidades.</p>",
+            "<p>El error relativo te dice la proporción (más útil cuando los números son grandes).</p>",
+            "<p>El número de dígitos correctos es aproximadamente <code>−log10(error relativo)</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Convergencia lineal vs cuadrática",
+          "codigo": "import math\n\n# Comparar convergencia de bisección (lineal) y Newton (cuadrática)\ndef biseccion_hist(f, a, b, n):\n    hist = []\n    for _ in range(n):\n        c = (a + b) / 2\n        hist.append(c)\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    return hist\n\ndef newton_hist(f, df, x0, n):\n    hist = []\n    x = x0\n    for _ in range(n):\n        x = x - f(x) / df(x)\n        hist.append(x)\n    return hist\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\nraiz_real = 1.5213797068045676\n\nhist_b = biseccion_hist(f, 1, 2, 10)\nhist_n = newton_hist(f, df, 1.5, 10)\n\nprint(f\"{'k':>3} {'Bisección err':>18} {'Newton err':>18}\")\nprint(\"-\" * 42)\n\nfor k in range(10):\n    eb = abs(hist_b[k] - raiz_real)\n    en = abs(hist_n[k] - raiz_real)\n    print(f\"{k:>3} {eb:>18.3e} {en:>18.3e}\")",
+          "explicacion": [
+            "<p>Bisección reduce el error por un factor ~2 cada iteración (lineal).</p>",
+            "<p>Newton lo reduce al cuadrado (cuadrática): 1e-3 → 1e-6 → 1e-12...</p>",
+            "<p>Por eso Newton llega a la precisión de máquina en pocas iteraciones.</p>"
+          ]
+        },
+        {
+          "titulo": "Criterio de parada",
+          "codigo": "def newton_con_parada(f, df, x0, tol=1e-10, max_iter=50):\n    x = x0\n    print(f\"{'k':>3} {'x':>18} {'error parada':>18}\")\n    print(\"-\" * 42)\n    \n    for k in range(max_iter):\n        x_nuevo = x - f(x) / df(x)\n        error = abs(x_nuevo - x)\n        \n        print(f\"{k:>3} {x_nuevo:>18.14f} {error:>18.3e}\")\n        \n        if error < tol:\n            print(f\"\\nConvergió en {k} iteraciones\")\n            print(f\"Raíz: {x_nuevo:.15f}\")\n            return x_nuevo, k\n        \n        x = x_nuevo\n    \n    raise RuntimeError(\"No convergió\")\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\ntry:\n    newton_con_parada(f, df, 1.5)\nexcept RuntimeError as e:\n    print(f\"Error: {e}\")",
+          "explicacion": [
+            "<p>El criterio de parada es <code>|x_k − x_{k−1}| &lt; tol</code>.</p>",
+            "<p>No necesitas conocer la raíz real: solo que dos aproximaciones consecutivas sean casi iguales.</p>",
+            "<p>Es la forma estándar de decidir cuándo parar.</p>"
+          ]
+        },
+        {
+          "titulo": "Detectar divergencia",
+          "codigo": "def newton_con_diagnostico(f, df, x0, tol=1e-10, max_iter=50):\n    x = x0\n    error_prev = float('inf')\n    \n    for k in range(max_iter):\n        if abs(df(x)) < 1e-14:\n            print(f\"Iter {k}: derivada casi cero, abandonando\")\n            return None, k, \"derivada cero\"\n        \n        x_nuevo = x - f(x) / df(x)\n        error = abs(x_nuevo - x)\n        \n        # ¿El error creció mucho respecto a la iteración anterior?\n        if error > 10 * error_prev and k > 2:\n            print(f\"Iter {k}: el error creció, posible divergencia\")\n            return x_nuevo, k, \"divergencia\"\n        \n        if error < tol:\n            return x_nuevo, k, \"convergió\"\n        \n        error_prev = error\n        x = x_nuevo\n    \n    return x, max_iter, \"no convergió\"\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\n# Desde 1.5 converge\nraiz, it, status = newton_con_diagnostico(f, df, 1.5)\nprint(f\"Desde 1.5: {status}, iteraciones = {it}\")",
+          "explicacion": [
+            "<p>Un buen diagnóstico puede detectar divergencia temprano.</p>",
+            "<p>Si el error crece mucho entre iteraciones, algo va mal.</p>",
+            "<p>Así no pierdes tiempo iterando sin sentido.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar error absoluto cuando los números son grandes",
+          "razon": "Un error de 0.01 puede ser enorme o diminuto según la escala.",
+          "correcto": "Usa error relativo cuando el valor es grande."
+        },
+        {
+          "error": "No comparar con el error real al final",
+          "razon": "El error de parada no es lo mismo que el error real.",
+          "correcto": "Verifica el resultado con <code>|f(raíz)|</code> o con un valor de referencia."
+        },
+        {
+          "error": "Tolerancia demasiado pequeña",
+          "razon": "Nunca vas a llegar por los errores de redondeo de los floats.",
+          "correcto": "Usa tol ≥ 1e-15. En la práctica, 1e-10 suele ser suficiente."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa error relativo cuando la magnitud importa.</p>",
+        "<p>💡 <strong>Truco 2:</strong> el criterio de parada <code>|x_{k+1} - x_k| &lt; tol</code> es el estándar.</p>",
+        "<p>💡 <strong>Truco 3:</strong> verifica el resultado final con <code>|f(raíz)|</code>, no solo con el error de parada.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico profesional, se combinan varios criterios: error absoluto, relativo, número de iteraciones máximas.</p>"
+      ],
+      "ejercicios": [
+        "Calcula error absoluto y relativo de varias aproximaciones de sqrt(2).",
+        "Compara la convergencia de bisección y Newton en la misma tabla.",
+        "Detecta si un método diverge observando el error.",
+        "Implementa un criterio de parada por error relativo.",
+        "Verifica el resultado final con |f(raíz)|."
+      ],
+      "resumen": "Error absoluto vs relativo. Convergencia lineal (bisección) vs cuadrática (Newton). El criterio de parada estándar es |x_{k+1} - x_k| < tol. Verifica el resultado final con |f(raíz)|."
+    }
+  ]
+}

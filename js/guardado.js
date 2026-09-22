@@ -1,6 +1,6 @@
 /* ============================================
    guardado.js — Sistema de guardado en 3 capas
-   v2 - Manejo de 404 (archivo borrado) y 401/403 (token)
+   v3 - Adaptado al entorno admin
    ============================================ */
 
 (function () {
@@ -15,13 +15,10 @@
   // ============================================================
   // COLA EN LOCALSTORAGE
   // ============================================================
-
   function leerCola() {
     try {
       return JSON.parse(localStorage.getItem(COLA_KEY) || '[]');
-    } catch (e) {
-      return [];
-    }
+    } catch (e) { return []; }
   }
 
   function guardarCola(cola) {
@@ -31,11 +28,7 @@
       console.warn('[guardado] localStorage lleno o bloqueado:', e);
       if (cola.length > 5) {
         cola.splice(0, cola.length - 5);
-        try {
-          localStorage.setItem(COLA_KEY, JSON.stringify(cola));
-        } catch (e2) {
-          console.error('[guardado] No se pudo guardar ni recortando');
-        }
+        try { localStorage.setItem(COLA_KEY, JSON.stringify(cola)); } catch (e2) {}
       }
     }
   }
@@ -57,11 +50,9 @@
       ts: Date.now()
     };
 
-    if (idx >= 0) {
-      cola[idx] = entrada;
-    } else {
-      cola.push(entrada);
-    }
+    if (idx >= 0) cola[idx] = entrada;
+    else cola.push(entrada);
+
     guardarCola(cola);
     actualizarEstadoUI();
     return entrada;
@@ -88,40 +79,24 @@
   }
 
   // ============================================================
-  // SERIALIZACIÓN SEGÚN TIPO
+  // SERIALIZACIÓN
   // ============================================================
-
   function prepararContenido(item) {
     if (item.ext === 'ipynb') {
       const nombre = item.nombre.replace('.ipynb', '');
       const ipynb = window.buildIpynb
         ? window.buildIpynb(item.contenido, nombre)
         : { cells: [{ cell_type: 'code', source: item.contenido }], metadata: {}, nbformat: 4, nbformat_minor: 5 };
-      return {
-        contenido: JSON.stringify(ipynb),
-        mime: 'application/json'
-      };
+      return { contenido: JSON.stringify(ipynb), mime: 'application/json' };
     } else if (item.ext === 'py') {
       return { contenido: item.contenido, mime: 'text/x-python' };
-    } else if (item.ext === 'md') {
-      return { contenido: item.contenido, mime: 'text/markdown' };
-    } else {
-      return { contenido: item.contenido, mime: 'text/plain' };
     }
+    return { contenido: item.contenido, mime: 'text/plain' };
   }
 
   // ============================================================
   // SUBIDA A DRIVE
   // ============================================================
-
-  /**
-   * Sube un pendiente.
-   * Devuelve:
-   *   true       → subida exitosa (nuevo)
-   *   string     → fileId del archivo nuevo
-   *   'recrear'  → el archivo fue borrado, hay que crearlo de nuevo
-   *   false      → error de red o token, reintentar después
-   */
   async function subirPendiente(item, token) {
     if (!token) return false;
 
@@ -134,10 +109,7 @@
     if (item.fileId) {
       url = `https://www.googleapis.com/upload/drive/v3/files/${item.fileId}?uploadType=media`;
       method = 'PATCH';
-      headers = {
-        'Authorization': 'Bearer ' + token,
-        'Content-Type': mime
-      };
+      headers = { 'Authorization': 'Bearer ' + token, 'Content-Type': mime };
       body = contenido;
     } else {
       url = 'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id';
@@ -165,34 +137,22 @@
         const data = method === 'POST' ? await res.json() : null;
         return data && data.id ? data.id : true;
       }
-
-      // 404 = archivo borrado
-      if (res.status === 404) {
-        console.warn('[guardado] Archivo no existe, se recreará:', item.nombre);
-        return 'recrear';
-      }
-
-      // 401/403 = token expirado o sin permisos
+      if (res.status === 404) return 'recrear';
       if (res.status === 401 || res.status === 403) {
-        console.warn('[guardado] Token inválido o sin permisos');
         if (typeof window.mostrarBannerReconectar === 'function') {
           window.mostrarBannerReconectar();
         }
         return false;
       }
-
-      console.warn('[guardado] Error al subir:', res.status, await res.text());
       return false;
     } catch (e) {
-      console.warn('[guardado] Error de red:', e.message);
       return false;
     }
   }
 
   // ============================================================
-  // CICLO DE SUBIDA
+  // CICLO
   // ============================================================
-
   async function intentarSubirTodo() {
     if (subiendo) return;
     const token = window.getDriveToken ? window.getDriveToken() : null;
@@ -208,37 +168,24 @@
       const resultado = await subirPendiente(item, token);
 
       if (resultado === false) {
-        // Error de red o token: dejar en cola y salir
         subiendo = false;
         actualizarEstadoUI('error');
         return;
       }
 
       if (resultado === 'recrear') {
-        // El archivo fue borrado. Quitarlo de la cola con fileId
-        // y volver a encolarlo sin fileId para que se cree de nuevo.
         const colaActual = leerCola().filter(p => {
           if (item.fileId) return p.fileId !== item.fileId;
           return !(p.nombre === item.nombre && !p.fileId);
         });
-        colaActual.push({
-          fileId: null,
-          nombre: item.nombre,
-          ext: item.ext,
-          contenido: item.contenido,
-          mime: item.mime,
-          parentId: item.parentId,
-          ts: Date.now()
-        });
+        colaActual.push({ ...item, fileId: null, ts: Date.now() });
         guardarCola(colaActual);
         subiendo = false;
         actualizarEstadoUI('ok');
         return;
       }
 
-      // Subida exitosa
       desencolar(item.fileId, item.nombre);
-
       if (resultado !== true && typeof window.actualizarFileIdActual === 'function') {
         window.actualizarFileIdActual(item.nombre, resultado);
       }
@@ -251,11 +198,7 @@
   function iniciarCiclo() {
     if (colaTimer) clearInterval(colaTimer);
     colaTimer = setInterval(intentarSubirTodo, INTERVALO_SUBIDA);
-
-    window.addEventListener('online', () => {
-      console.log('[guardado] Conexión recuperada, subiendo pendientes...');
-      intentarSubirTodo();
-    });
+    window.addEventListener('online', () => intentarSubirTodo());
   }
 
   function detenerCiclo() {
@@ -264,9 +207,8 @@
   }
 
   // ============================================================
-  // ESTADO UI
+  // UI
   // ============================================================
-
   function actualizarEstadoUI(estado) {
     const el = document.getElementById('autosave-status');
     if (!el) return;
@@ -277,14 +219,12 @@
     if (estado === 'subiendo') {
       el.innerText = '☁ Subiendo...';
       el.classList.remove('saved');
-      el.style.color = 'var(--cyan)';
       return;
     }
 
     if (pendientes === 0) {
       el.innerText = '✅ Todo sincronizado';
       el.classList.add('saved');
-      el.style.color = 'var(--accent)';
       setTimeout(() => {
         if (contarPendientes() === 0) {
           el.innerText = '';
@@ -296,10 +236,8 @@
 
     if (!online) {
       el.innerText = `⚠️ Sin conexión · ${pendientes} pendiente${pendientes > 1 ? 's' : ''}`;
-      el.style.color = 'var(--danger)';
     } else {
       el.innerText = `💾 Guardado local · ${pendientes} pendiente${pendientes > 1 ? 's' : ''}`;
-      el.style.color = 'var(--warning)';
     }
     el.classList.remove('saved');
   }
@@ -307,7 +245,6 @@
   // ============================================================
   // API PÚBLICA
   // ============================================================
-
   function guardarCambio(datos) {
     encolar(datos);
     intentarSubirTodo();
@@ -317,9 +254,6 @@
     actualizarEstadoUI();
     setTimeout(intentarSubirTodo, 2000);
   });
-
-  window.addEventListener('online', () => actualizarEstadoUI());
-  window.addEventListener('offline', () => actualizarEstadoUI());
 
   window.guardado = {
     guardarCambio,

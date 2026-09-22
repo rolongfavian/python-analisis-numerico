@@ -1,0 +1,35 @@
+{
+  "titulo": "Cómo usar esta página",
+  "emoji": "📚",
+  "descripcion": "Una guía rápida para aprovechar al máximo todos los recursos de esta web: la navegación, el buscador, el motor de Python y la tienda de extensiones.",
+  "secciones": [
+    {
+      "titulo": "🧭 Navegación",
+      "contenido": "<p>Todo se controla desde el <strong>menú hamburguesa</strong> (☰) en la esquina superior izquierda:</p><ul><li><strong>Introducción</strong> — Qué es Python y por qué usarlo.</li><li><strong>Cómo usar esta página</strong> — Esta misma sección.</li><li><strong>15 partes</strong> — Organizadas por dificultad, de lo más básico a lo más avanzado.</li><li><strong>Glosario</strong> — Términos técnicos ordenados por tema.</li></ul><p>También puedes navegar usando la <strong>URL con hash</strong>: por ejemplo, <code>#parte-05</code> te lleva directamente a la parte 5.</p>"
+    },
+    {
+      "titulo": "🔍 Buscador",
+      "contenido": "<p>Pulsa <strong>Ctrl + K</strong> (o el botón de la lupa arriba) para abrir el buscador global. Escribe al menos 2 letras y verás resultados de todos los temas, secciones y partes.</p><ul><li>Navega con las flechas <strong>↑</strong> y <strong>↓</strong>.</li><li>Pulsa <strong>Enter</strong> para ir al resultado seleccionado.</li><li>Pulsa <strong>Escape</strong> para cerrar.</li></ul>"
+    },
+    {
+      "titulo": "⚙️ Motor de Python",
+      "contenido": "<p>Los ejemplos con código tienen un botón <strong>▶ Ejecutar</strong>. Al pulsarlo, el código se ejecuta en tu navegador y verás el resultado debajo.</p><p>La primera vez que abras la web, verás una <strong>barra de progreso</strong> arriba que indica que Python se está cargando. Mientras tanto, puedes leer toda la guía.</p><p>Si el código tiene errores de sintaxis, verás <strong>subrayado rojo ondulado</strong> y un icono ⚠ en el margen izquierdo. Pasa el ratón por encima para ver el mensaje.</p>"
+    },
+    {
+      "titulo": "🛒 Tienda de extensiones",
+      "contenido": "<p>Python por defecto viene con muchas funciones, pero si necesitas librerías como <strong>NumPy</strong> o <strong>Matplotlib</strong>, puedes instalarlas desde la tienda.</p><p>Cuando instalas una extensión:</p><ol><li>Te aparece un <strong>aviso de descarga</strong> con recomendación de Wi-Fi.</li><li>Si confirmas, los archivos se <strong>cachean en tu navegador</strong>.</li><li>La extensión se carga en memoria y ya puedes usarla.</li></ol><p>Si borras el caché del navegador, la extensión aparecerá como <strong>\"pendiente de reinstalar\"</strong> en la tienda, y tú decides cuándo volver a descargarla. <strong>No se reinstala sola.</strong></p>"
+    },
+    {
+      "titulo": "🌓 Tema claro y oscuro",
+      "contenido": "<p>Arriba a la derecha hay un <strong>selector de tema</strong> con tres opciones:</p><ul><li><strong>Oscuro</strong> — Fondo negro, ideal para leer de noche.</li><li><strong>Claro</strong> — Fondo blanco, mejor a plena luz.</li><li><strong>Sistema</strong> — Se ajusta automáticamente al tema de tu dispositivo.</li></ul><p>Tu elección se guarda en el navegador, así que se mantiene entre visitas.</p>"
+    },
+    {
+      "titulo": "💾 Guardar tu progreso",
+      "contenido": "<p>Esta web <strong>no guarda tu progreso automáticamente</strong>. Cada vez que vuelves, empiezas de cero.</p><p>Si quieres llevar un registro de lo que aprendes, te recomendamos:</p><ul><li>Descargar los ejemplos que más te interesen.</li><li>Anotar tus dudas en un cuaderno aparte.</li><li>Practicar cada tema por tu cuenta en tu editor favorito.</li></ul>"
+    },
+    {
+      "titulo": "🚀 Sugerencias de uso",
+      "contenido": "<p>Para aprovechar al máximo la guía:</p><ol><li><strong>Empieza por la introducción</strong> para entender de qué va todo.</li><li><strong>Sigue las partes en orden</strong>, porque cada una asume los conceptos de las anteriores.</li><li><strong>Ejecuta los ejemplos</strong> y modifícalos para ver qué pasa.</li><li><strong>No te saltes los errores comunes</strong>: son la mejor forma de aprender.</li><li><strong>Practica con proyectos propios</strong>: solo así se consolida lo aprendido.</li></ol>"
+    }
+  ]
+}

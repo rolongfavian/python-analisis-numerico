@@ -1,0 +1,424 @@
+{
+  "parte": 15,
+  "titulo": "Recursos y cierre",
+  "emoji": "🎓",
+  "descripcion": "Has llegado al final de la guía. Ahora toca consolidar lo aprendido, saber dónde seguir aprendiendo y qué construir para practicar. Esta parte es tu punto de partida hacia el siguiente nivel.",
+  "temas": [
+    {
+      "id": "ejercicios-integradores",
+      "numero": "1",
+      "titulo": "Ejercicios integradores",
+      "emoji": "💪",
+      "subtitulo": "Problemas que combinan varios temas",
+      "que_es": [
+        "<p>Los ejercicios integradores combinan varios temas a la vez. Son los que de verdad te hacen aprender, porque te obligan a pensar cómo encajan las piezas.</p>",
+        "<p>Cada uno te pide usar funciones, listas, condicionales, bucles, archivos o clases. Resuélvelos sin mirar la solución primero. Si te atascas, revisa la parte correspondiente.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Resolver ejercicios integradores te da:</p>",
+        "<ul><li><strong>Fluidez</strong>: pasas de saber la teoría a saber aplicarla.</li><li><strong>Confianza</strong>: ves que puedes resolver problemas reales.</li><li><strong>Criterio</strong>: decides qué herramienta usar en cada caso.</li></ul>"
+      ],
+      "sintaxis": null,
+      "ejemplos": [
+        {
+          "titulo": "Ejercicio 1: Calculadora de estadísticas",
+          "codigo": "# Crea una función que reciba una lista de números\n# y devuelva un diccionario con:\n# - minimo, maximo, media, mediana, desviacion_estandar\n# - cuantos elementos hay\n# - cuantos son positivos, negativos, cero\n# Pista: usa funciones, listas, diccionarios, bucles.\n\ndef estadisticas(numeros):\n    if not numeros:\n        return None\n    \n    n = len(numeros)\n    ordenados = sorted(numeros)\n    \n    # Mediana\n    if n % 2 == 0:\n        mediana = (ordenados[n//2 - 1] + ordenados[n//2]) / 2\n    else:\n        mediana = ordenados[n//2]\n    \n    # Media\n    media = sum(numeros) / n\n    \n    # Desviación estándar\n    varianza = sum((x - media) ** 2 for x in numeros) / n\n    desv = varianza ** 0.5\n    \n    return {\n        \"minimo\": min(numeros),\n        \"maximo\": max(numeros),\n        \"media\": media,\n        \"mediana\": mediana,\n        \"desviacion_estandar\": desv,\n        \"n\": n,\n        \"positivos\": sum(1 for x in numeros if x > 0),\n        \"negativos\": sum(1 for x in numeros if x < 0),\n        \"ceros\": sum(1 for x in numeros if x == 0)\n    }\n\nresultado = estadisticas([3, -1, 0, 5, 7, -2, 4])\nfor clave, valor in resultado.items():\n    print(f\"{clave}: {valor}\")",
+          "explicacion": [
+            "<p>Este ejercicio combina:</p>",
+            "<ul><li>Funciones</li><li>Listas y ordenamiento</li><li>Diccionarios</li><li>Comprensiones</li><li>Cálculo de estadísticas</li></ul>",
+            "<p>Es un buen repaso de las primeras partes, aplicado a algo útil.</p>"
+          ]
+        },
+        {
+          "titulo": "Ejercicio 2: Encontrar todas las raíces de un polinomio",
+          "codigo": "# Dado un polinomio y un rango, encuentra TODAS las raíces\n# buscando cambios de signo y aplicando bisección en cada intervalo.\n\ndef evaluar(coefs, x):\n    \"\"\"coefs = [a0, a1, a2, ...] para a0 + a1*x + a2*x^2 + ...\"\"\"\n    return sum(c * x**i for i, c in enumerate(coefs))\n\ndef biseccion(f, a, b, tol=1e-10, max_iter=100):\n    if f(a) * f(b) >= 0:\n        return None\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol or (b - a) / 2 < tol:\n            return c\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    return c\n\ndef encontrar_raices(coefs, inicio, fin, paso=0.1):\n    f = lambda x: evaluar(coefs, x)\n    raices = []\n    a = inicio\n    while a < fin:\n        b = a + paso\n        if f(a) * f(b) < 0:\n            raiz = biseccion(f, a, b)\n            if raiz is not None:\n                # Verificar que no está duplicada\n                if not any(abs(raiz - r) < 1e-6 for r in raices):\n                    raices.append(raiz)\n        a = b\n    return raices\n\n# x³ - x - 2 = 0 → coefs = [-2, -1, 0, 1]\ncoefs = [-2, -1, 0, 1]\nraices = encontrar_raices(coefs, -5, 5)\nfor r in raices:\n    print(f\"Raíz: {r:.10f}\")",
+          "explicacion": [
+            "<p>Este ejercicio combina:</p>",
+            "<ul><li>Funciones y lambdas</li><li>Bucles anidados</li><li>Búsqueda de cambios de signo</li><li>Bisección</li><li>Listas y verificación de duplicados</li></ul>",
+            "<p>Encuentra varias raíces en un rango, no solo una.</p>"
+          ]
+        },
+        {
+          "titulo": "Ejercicio 3: Clase para un método numérico completo",
+          "codigo": "# Crea una clase 'MetodoNumerico' que:\n# - guarde f, tol, max_iter\n# - tenga un método 'resolver(a, b)' con bisección\n# - guarde historial de iteraciones\n# - tenga una propiedad 'convergencia' que devuelva 'rápida', 'normal' o 'lenta'\n# - tenga un método 'guardar_csv(ruta)'\n\nimport csv\nfrom pathlib import Path\n\nclass MetodoNumerico:\n    def __init__(self, f, tol=1e-8, max_iter=100):\n        self.f = f\n        self.tol = tol\n        self.max_iter = max_iter\n        self.historial = []\n        self.raiz = None\n    \n    def resolver(self, a, b):\n        if self.f(a) * self.f(b) >= 0:\n            raise ValueError(\"Bolzano no se cumple\")\n        for k in range(self.max_iter):\n            c = (a + b) / 2\n            error = (b - a) / 2\n            self.historial.append((k, a, b, c, self.f(c), error))\n            if abs(self.f(c)) < self.tol or error < self.tol:\n                self.raiz = c\n                return c, k\n            if self.f(a) * self.f(c) < 0:\n                b = c\n            else:\n                a = c\n        raise RuntimeError(\"No convergió\")\n    \n    @property\n    def convergencia(self):\n        if not self.historial:\n            return \"no ejecutado\"\n        n = len(self.historial)\n        if n < 5:\n            return \"rápida\"\n        elif n < 20:\n            return \"normal\"\n        return \"lenta\"\n    \n    def guardar_csv(self, ruta):\n        with open(ruta, \"w\", newline=\"\") as f:\n            w = csv.writer(f)\n            w.writerow([\"k\", \"a\", \"b\", \"c\", \"f(c)\", \"error\"])\n            for fila in self.historial:\n                w.writerow(fila)\n\n# Prueba\nf = lambda x: x**3 - x - 2\nmetodo = MetodoNumerico(f, tol=1e-10)\nraiz, iters = metodo.resolver(1, 2)\n\nprint(f\"Raíz: {raiz:.10f}\")\nprint(f\"Iteraciones: {iters}\")\nprint(f\"Convergencia: {metodo.convergencia}\")",
+          "explicacion": [
+            "<p>Este ejercicio combina:</p>",
+            "<ul><li>Clases y POO</li><li>Atributos y métodos</li><li>Propiedades</li><li>Archivos CSV</li><li>pathlib</li></ul>",
+            "<p>Es la culminación de todo lo aprendido.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Intentar resolver todo de una vez",
+          "razon": "Te bloqueas. Mejor divide en pasos pequeños.",
+          "correcto": "Resuelve por partes: primero la estructura, luego los detalles."
+        },
+        {
+          "error": "No probar con casos simples primero",
+          "razon": "Si no funciona con lo simple, no funcionará con lo complejo.",
+          "correcto": "Prueba con un caso que sepas resolver a mano."
+        },
+        {
+          "error": "Rendirse al primer error",
+          "razon": "Los errores son parte del proceso.",
+          "correcto": "Lee el mensaje, busca la línea, arréglalo."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> no mires la solución antes de intentarlo 15 minutos. El esfuerzo es lo que hace aprender.</p>",
+        "<p>💡 <strong>Truco 2:</strong> si te atascas, prueba con datos más simples. Reduce el problema.</p>",
+        "<p>💡 <strong>Truco 3:</strong> cuando termines, refactoriza. ¿Se puede hacer más limpio?</p>",
+        "<p>💡 <strong>Truco 4:</strong> guarda tus soluciones. Son tu portafolio.</p>"
+      ],
+      "ejercicios": [
+        "Implementa la calculadora de estadísticas y pruébala con datos reales.",
+        "Encuentra todas las raíces de x³ - 6x² + 11x - 6 en [-5, 5].",
+        "Crea la clase MetodoNumerico completa con todos los métodos.",
+        "Añade un método comparar_con(otro_metodo) que devuelva cuál fue más rápido.",
+        "Guarda los resultados en CSV y léelos después para analizar."
+      ],
+      "resumen": "Los ejercicios integradores combinan varios temas. Resuélvelos por partes, pruébalos con casos simples y refactoriza. Son la mejor forma de consolidar lo aprendido."
+    },
+    {
+      "id": "proyectos",
+      "numero": "2",
+      "titulo": "Proyectos sugeridos",
+      "emoji": "🚀",
+      "subtitulo": "Ideas para seguir practicando por tu cuenta",
+      "que_es": [
+        "<p>Estos son proyectos completos que puedes construir con lo aprendido. Cada uno te llevará varias horas o días, pero te dejarán un portafolio sólido.</p>",
+        "<p>Elige el que más te llame. No hace falta terminarlos todos. Lo importante es que cada proyecto te obligue a resolver problemas nuevos.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Hacer proyectos te da:</p>",
+        "<ul><li><strong>Experiencia real</strong>: enfrentarte a problemas abiertos.</li><li><strong>Portafolio</strong>: algo que mostrar.</li><li><strong>Confianza</strong>: ves que puedes construir cosas completas.</li><li><strong>Aprendizaje profundo</strong>: cada proyecto te obliga a investigar.</li></ul>"
+      ],
+      "sintaxis": null,
+      "ejemplos": [
+        {
+          "titulo": "Proyecto 1: Comparador de métodos numéricos",
+          "codigo": "# Objetivo: comparar bisección, Newton y secante en varias funciones.\n#\n# 1. Definir una lista de funciones de prueba (con sus derivadas)\n# 2. Aplicar los 3 métodos a cada una\n# 3. Guardar los resultados en un CSV\n# 4. Analizar: ¿cuál converge más rápido? ¿cuál falla?\n# 5. (Opcional) Graficar con matplotlib\n#\n# Estructura sugerida:\n#\n# comparador/\n# ├── main.py\n# ├── metodos/\n# │   ├── __init__.py\n# │   ├── biseccion.py\n# │   ├── newton.py\n# │   └── secante.py\n# ├── funciones.py\n# └── resultados/\n#     ├── comparacion.csv\n#     └── analisis.json",
+          "explicacion": [
+            "<p>Este proyecto combina:</p>",
+            "<ul><li>Módulos y paquetes</li><li>Funciones y clases</li><li>CSV y JSON</li><li>Análisis numérico</li></ul>",
+            "<p>El resultado es un pequeño framework para comparar métodos.</p>"
+          ]
+        },
+        {
+          "titulo": "Proyecto 2: Analizador de datos de sensores",
+          "codigo": "# Objetivo: leer datos de un sensor (simulados o reales),\n# limpiarlos, calcular estadísticas y detectar anomalías.\n#\n# 1. Generar datos simulados (con random y math)\n# 2. Guardarlos en CSV\n# 3. Leer el CSV y calcular estadísticas\n# 4. Detectar valores anómalos (fuera de media ± 2·desviación)\n# 5. Guardar un informe en JSON\n#\n# Aprendizajes:\n# - Generación de datos\n# - Análisis estadístico\n# - Manejo de archivos\n# - Detección de anomalías (¡muy útil en la industria!)",
+          "explicacion": [
+            "<p>Este proyecto te da experiencia con el flujo típico de ciencia de datos:</p>",
+            "<ul><li>Generar/leer datos.</li><li>Limpiar y analizar.</li><li>Detectar anomalías.</li><li>Reportar resultados.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Proyecto 3: Resolver ecuaciones interactivo",
+          "codigo": "# Objetivo: hacer un programa que pida al usuario:\n# - una función (en texto, tipo \"x**3 - x - 2\")\n# - un intervalo\n# - una tolerancia\n# Y devuelva la raíz usando varios métodos, comparando resultados.\n#\n# Pistas:\n# - Usa input() para pedir datos\n# - Usa eval() para evaluar la función desde texto\n# - Prueba los 3 métodos y compara\n# - Muestra una tabla con los resultados\n# - Maneja errores con try/except\n#\n# Aprendizajes:\n# - input() y validación\n# - eval() seguro (¡ojo, es peligroso con código ajeno!)\n# - Comparación de resultados\n# - Interfaz por terminal",
+          "explicacion": [
+            "<p>Este proyecto te obliga a integrar muchas cosas:</p>",
+            "<ul><li>Entrada de usuario</li><li>Evaluación dinámica de funciones</li><li>Manejo de errores</li><li>Comparación de métodos</li></ul>",
+            "<p><strong>Ojo:</strong> <code>eval()</code> es peligroso si evalúas código de otros. Para tu propio uso está bien, pero nunca en producción.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Querer hacer todo perfecto desde el principio",
+          "razon": "Te bloqueas y no avanzas.",
+          "correcto": "Haz una versión mínima que funcione, luego mejora."
+        },
+        {
+          "error": "No planificar la estructura antes de escribir código",
+          "razon": "El código se vuelve un lío.",
+          "correcto": "Escribe la estructura en papel o comentarios antes de programar."
+        },
+        {
+          "error": "Abandonar cuando algo no sale",
+          "razon": "Es normal atascarse. Los proyectos buenos tardan días.",
+          "correcto": "Divide en tareas pequeñas y ve una por una."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> empieza con una versión mínima que funcione. Luego añade mejoras.</p>",
+        "<p>💡 <strong>Truco 2:</strong> escribe la estructura en comentarios antes de programar.</p>",
+        "<p>💡 <strong>Truco 3:</strong> prueba cada parte por separado antes de juntarlas.</p>",
+        "<p>💡 <strong>Truco 4:</strong> versiona tu código con git. Es una habilidad esencial.</p>",
+        "<p>💡 <strong>Truco 5:</strong> cuando termines, escribe un README explicando cómo se usa. Es parte del proyecto.</p>"
+      ],
+      "ejercicios": [
+        "Elige uno de los tres proyectos y plánificalo en papel.",
+        "Empieza con la estructura de carpetas y archivos.",
+        "Implementa la versión mínima que funcione.",
+        "Añade funcionalidad paso a paso.",
+        "Escribe un README explicando el proyecto."
+      ],
+      "resumen": "Los proyectos te dan experiencia real. Empieza por la versión mínima, divide en tareas, prueba cada parte, versiona con git y escribe un README."
+    },
+    {
+      "id": "recursos",
+      "numero": "3",
+      "titulo": "Recursos para seguir aprendiendo",
+      "emoji": "📚",
+      "subtitulo": "Dónde encontrar más información de calidad",
+      "que_es": [
+        "<p>Ya tienes la base. Ahora necesitas recursos de calidad para seguir profundizando. Aquí tienes una selección de lo mejor que hay disponible, tanto en español como en inglés.</p>",
+        "<p>No intentes consumir todos. Elige uno o dos y ve paso a paso.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Tener buenos recursos te permite:</p>",
+        "<ul><li><strong>Profundizar</strong> en temas concretos.</li><li><strong>Resolver dudas</strong> rápido.</li><li><strong>Aprender buenas prácticas</strong> de la comunidad.</li><li><strong>Mantenerte actualizado</strong>.</li></ul>"
+      ],
+      "sintaxis": null,
+      "ejemplos": [
+        {
+          "titulo": "Documentación oficial",
+          "codigo": "# La fuente principal de verdad:\n# https://docs.python.org/es/3/   (en español)\n# https://docs.python.org/3/      (en inglés)\n\n# Módulos específicos:\n# - math:       https://docs.python.org/3/library/math.html\n# - random:     https://docs.python.org/3/library/random.html\n# - datetime:   https://docs.python.org/3/library/datetime.html\n# - csv:        https://docs.python.org/3/library/csv.html\n# - json:       https://docs.python.org/3/library/json.html\n# - pathlib:    https://docs.python.org/3/library/pathlib.html",
+          "explicacion": [
+            "<p>La documentación oficial es la fuente principal. Está bien organizada y actualizada.</p>",
+            "<p>Cuando dudes sobre una función, busca ahí primero.</p>"
+          ]
+        },
+        {
+          "titulo": "Tutoriales y cursos",
+          "codigo": "# 30 Days of Python (el que inspiró esta guía)\n# https://github.com/Asabeneh/30-Days-Of-Python\n\n# Real Python\n# https://realpython.com/\n\n# Python para todos (español)\n# https://www.py4e.com/\n\n# freeCodeCamp\n# https://www.freecodecamp.org/learn/scientific-computing-with-python/\n\n# Curso de análisis numérico con Python (español)\n# https://www.youtube.com/results?search_query=an%C3%A1lisis+num%C3%A9rico+python",
+          "explicacion": [
+            "<p>Los tutoriales son buenos para seguir un camino estructurado.</p>",
+            "<p>Elige uno y termínalo antes de saltar a otro.</p>"
+          ]
+        },
+        {
+          "titulo": "Análisis numérico con Python",
+          "codigo": "# NumPy (la librería de cálculo numérico)\n# https://numpy.org/doc/stable/\n\n# SciPy (métodos numéricos avanzados)\n# https://docs.scipy.org/doc/scipy/\n\n# Matplotlib (gráficas)\n# https://matplotlib.org/stable/\n\n# SymPy (matemática simbólica)\n# https://docs.sympy.org/\n\n# Pandas (datos tabulares)\n# https://pandas.pydata.org/docs/\n\n# Jupyter (cuadernos interactivos)\n# https://jupyter.org/",
+          "explicacion": [
+            "<p>Cuando pases de lo básico, estas librerías son el siguiente paso.</p>",
+            "<p>NumPy, SciPy y Matplotlib son el estándar para análisis numérico profesional.</p>"
+          ]
+        },
+        {
+          "titulo": "Comunidades",
+          "codigo": "# Stack Overflow (para dudas específicas)\n# https://stackoverflow.com/questions/tagged/python\n\n# Reddit r/learnpython\n# https://www.reddit.com/r/learnpython/\n\n# Python Discord\n# https://discord.gg/python\n\n# Telegram 30DaysOfPython\n# Enlace en el README del repo original",
+          "explicacion": [
+            "<p>Las comunidades son el mejor recurso cuando te atascas.</p>",
+            "<p>Busca antes de preguntar: casi seguro que alguien tuvo tu mismo problema.</p>",
+            "<p>Cuando preguntes, sé específico: código, error, qué esperabas, qué obtuviste.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Intentar consumir todos los recursos a la vez",
+          "razon": "Te agobias y no aprendes nada.",
+          "correcto": "Elige uno o dos. Termina lo que empiezas."
+        },
+        {
+          "error": "Preguntar sin buscar antes",
+          "razon": "Es una pérdida de tiempo para todos.",
+          "correcto": "Busca primero. Si no encuentras, pregunta con detalle."
+        },
+        {
+          "error": "Solo leer, nunca practicar",
+          "razon": "Leer no enseña a programar.",
+          "correcto": "Por cada hora leyendo, 3 horas programando."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> no colecciones recursos. Consume uno bueno a fondo.</p>",
+        "<p>💡 <strong>Truco 2:</strong> la documentación oficial es tu mejor amiga. Apréndete a navegarla.</p>",
+        "<p>💡 <strong>Truco 3:</strong> cuando leas código, ejecútalo. Modifícalo. Rompelo.</p>",
+        "<p>💡 <strong>Truco 4:</strong> Stack Overflow no es solo para preguntar. Es una mina de soluciones.</p>"
+      ],
+      "ejercicios": [
+        "Visita la documentación oficial de Python en español.",
+        "Sigue el tutorial de '30 Days of Python' del día que más te interese.",
+        "Busca en Stack Overflow una duda tuya y encuentra la respuesta.",
+        "Suscríbete a r/learnpython o al Discord de Python.",
+        "Elige una librería (NumPy, SciPy, etc.) y explora su documentación."
+      ],
+      "resumen": "La documentación oficial es la fuente principal. Tutoriales como 30 Days of Python, Real Python y freeCodeCamp son excelentes. NumPy, SciPy y Matplotlib son el siguiente paso. Stack Overflow y las comunidades te ayudan cuando te atascas."
+    },
+    {
+      "id": "buenas-practicas",
+      "numero": "4",
+      "titulo": "Buenas prácticas y estilo",
+      "emoji": "✨",
+      "subtitulo": "Escribir código limpio, legible y mantenible",
+      "que_es": [
+        "<p>Hay mucha diferencia entre código que funciona y código <strong>bien escrito</strong>. El primero se entiende una vez. El segundo, siempre.</p>",
+        "<p>Las buenas prácticas no son reglas arbitrarias: son convenciones que la comunidad ha adoptado porque hacen la vida más fácil a todos. En Python existe una guía oficial: <strong>PEP 8</strong>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Seguir buenas prácticas te da:</p>",
+        "<ul><li><strong>Legibilidad</strong>: tú y otros entendéis el código rápido.</li><li><strong>Menos bugs</strong>: menos margen para errores.</li><li><strong>Colaboración</strong>: es más fácil trabajar en equipo.</li><li><strong>Profesionalidad</strong>: es lo que se espera de un buen programador.</li></ul>"
+      ],
+      "sintaxis": "# Reglas principales de PEP 8:\n# - 4 espacios de indentación\n# - máximo 79 caracteres por línea\n# - 2 líneas en blanco entre funciones\n# - snake_case para variables y funciones\n# - CamelCase para clases\n# - MAYÚSCULAS para constantes",
+      "ejemplos": [
+        {
+          "titulo": "Nombres descriptivos",
+          "codigo": "# Mal\nx = 3.14159\nr = 5\na = x * r ** 2\n\n# Bien\nPI = 3.14159\nradio = 5\narea = PI * radio ** 2\n\nprint(area)",
+          "explicacion": [
+            "<p>Nombres descriptivos hacen que el código se explique solo.</p>",
+            "<p><code>area</code> es mejor que <code>a</code>. <code>radio</code> es mejor que <code>r</code>.</p>",
+            "<p>Es cierto que escribir es más lento, pero leer es mucho más rápido.</p>"
+          ]
+        },
+        {
+          "titulo": "Funciones cortas y con una sola responsabilidad",
+          "codigo": "# Mal: una función que hace demasiado\ndef procesar(datos):\n    # limpia\n    datos = [x for x in datos if x is not None]\n    # ordena\n    datos = sorted(datos)\n    # calcula estadísticas\n    media = sum(datos) / len(datos)\n    # imprime\n    print(f\"Media: {media}\")\n    # guarda\n    with open(\"out.txt\", \"w\") as f:\n        f.write(str(datos))\n\n# Bien: funciones separadas\ndef limpiar(datos):\n    return [x for x in datos if x is not None]\n\ndef ordenar(datos):\n    return sorted(datos)\n\ndef media(datos):\n    return sum(datos) / len(datos)\n\ndef guardar(datos, ruta):\n    with open(ruta, \"w\") as f:\n        f.write(str(datos))",
+          "explicacion": [
+            "<p>Cada función debe hacer <strong>una sola cosa</strong>.</p>",
+            "<p>Así es más fácil de probar, entender y reutilizar.</p>",
+            "<p>Cuando una función hace muchas cosas, cámbiala por varias.</p>"
+          ]
+        },
+        {
+          "titulo": "Docstrings y comentarios útiles",
+          "codigo": "def biseccion(f, a, b, tol=1e-8, max_iter=100):\n    \"\"\"Encuentra una raíz de f en [a, b] por bisección.\n\n    Args:\n        f: función continua con cambio de signo en [a, b].\n        a: extremo izquierdo.\n        b: extremo derecho.\n        tol: tolerancia del error.\n        max_iter: número máximo de iteraciones.\n\n    Returns:\n        (raíz, iteraciones).\n\n    Raises:\n        ValueError: si f(a) * f(b) >= 0.\n    \"\"\"\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    # ... (resto del código)",
+          "explicacion": [
+            "<p>El docstring explica qué hace la función, sus parámetros y qué devuelve.</p>",
+            "<p>Los comentarios dentro explican el <em>por qué</em>, no el <em>qué</em>.</p>",
+            "<p>Si necesitas comentar mucho, probablemente tu código no es lo bastante claro.</p>"
+          ]
+        },
+        {
+          "titulo": "Evitar números mágicos",
+          "codigo": "# Mal\nif x > 1e-8:\n    pass\n\n# Bien\nTOLERANCIA = 1e-8\nif x > TOLERANCIA:\n    pass\n\n# Mal\nradio = 5\narea = 3.14159 * radio ** 2\n\n# Bien\nPI = 3.14159\nradio = 5\narea = PI * radio ** 2",
+          "explicacion": [
+            "<p>Los números y strings \"mágicos\" (sin explicación) son malos.</p>",
+            "<p>Defínelos como constantes con nombre al principio del archivo.</p>",
+            "<p>Así es más fácil cambiarlos y entender su significado.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Nombres genéricos como a, b, x, temp, data",
+          "razon": "No dicen nada sobre qué contienen.",
+          "correcto": "Usa nombres descriptivos: precio_con_iva, lista_ordenada, etc."
+        },
+        {
+          "error": "Funciones que hacen 5 cosas distintas",
+          "razon": "Difíciles de entender, probar y reutilizar.",
+          "correcto": "Una función, una responsabilidad."
+        },
+        {
+          "error": "Comentarios que repiten el código",
+          "razon": "No aportan nada.",
+          "correcto": "# x = 5  # asigna 5 a x   ← inútil\nx = 5  # velocidad inicial   ← útil"
+        },
+        {
+          "error": "Anidar demasiado (if dentro de if dentro de for...)",
+          "razon": "El código se vuelve ilegible.",
+          "correcto": "Extrae funciones, usa retornos tempranos."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> el código se lee muchas más veces de las que se escribe. Prioriza legibilidad sobre brevedad.</p>",
+        "<p>💡 <strong>Truco 2:</strong> una función debe caber en una pantalla. Si no, divídela.</p>",
+        "<p>💡 <strong>Truco 3:</strong> usa nombres que se expliquen solos. <code>precio_con_iva</code> mejor que <code>p2</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> sigue PEP 8. Hay herramientas que te ayudan: <code>black</code>, <code>flake8</code>, <code>ruff</code>.</p>",
+        "<p>💡 <strong>Truco 5:</strong> comenta el <em>por qué</em>, no el <em>qué</em>. El qué ya está en el código.</p>"
+      ],
+      "ejercicios": [
+        "Toma un código tuyo y renombra las variables con nombres descriptivos.",
+        "Divide una función larga en varias cortas.",
+        "Añade docstrings a tus funciones.",
+        "Sustituye números mágicos por constantes con nombre.",
+        "Ejecuta `black` o `ruff` sobre tu código y mira qué cambia."
+      ],
+      "resumen": "PEP 8 define el estilo de Python. Usa nombres descriptivos, funciones cortas, docstrings y evita números mágicos. Prioriza legibilidad. Herramientas como black y ruff te ayudan a cumplir el estilo."
+    },
+    {
+      "id": "siguiente-paso",
+      "numero": "5",
+      "titulo": "Tu siguiente paso",
+      "emoji": "🚪",
+      "subtitulo": "Qué hacer después de esta guía",
+      "que_es": [
+        "<p>Has terminado la guía. Esto es un logro real. Ahora tienes las bases sólidas de Python y del análisis numérico.</p>",
+        "<p>Pero esto no es el final: es el principio. La programación se aprende programando. Aquí te dejo un plan concreto para los próximos meses.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Tener un plan claro te evita:</p>",
+        "<ul><li><strong>Dispersarte</strong>: saltar de un tutorial a otro sin profundizar.</li><li><strong>Estancarte</strong>: no saber qué hacer después.</li><li><strong>Desmotivarte</strong>: no ver progreso.</li></ul>"
+      ],
+      "sintaxis": "# Plan sugerido:\n#\n# Semana 1-2:   Repasa las partes que te costaron más\n# Semana 3-4:   Termina los ejercicios integradores\n# Mes 2:        Haz un proyecto completo (elige uno de los 3)\n# Mes 3-4:      Aprende NumPy y Matplotlib\n# Mes 5-6:      Aprende SciPy y aplica a problemas reales\n# Mes 7+:       Elige una especialidad (optimización, simulación, ML...)",
+      "ejemplos": [
+        {
+          "titulo": "Rutina diaria sugerida",
+          "codigo": "# 30-60 minutos al día es suficiente para progresar.\n#\n# Sugerencia:\n# - 10 min: repasar algo viejo (una parte, un ejercicio)\n# - 30 min: aprender algo nuevo (tutorial, documentación)\n# - 20 min: programar algo propio (ejercicio, mini-proyecto)\n#\n# Los fines de semana, 2-3 horas seguidas para proyectos.\n#\n# Lo importante: constancia > intensidad.\n# 30 min al día durante 6 meses > 10 horas un sábado.",
+          "explicacion": [
+            "<p>La constancia es clave. Programar es como un idioma: se aprende usándolo.</p>",
+            "<p>30 minutos al día son suficientes si son todos los días.</p>",
+            "<p>Es mejor poco y frecuente que mucho y de vez en cuando.</p>"
+          ]
+        },
+        {
+          "titulo": "Cómo practicar",
+          "codigo": "# Opciones para practicar:\n#\n# 1. Ejercicios de tu guía: vuelve a hacerlos sin mirar\n# 2. LeetCode / HackerRank: ejercicios de algoritmos\n# 3. Proyectos propios: ideas que te interesen\n# 4. Contribuir a proyectos open source\n# 5. Reimplementar cosas que ya existen\n#\n# La mejor práctica: construir algo que te sirva para algo.\n# Un script para ordenar tus fotos.\n# Un análisis de tus gastos.\n# Un bot de Telegram.\n# Un juego.\n#\n# Lo que sea, pero que sea TUYO.",
+          "explicacion": [
+            "<p>Los ejercicios abstractos están bien, pero los proyectos propios son donde más aprendes.</p>",
+            "<p>Elige algo que quieras construir de verdad. La motivación viene sola.</p>"
+          ]
+        },
+        {
+          "titulo": "Aprender a aprender",
+          "codigo": "# Cosas que te harán mejor programador:\n#\n# 1. Leer código ajeno: en GitHub, en open source\n# 2. Aprender git: imprescindible en cualquier trabajo\n# 3. Aprender a leer tracebacks: sin miedo a los errores\n# 4. Aprender a buscar: Google es tu mejor amigo\n# 5. Aprender a preguntar: cómo escribir buenas preguntas\n# 6. Aprender a escribir tests: probar tu código automáticamente\n# 7. Aprender otro lenguaje: JavaScript, Rust, C++...\n#\n# Python es la herramienta, no el objetivo.",
+          "explicacion": [
+            "<p>Python es un medio, no un fin. Lo que importa es saber resolver problemas.</p>",
+            "<p>Aprende git, aprende a leer código ajeno, aprende a buscar. Todo eso te hará mejor.</p>",
+            "<p>Y aprende otro lenguaje con el tiempo. Cambia tu forma de pensar.</p>"
+          ]
+        },
+        {
+          "titulo": "Mensaje final",
+          "codigo": "# Lo importante no es la meta, sino el camino.\n#\n# Programar no es memorizar. Es resolver problemas.\n# No importa si no recuerdas la sintaxis exacta:\n# importa si puedes pensar la solución.\n#\n# Al principio copiarás código. Es normal.\n# Luego lo modificarás. Luego lo escribirás tú.\n# Y algún día, lo diseñarás tú.\n#\n# No tengas miedo a los errores.\n# No tengas miedo a romper cosas.\n# No tengas miedo a preguntar.\n#\n# Lo único que no funciona es rendirse.\n#\n# 🧡 Happy coding!",
+          "explicacion": [
+            "<p>Programar es un proceso. Al principio todo parece difícil. Con práctica, se vuelve natural.</p>",
+            "<p>No te compares con otros. Cada persona avanza a su ritmo.</p>",
+            "<p>Lo importante es seguir. Un poco cada día.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Dejarlo después de la guía",
+          "razon": "Sin práctica, se olvida.",
+          "correcto": "Sigue practicando, aunque sea 15 min al día."
+        },
+        {
+          "error": "Saltar a temas avanzados sin consolidar lo básico",
+          "razon": "Te frustras porque no entiendes.",
+          "correcto": "Domina lo básico primero. Todo lo demás se construye encima."
+        },
+        {
+          "error": "No construir nada propio",
+          "razon": "Los tutoriales te dan la ilusión de aprender, pero no consolidas.",
+          "correcto": "Construye cosas tuyas. Aunque sean simples."
+        },
+        {
+          "error": "Compararte con quien lleva años",
+          "razon": "Es injusto contigo mismo.",
+          "correcto": "Compárate con tu yo de la semana pasada."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> 30 minutos al día, todos los días, valen más que 10 horas un sábado.</p>",
+        "<p>💡 <strong>Truco 2:</strong> construye cosas tuyas. Un proyecto propio enseña más que 10 tutoriales.</p>",
+        "<p>💡 <strong>Truco 3:</strong> no temas romper cosas. Los errores enseñan.</p>",
+        "<p>💡 <strong>Truco 4:</strong> aprende git. Es imprescindible.</p>",
+        "<p>💡 <strong>Truco 5:</strong> no te rindas. Lo único que garantiza fracasar es parar.</p>"
+      ],
+      "ejercicios": [
+        "Repasa la parte que te haya costado más.",
+        "Termina los ejercicios integradores del primer tema.",
+        "Elige un proyecto de los 3 y empieza esta semana.",
+        "Reserva 30 minutos al día para programar.",
+        "Cuando tengas una duda, busca la respuesta tú primero.",
+        "Escribe tu primer README de un proyecto propio."
+      ],
+      "resumen": "Has terminado la guía. El siguiente paso es practicar todos los días. Construye proyectos propios. Aprende git. No te rindas. Lo único que garantiza fracasar es parar."
+    }
+  ]
+}

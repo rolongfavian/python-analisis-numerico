@@ -1,0 +1,671 @@
+{
+  "parte": 10,
+  "titulo": "Módulos",
+  "emoji": "📦",
+  "descripcion": "Un módulo es un archivo con código Python que puedes importar desde otro. Python viene con muchos módulos listos para usar (math, random, datetime...) y puedes instalar miles más. Aquí aprenderás a usarlos, a crear los tuyos y a organizar tu código en varios archivos.",
+  "temas": [
+    {
+      "id": "import",
+      "numero": "1",
+      "titulo": "import — Usar módulos de Python",
+      "emoji": "📥",
+      "subtitulo": "Cómo traer código de otros archivos al tuyo",
+      "que_es": [
+        "<p>Un <strong>módulo</strong> es un archivo con código Python que puedes <strong>importar</strong> desde otro archivo. Es la forma de reutilizar código que ya está escrito y probado.</p>",
+        "<p>Python viene con una <strong>biblioteca estándar</strong> enorme: cientos de módulos para matemáticas, fechas, archivos, redes, etc. Solo tienes que importarlos para usarlos.</p>",
+        "<p>La instrucción <code>import</code> trae un módulo completo. Después accedes a sus funciones con la sintaxis <code>modulo.funcion()</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los módulos se usan para:</p>",
+        "<ul><li><strong>No reinventar la rueda</strong>: ya existen funciones para casi todo.</li><li><strong>Organizar tu código</strong>: cada archivo hace una cosa.</li><li><strong>Reutilizar</strong>: importas un módulo en varios programas.</li><li><strong>Mantener</strong>: los módulos se actualizan independientemente.</li></ul>",
+        "<p>En análisis numérico, los módulos <code>math</code> y <code>cmath</code> son esenciales. Y <code>numpy</code> (que se instala aparte) es el estándar para cálculo numérico.</p>"
+      ],
+      "sintaxis": "import modulo\n\n# Usar\nmodulo.funcion()\nmodulo.variable\n\n# Ejemplos\nimport math\nimport random\nimport datetime",
+      "ejemplos": [
+        {
+          "titulo": "Importar y usar math",
+          "codigo": "import math\n\nprint(math.pi)          # 3.141592653589793\nprint(math.e)           # 2.718281828459045\nprint(math.sqrt(16))    # 4.0\nprint(math.factorial(5))  # 120",
+          "explicacion": [
+            "<p><code>import math</code> trae el módulo completo.</p>",
+            "<p>Accedes a sus constantes y funciones con <code>math.pi</code>, <code>math.sqrt()</code>, etc.</p>",
+            "<p><strong>Ventaja:</strong> siempre sabes de dónde viene cada función porque lleva el prefijo <code>math.</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Importar y usar random",
+          "codigo": "import random\n\nprint(random.randint(1, 10))   # entero entre 1 y 10\nprint(random.random())        # float entre 0 y 1\nprint(random.choice([1, 2, 3]))  # elige uno al azar\n\nlista = [1, 2, 3, 4, 5]\nrandom.shuffle(lista)\nprint(lista)   # orden aleatorio",
+          "explicacion": [
+            "<p><code>random</code> sirve para generar números aleatorios y elegir elementos al azar.</p>",
+            "<ul><li><code>randint(a, b)</code> → entero entre a y b (ambos incluidos).</li><li><code>random()</code> → float entre 0 y 1.</li><li><code>choice(lista)</code> → un elemento al azar.</li><li><code>shuffle(lista)</code> → reordena al azar.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Importar varios módulos",
+          "codigo": "import math\nimport random\nimport datetime\n\nprint(math.sqrt(25))\nprint(random.randint(1, 6))\nprint(datetime.datetime.now().year)",
+          "explicacion": [
+            "<p>Puedes importar todos los módulos que necesites, cada uno en su línea.</p>",
+            "<p>En una sola línea también: <code>import math, random, datetime</code>. Pero no es la práctica recomendada.</p>"
+          ]
+        },
+        {
+          "titulo": "Módulos en análisis numérico",
+          "codigo": "import math\n\n# Calcular la raíz de 2 con math\ndef f(x):\n    return x**2 - 2\n\n# Método de Newton con math.sqrt como referencia\nx = 1.0\nfor _ in range(10):\n    x = (x + 2/x) / 2\n\nprint(f\"Aproximación: {x:.15f}\")\nprint(f\"math.sqrt:    {math.sqrt(2):.15f}\")\nprint(f\"Diferencia:   {abs(x - math.sqrt(2)):.2e}\")",
+          "explicacion": [
+            "<p>Comparas tu método con la función exacta de Python.</p>",
+            "<p>Esto se hace siempre para verificar que tu implementación numérica es correcta.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "import math\nprint(sqrt(16))",
+          "razon": "Falta el prefijo. No puedes usar sqrt directamente.",
+          "correcto": "import math\nprint(math.sqrt(16))"
+        },
+        {
+          "error": "import modulo_inexistente",
+          "razon": "Da ModuleNotFoundError.",
+          "correcto": "Verifica el nombre o instala el módulo."
+        },
+        {
+          "error": "Usar un módulo sin importarlo",
+          "razon": "Python no sabe qué es math.sqrt si no has hecho import math.",
+          "correcto": "Importa primero."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> importar el módulo completo con <code>import math</code> es más claro que importar cosas sueltas. Siempre sabes de dónde viene cada función.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para ver qué tiene un módulo: <code>dir(math)</code> o <code>help(math)</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>math.sqrt</code>, <code>math.sin</code>, <code>math.cos</code>, <code>math.exp</code>, <code>math.log</code> son esenciales.</p>",
+        "<p>💡 <strong>Truco 4:</strong> si necesitas muchos módulos, sepáralos en varias líneas. Es más limpio.</p>"
+      ],
+      "ejercicios": [
+        "Importa `math` y muestra el valor de π con 5 decimales.",
+        "Importa `random` y genera un número entero entre 1 y 100.",
+        "Importa `datetime` y muestra el año actual.",
+        "Usa `math.sqrt` para calcular la raíz cuadrada de 144.",
+        "Genera una lista de 10 números aleatorios con `random.randint`."
+      ],
+      "resumen": "import trae un módulo completo. Se usa con el prefijo del módulo. Python tiene cientos de módulos listos para usar. Es la forma de reutilizar código."
+    },
+    {
+      "id": "from-import",
+      "numero": "2",
+      "titulo": "from ... import ...",
+      "emoji": "🎯",
+      "subtitulo": "Traer solo lo que necesitas",
+      "que_es": [
+        "<p><code>from modulo import nombre</code> importa solo una función, clase o variable específica de un módulo, sin traer todo el módulo.</p>",
+        "<p>Ventaja: escribes menos porque no necesitas el prefijo. Desventaja: puede haber ambigüedad si importas muchas cosas de varios módulos.</p>",
+        "<p>También existe <code>from modulo import *</code>, que importa todo. <strong>No se recomienda</strong> porque contamina el espacio de nombres y no se sabe de dónde viene cada cosa.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa cuando:</p>",
+        "<ul><li><strong>Necesitas solo una función</strong>: <code>from math import pi</code>.</li><li><strong>Quieres escribir menos</strong>: <code>sqrt(16)</code> en vez de <code>math.sqrt(16)</code>.</li><li><strong>Módulos largos</strong>: importar solo lo necesario.</li></ul>"
+      ],
+      "sintaxis": "# Importar una función específica\nfrom math import sqrt\nsqrt(16)   # sin prefijo\n\n# Importar varias\nfrom math import sqrt, pi, e\n\n# Importar con alias\nfrom math import sqrt as raiz\nraiz(16)\n\n# Importar todo (NO recomendado)\nfrom math import *",
+      "ejemplos": [
+        {
+          "titulo": "Importar una función específica",
+          "codigo": "from math import sqrt, pi\n\nprint(sqrt(16))     # 4.0\nprint(pi)           # 3.141592653589793\n\n# A diferencia de import math, aquí no usas el prefijo.",
+          "explicacion": [
+            "<p>Con <code>from math import sqrt</code>, la función <code>sqrt</code> está disponible directamente.</p>",
+            "<p>No necesitas escribir <code>math.sqrt</code>, solo <code>sqrt</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Importar con alias",
+          "codigo": "from math import sqrt as raiz, pi as PI\n\nprint(raiz(25))    # 5.0\nprint(PI)          # 3.14159...\n\n# Útil si el nombre es largo o conflictivo",
+          "explicacion": [
+            "<p><code>as</code> cambia el nombre por el que llamas a la función.</p>",
+            "<p>Útil cuando el nombre original es muy largo o podría chocar con otra función.</p>"
+          ]
+        },
+        {
+          "titulo": "El problema de import *",
+          "codigo": "# MAL: no sabes qué se importó\n# from math import *\n#\n# print(sqrt(16))   # ¿de dónde viene sqrt?\n\n# BIEN: importar solo lo que usas\nfrom math import sqrt\n\nprint(sqrt(16))",
+          "explicacion": [
+            "<p><code>import *</code> contamina tu espacio de nombres. Puede sobrescribir funciones tuyas sin que te des cuenta.</p>",
+            "<p>Aunque parezca cómodo, es una mala práctica. Sé explícito con lo que importas.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "from math import *\npi = 3\n# Sobrescribe math.pi sin darte cuenta",
+          "razon": "Import * trae todo y puede sobrescribir tus variables.",
+          "correcto": "Importa solo lo que necesitas o usa import math."
+        },
+        {
+          "error": "from math import sqrt\nprint(math.sqrt(16))",
+          "razon": "Si solo importaste sqrt, el nombre 'math' no existe.",
+          "correcto": "print(sqrt(16))"
+        },
+        {
+          "error": "from math import sqr",
+          "razon": "Nombre mal escrito. Da ImportError.",
+          "correcto": "from math import sqrt"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> prefiere <code>import math</code> a <code>from math import ...</code>. Es más claro.</p>",
+        "<p>💡 <strong>Truco 2:</strong> usa <code>from ... import ... as ...</code> cuando el nombre sea conflictivo o muy largo.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>from math import sqrt, sin, cos, exp, log, pi, e</code> es común. Todas esas funciones se usan mucho.</p>"
+      ],
+      "ejercicios": [
+        "Importa solo `sqrt` de math y calcula la raíz de 144.",
+        "Importa `pi` con alias `PI` y muestra su valor.",
+        "Importa `randint` de random y genera 5 números al azar.",
+        "Explica por qué `from math import *` no es recomendable."
+      ],
+      "resumen": "from ... import ... trae solo lo que necesitas. Con 'as' le das un alias. Evita 'import *' porque contamina el espacio de nombres."
+    },
+    {
+      "id": "modulos-propios",
+      "numero": "3",
+      "titulo": "Crear tus propios módulos",
+      "emoji": "📁",
+      "subtitulo": "Organizar tu código en varios archivos",
+      "que_es": [
+        "<p>Un módulo no es más que un archivo <code>.py</code> con código. Puedes crear el tuyo y luego importarlo desde otro archivo.</p>",
+        "<p>Por ejemplo: si tienes un archivo <code>matematicas.py</code> con funciones, puedes importarlo desde <code>main.py</code> con <code>import matematicas</code>.</p>",
+        "<p>Esto permite organizar proyectos grandes en varios archivos, cada uno con su responsabilidad.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los módulos propios te permiten:</p>",
+        "<ul><li><strong>Organizar</strong>: cada archivo hace una cosa.</li><li><strong>Reutilizar</strong>: importas tus funciones desde varios sitios.</li><li><strong>Mantener</strong>: si algo falla, sabes en qué archivo buscar.</li><li><strong>Probar</strong>: puedes probar cada módulo por separado.</li></ul>"
+      ],
+      "sintaxis": "# archivo matematicas.py\ndef sumar(a, b):\n    return a + b\n\ndef area_circulo(r):\n    return 3.14159 * r ** 2\n\n# archivo main.py\nimport matematicas\n\nprint(matematicas.sumar(2, 3))\nprint(matematicas.area_circulo(5))",
+      "ejemplos": [
+        {
+          "titulo": "Módulo con funciones matemáticas",
+          "codigo": "# Archivo: matematicas.py\n\ndef sumar(a, b):\n    return a + b\n\ndef restar(a, b):\n    return a - b\n\ndef multiplicar(a, b):\n    return a * b\n\ndef dividir(a, b):\n    if b == 0:\n        return None\n    return a / b",
+          "explicacion": [
+            "<p>Este es el contenido del archivo <code>matematicas.py</code>. Cuando lo importes desde otro archivo, tendrás acceso a estas funciones.</p>",
+            "<p>Es un ejemplo simple, pero la idea es la misma para módulos más grandes.</p>"
+          ]
+        },
+        {
+          "titulo": "Usar el módulo desde otro archivo",
+          "codigo": "# Archivo: main.py\nimport matematicas\n\nprint(matematicas.sumar(2, 3))         # 5\nprint(matematicas.multiplicar(4, 5))   # 20\nprint(matematicas.dividir(10, 0))      # None",
+          "explicacion": [
+            "<p>Desde otro archivo, importas <code>matematicas</code> y usas sus funciones con el prefijo.</p>",
+            "<p>Los dos archivos tienen que estar en la misma carpeta (o en el PYTHONPATH).</p>"
+          ]
+        },
+        {
+          "titulo": "Módulo con código de prueba",
+          "codigo": "# Archivo: matematicas.py\n\ndef sumar(a, b):\n    return a + b\n\n# Esto solo se ejecuta si corres el archivo directamente\nif __name__ == \"__main__\":\n    print(\"Prueba:\", sumar(2, 3))",
+          "explicacion": [
+            "<p><code>if __name__ == \"__main__\":</code> es un patrón estándar. El código de dentro solo se ejecuta si corres el archivo directamente (no si lo importas).</p>",
+            "<p>Se usa para poner pruebas o ejemplos sin que se ejecuten al importar el módulo.</p>"
+          ]
+        },
+        {
+          "titulo": "Módulo de análisis numérico",
+          "codigo": "# Archivo: metodos.py\n\ndef biseccion(f, a, b, tol=1e-8, max_iter=100):\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol:\n            return c, k\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    return c, max_iter\n\nif __name__ == \"__main__\":\n    f = lambda x: x**3 - x - 2\n    raiz, iters = biseccion(f, 1, 2)\n    print(f\"Raíz: {raiz:.10f}, iteraciones: {iters}\")",
+          "explicacion": [
+            "<p>Creas un módulo con el método de bisección.</p>",
+            "<p>Cuando lo importes desde otro archivo, no se ejecutará la parte de prueba.</p>",
+            "<p>Cuando lo ejecutes directamente, se ejecutará la prueba.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "ModuleNotFoundError al importar tu módulo",
+          "razon": "El archivo no está en la misma carpeta o no está en el PYTHONPATH.",
+          "correcto": "Coloca los archivos en la misma carpeta, o añade la ruta al sys.path."
+        },
+        {
+          "error": "Nombre del módulo con mayúsculas o guiones",
+          "razon": "Los módulos deben tener nombres en snake_case, sin guiones.",
+          "correcto": "matematicas.py, no Matematicas.py ni mi-modulo.py"
+        },
+        {
+          "error": "Ejecutar código al importar sin querer",
+          "razon": "El código del módulo se ejecuta al importarlo.",
+          "correcto": "Usa if __name__ == '__main__': para código de prueba."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa nombres cortos y descriptivos para tus módulos: <code>metodos.py</code>, <code>utils.py</code>, <code>config.py</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> siempre que tengas código de prueba, envuélvelo en <code>if __name__ == '__main__':</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, es típico tener un módulo <code>metodos.py</code> con bisección, Newton, punto fijo, etc.</p>"
+      ],
+      "ejercicios": [
+        "Crea un archivo `saludos.py` con una función `saludar(nombre)`.",
+        "Crea otro archivo `main.py` que importe `saludos` y llame a la función.",
+        "Añade `if __name__ == '__main__':` al final de `saludos.py`.",
+        "Crea un módulo `estadisticas.py` con funciones para media, varianza y desviación estándar."
+      ],
+      "resumen": "Un módulo propio es un archivo .py con funciones. Se importa desde otros archivos. Usa if __name__ == '__main__': para pruebas. Organiza tu código en varios archivos."
+    },
+    {
+      "id": "math",
+      "numero": "4",
+      "titulo": "math — Funciones matemáticas",
+      "emoji": "🧮",
+      "subtitulo": "La librería estándar de matemáticas",
+      "que_es": [
+        "<p><code>math</code> es el módulo de matemáticas de la biblioteca estándar de Python. Trae constantes y funciones matemáticas comunes.</p>",
+        "<p>Es imprescindible para cálculo numérico elemental. No trae álgebra lineal (para eso está <code>numpy</code>, que se instala aparte).</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa en cualquier cálculo matemático:</p>",
+        "<ul><li><strong>Raíces</strong>: <code>sqrt</code>, <code>cbrt</code>.</li><li><strong>Trigonometría</strong>: <code>sin</code>, <code>cos</code>, <code>tan</code>, <code>asin</code>, <code>acos</code>, <code>atan</code>.</li><li><strong>Logaritmos y exponenciales</strong>: <code>log</code>, <code>log10</code>, <code>exp</code>.</li><li><strong>Redondeo</strong>: <code>floor</code>, <code>ceil</code>, <code>trunc</code>.</li><li><strong>Constantes</strong>: <code>pi</code>, <code>e</code>, <code>tau</code>, <code>inf</code>, <code>nan</code>.</li></ul>",
+        "<p>En análisis numérico, casi todas las funciones matemáticas que necesites están en <code>math</code>.</p>"
+      ],
+      "sintaxis": "import math\n\nmath.pi           # 3.14159...\nmath.e            # 2.71828...\nmath.sqrt(x)      # raíz cuadrada\nmath.exp(x)       # e^x\nmath.log(x)       # ln(x)\nmath.log10(x)     # log10(x)\nmath.sin(x)       # seno (radianes)\nmath.cos(x)       # coseno\nmath.tan(x)       # tangente\nmath.floor(x)     # redondeo hacia abajo\nmath.ceil(x)      # redondeo hacia arriba\nmath.fabs(x)      # valor absoluto (float)\nmath.factorial(n) # factorial",
+      "ejemplos": [
+        {
+          "titulo": "Constantes y raíces",
+          "codigo": "import math\n\nprint(math.pi)          # 3.141592653589793\nprint(math.e)           # 2.718281828459045\nprint(math.tau)         # 6.283185307179586 (2π)\nprint(math.sqrt(2))     # 1.4142135623730951\nprint(math.cbrt(27))    # 3.0",
+          "explicacion": [
+            "<p><code>pi</code>, <code>e</code> y <code>tau</code> son las constantes más usadas.</p>",
+            "<p><code>sqrt</code> es la raíz cuadrada, <code>cbrt</code> la cúbica.</p>"
+          ]
+        },
+        {
+          "titulo": "Trigonometría",
+          "codigo": "import math\n\n# Los ángulos en radianes\nprint(math.sin(0))                # 0.0\nprint(math.sin(math.pi / 2))      # 1.0\nprint(math.cos(0))                # 1.0\nprint(math.tan(0))                # 0.0\n\n# Convertir grados a radianes\ngrados = 45\nrad = math.radians(grados)\nprint(math.sin(rad))              # 0.7071...",
+          "explicacion": [
+            "<p>Las funciones trigonométricas trabajan en <strong>radianes</strong>, no en grados.</p>",
+            "<p>Usa <code>math.radians(grados)</code> para convertir. Y <code>math.degrees(rad)</code> para lo contrario.</p>"
+          ]
+        },
+        {
+          "titulo": "Logaritmos y exponenciales",
+          "codigo": "import math\n\nprint(math.exp(0))         # 1.0 (e^0)\nprint(math.exp(1))         # 2.718281828459045\nprint(math.log(math.e))    # 1.0 (ln(e))\nprint(math.log(100, 10))   # 2.0 (log base 10)\nprint(math.log10(1000))    # 3.0\nprint(math.log2(8))        # 3.0",
+          "explicacion": [
+            "<ul><li><code>exp(x)</code> → e^x</li><li><code>log(x)</code> → logaritmo natural</li><li><code>log(x, base)</code> → log en cualquier base</li><li><code>log10</code> → base 10, <code>log2</code> → base 2</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Redondeo y valor absoluto",
+          "codigo": "import math\n\nprint(math.floor(3.7))    # 3 (hacia abajo)\nprint(math.ceil(3.2))     # 4 (hacia arriba)\nprint(math.trunc(3.9))    # 3 (hacia cero)\nprint(math.fabs(-5))      # 5.0\n\n# Diferencia con built-ins\nprint(round(3.5))         # 4 (redondeo bancario)\nprint(abs(-5))            # 5 (intacto)",
+          "explicacion": [
+            "<ul><li><code>floor</code> redondea hacia abajo, <code>ceil</code> hacia arriba.</li><li><code>trunc</code> corta los decimales (hacia cero).</li><li><code>fabs</code> es el valor absoluto en float.</li><li><code>abs</code> es el valor absoluto built-in (mantiene el tipo).</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Otros útiles",
+          "codigo": "import math\n\n# MCD y MCM\nprint(math.gcd(12, 18))        # 6\nprint(math.lcm(4, 6))          # 12\n\n# Combinatoria\nprint(math.factorial(5))       # 120\nprint(math.comb(5, 2))         # 10 (combinaciones)\nprint(math.perm(5, 2))         # 20 (permutaciones)\n\n# Comprobar si es finito/NaN\nprint(math.isfinite(5))        # True\nprint(math.isnan(math.nan))    # True\nprint(math.isinf(math.inf))    # True",
+          "explicacion": [
+            "<p><code>math</code> tiene también funciones de teoría de números y combinatoria.</p>",
+            "<p><code>math.nan</code> es \"not a number\", <code>math.inf</code> es infinito.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "math.sin(90)  esperando 1.0",
+          "razon": "Trabaja en radianes. sin(90 rad) no es 1.",
+          "correcto": "math.sin(math.radians(90))"
+        },
+        {
+          "error": "math.sqrt(-1)",
+          "razon": "math.sqrt no admite negativos. Da ValueError.",
+          "correcto": "Usa cmath.sqrt(-1) o instala numpy."
+        },
+        {
+          "error": "math.log(0)",
+          "razon": "El logaritmo de 0 no está definido. Da ValueError.",
+          "correcto": "Verifica que x > 0 antes."
+        },
+        {
+          "error": "math.exp(1000)",
+          "razon": "Overflow: el resultado es mayor que el float máximo.",
+          "correcto": "Usa logaritmos o verifica el rango."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> siempre trabaja en radianes con math. Convierte con <code>radians()</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para álgebra lineal (matrices, vectores), necesitas numpy. math solo hace operaciones escalares.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para logaritmos: <code>log</code> es natural, <code>log10</code> base 10, <code>log2</code> base 2.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, <code>math.fabs</code> es útil para el error absoluto.</p>",
+        "<p>💡 <strong>Truco 5:</strong> <code>math.isclose(a, b, rel_tol=1e-9)</code> compara floats con tolerancia. Perfecto para verificar convergencia.</p>"
+      ],
+      "ejercicios": [
+        "Calcula la raíz cuadrada de 144 con math.sqrt.",
+        "Convierte 45 grados a radianes y calcula su seno.",
+        "Calcula e^5 con math.exp.",
+        "Redondea 3.7 hacia arriba y hacia abajo con ceil y floor.",
+        "Usa math.isclose para comparar 0.1+0.2 con 0.3.",
+        "Calcula el logaritmo natural de 100 y el log10."
+      ],
+      "resumen": "math trae las funciones matemáticas básicas: sqrt, exp, log, sin, cos, tan, floor, ceil, factorial y constantes pi, e. Trabaja en radianes. Para álgebra lineal necesitas numpy."
+    },
+    {
+      "id": "random",
+      "numero": "5",
+      "titulo": "random — Números aleatorios",
+      "emoji": "🎲",
+      "subtitulo": "Generar datos aleatorios y elegir al azar",
+      "que_es": [
+        "<p><code>random</code> genera números <strong>pseudoaleatorios</strong>. No son verdaderamente aleatorios, pero son impredecibles para uso práctico.</p>",
+        "<p>Se usan para simulaciones, juegos, pruebas, muestreo estadístico, inicialización aleatoria de algoritmos, etc.</p>",
+        "<p>Puedes <strong>fijar la semilla</strong> con <code>random.seed(n)</code> para que la secuencia sea reproducible. Muy útil para depurar.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa en:</p>",
+        "<ul><li><strong>Simulaciones</strong>: Monte Carlo, física, juegos.</li><li><strong>Muestreo</strong>: elegir elementos al azar de una población.</li><li><strong>Pruebas</strong>: generar datos de prueba.</li><li><strong>Algoritmos aleatorizados</strong>: inicialización, shuffle, etc.</li></ul>",
+        "<p>En análisis numérico, <code>random</code> se usa para Monte Carlo, métodos estocásticos y para generar datos de prueba.</p>"
+      ],
+      "sintaxis": "import random\n\nrandom.random()            # float entre 0 y 1\nrandom.uniform(a, b)       # float entre a y b\nrandom.randint(a, b)       # int entre a y b (ambos incluidos)\nrandom.randrange(a, b, p)  # int en range(a, b, p)\nrandom.choice(lista)       # elemento al azar\nrandom.choices(lista, k=n) # n elementos (con reemplazo)\nrandom.sample(lista, k=n)  # n elementos (sin reemplazo)\nrandom.shuffle(lista)      # reordena in-place\nrandom.seed(n)             # fija la semilla",
+      "ejemplos": [
+        {
+          "titulo": "Números aleatorios básicos",
+          "codigo": "import random\n\nprint(random.random())        # float en [0, 1)\nprint(random.uniform(0, 10))  # float en [0, 10]\nprint(random.randint(1, 6))   # int en [1, 6] (dado)\nprint(random.randrange(0, 10, 2))   # par entre 0 y 8",
+          "explicacion": [
+            "<ul><li><code>random()</code> → float 0 ≤ x &lt; 1.</li><li><code>uniform(a, b)</code> → float a ≤ x ≤ b.</li><li><code>randint(a, b)</code> → int a ≤ x ≤ b.</li><li><code>randrange</code> → como range, pero elige uno.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Elegir de una lista",
+          "codigo": "import random\n\ncolores = [\"rojo\", \"verde\", \"azul\", \"amarillo\"]\n\nprint(random.choice(colores))          # un color\nprint(random.choices(colores, k=3))    # 3 colores (con repetición)\nprint(random.sample(colores, k=2))     # 2 colores (sin repetición)\n\nrandom.shuffle(colores)\nprint(colores)   # orden aleatorio",
+          "explicacion": [
+            "<ul><li><code>choice</code> → un elemento al azar.</li><li><code>choices</code> → n elementos con reemplazo (puede repetir).</li><li><code>sample</code> → n elementos sin reemplazo (no repite).</li><li><code>shuffle</code> → reordena la lista original.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Semilla para reproducibilidad",
+          "codigo": "import random\n\nrandom.seed(42)\nprint(random.randint(1, 100))   # 82\nprint(random.randint(1, 100))   # 15\n\nrandom.seed(42)   # reiniciar\nprint(random.randint(1, 100))   # 82 (el mismo)\nprint(random.randint(1, 100))   # 15 (el mismo)",
+          "explicacion": [
+            "<p>Con la misma semilla, la secuencia es idéntica. Muy útil para depurar o para reproducir resultados.</p>",
+            "<p>Si no fijas la semilla, Python usa el reloj del sistema y los números cambian cada vez.</p>"
+          ]
+        },
+        {
+          "titulo": "Simulación de Monte Carlo",
+          "codigo": "import random\nimport math\n\ndef estimar_pi(n):\n    dentro = 0\n    for _ in range(n):\n        x = random.random()\n        y = random.random()\n        if x**2 + y**2 <= 1:\n            dentro += 1\n    return 4 * dentro / n\n\nrandom.seed(42)\nfor n in [100, 1000, 10000, 100000]:\n    pi_est = estimar_pi(n)\n    error = abs(pi_est - math.pi)\n    print(f\"n={n:>6}: π ≈ {pi_est:.6f}, error = {error:.2e}\")",
+          "explicacion": [
+            "<p>El método de Monte Carlo estima π lanzando puntos aleatorios en un cuadrado y contando cuántos caen dentro del círculo.</p>",
+            "<p>La aproximación mejora con más puntos, pero lentamente (error ~ 1/√n).</p>",
+            "<p>Este ejemplo combina <code>random</code> con <code>math</code>. Es un caso real de análisis numérico.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "random.randint(1, 6.5)",
+          "razon": "randint solo acepta enteros.",
+          "correcto": "random.randint(1, 6)   o   random.uniform(1, 6.5)"
+        },
+        {
+          "error": "random.choice([])",
+          "razon": "No se puede elegir de una lista vacía. Da IndexError.",
+          "correcto": "Verifica que la lista tenga elementos."
+        },
+        {
+          "error": "random.sample(lista, k=len(lista)+1)",
+          "razon": "No puedes sacar más elementos de los que hay (sin reemplazo).",
+          "correcto": "Usa k ≤ len(lista)."
+        },
+        {
+          "error": "Esperar aleatoriedad real",
+          "razon": "random genera pseudoaleatorios. Con la misma semilla, siempre da lo mismo.",
+          "correcto": "Para criptografía usa secrets."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> fija la semilla con <code>random.seed(42)</code> cuando quieras resultados reproducibles.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>choices</code> permite repetición; <code>sample</code> no. Elige según lo que necesites.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para Monte Carlo, usa <code>random()</code> para generar floats en [0, 1).</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, <code>random</code> sirve para inicialización aleatoria de algoritmos de optimización.</p>",
+        "<p>💡 <strong>Truco 5:</strong> si necesitas distribuciones estadísticas (normal, exponencial), usa <code>random.gauss</code> o el módulo <code>statistics</code>.</p>"
+      ],
+      "ejercicios": [
+        "Genera 10 números aleatorios enteros entre 1 y 100.",
+        "Elige al azar un elemento de una lista de frutas.",
+        "Baraja una lista del 1 al 10 con shuffle.",
+        "Fija la semilla a 123 y genera 5 números; repite y compara.",
+        "Implementa el método de Monte Carlo para estimar π con 10000 puntos."
+      ],
+      "resumen": "random genera números pseudoaleatorios. Tiene random, uniform, randint, choice, choices, sample, shuffle. La semilla fija la secuencia. Se usa en simulaciones y Monte Carlo."
+    },
+    {
+      "id": "datetime",
+      "numero": "6",
+      "titulo": "datetime — Fechas y horas",
+      "emoji": "📅",
+      "subtitulo": "Trabajar con fechas, horas y diferencias de tiempo",
+      "que_es": [
+        "<p><code>datetime</code> es el módulo de la biblioteca estándar para trabajar con fechas y horas. Trae varias clases:</p>",
+        "<ul><li><code>date</code>: solo fecha (año, mes, día).</li><li><code>time</code>: solo hora (hora, minuto, segundo).</li><li><code>datetime</code>: fecha y hora juntas.</li><li><code>timedelta</code>: diferencia entre fechas/horas.</li></ul>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa para:</p>",
+        "<ul><li><strong>Registrar tiempos</strong>: cuándo ocurrió algo.</li><li><strong>Medir duración</strong>: cuánto tarda un cálculo.</li><li><strong>Formatear fechas</strong>: mostrar en formato legible.</li><li><strong>Calcular diferencias</strong>: días entre fechas, horas entre eventos.</li></ul>",
+        "<p>En análisis numérico, <code>datetime</code> sirve para medir cuánto tarda un método y comparar rendimiento.</p>"
+      ],
+      "sintaxis": "from datetime import datetime, date, time, timedelta\n\ndatetime.now()             # fecha y hora actual\ndatetime(2024, 3, 15, 14, 30)  # fecha específica\ndt.strftime(\"%Y-%m-%d\")     # formatear\ndt.year, dt.month, dt.day  # componentes\ndt2 - dt1                  # diferencia (timedelta)\ndelta.total_seconds()      # segundos totales",
+      "ejemplos": [
+        {
+          "titulo": "Obtener fecha y hora actual",
+          "codigo": "from datetime import datetime\n\nahora = datetime.now()\nprint(ahora)\n# 2024-03-15 14:30:25.123456\n\nprint(ahora.year)     # 2024\nprint(ahora.month)    # 3\nprint(ahora.day)      # 15\nprint(ahora.hour)     # 14\nprint(ahora.minute)   # 30\nprint(ahora.second)   # 25",
+          "explicacion": [
+            "<p><code>datetime.now()</code> da la fecha y hora actual.</p>",
+            "<p>Puedes acceder a cada componente: año, mes, día, hora, minuto, segundo, microsegundo.</p>"
+          ]
+        },
+        {
+          "titulo": "Formatear fechas",
+          "codigo": "from datetime import datetime\n\nahora = datetime(2024, 3, 15, 14, 30, 0)\n\nprint(ahora.strftime(\"%Y-%m-%d\"))          # 2024-03-15\nprint(ahora.strftime(\"%d/%m/%Y\"))          # 15/03/2024\nprint(ahora.strftime(\"%d de %B de %Y\"))    # 15 de March de 2024\nprint(ahora.strftime(\"%H:%M:%S\"))          # 14:30:00\nprint(ahora.strftime(\"%Y-%m-%d %H:%M\"))    # 2024-03-15 14:30",
+          "explicacion": [
+            "<p><code>strftime</code> convierte un datetime a string con el formato que elijas.</p>",
+            "<ul><li><code>%Y</code> → año con 4 dígitos.</li><li><code>%m</code> → mes con 2 dígitos.</li><li><code>%d</code> → día con 2 dígitos.</li><li><code>%H</code>, <code>%M</code>, <code>%S</code> → hora, minuto, segundo.</li><li><code>%B</code> → nombre del mes.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Medir tiempo de ejecución",
+          "codigo": "from datetime import datetime\n\ndef suma_lenta(n):\n    total = 0\n    for i in range(n):\n        total += i\n    return total\n\ninicio = datetime.now()\nresultado = suma_lenta(1000000)\nfin = datetime.now()\n\nduracion = fin - inicio\nprint(f\"Resultado: {resultado}\")\nprint(f\"Duración: {duracion.total_seconds():.4f} segundos\")",
+          "explicacion": [
+            "<p>Este es el patrón para medir cuánto tarda algo.</p>",
+            "<ul><li>Guardas <code>inicio</code> antes de la operación.</li><li>Guardas <code>fin</code> después.</li><li>La resta da un <code>timedelta</code>.</li><li><code>.total_seconds()</code> te da la duración en segundos.</li></ul>",
+            "<p><strong>Ojo:</strong> para medir con precisión, usa <code>time.perf_counter()</code>, que es monotónico.</p>"
+          ]
+        },
+        {
+          "titulo": "Operaciones con fechas",
+          "codigo": "from datetime import datetime, timedelta\n\nhoy = datetime(2024, 3, 15)\n\n# Sumar días\nmanana = hoy + timedelta(days=1)\nsemana = hoy + timedelta(weeks=1)\nprint(manana)   # 2024-03-16\nprint(semana)   # 2024-03-22\n\n# Restar días\nayer = hoy - timedelta(days=1)\nprint(ayer)     # 2024-03-14\n\n# Diferencia entre fechas\nfecha1 = datetime(2024, 1, 1)\nfecha2 = datetime(2024, 12, 31)\ndif = fecha2 - fecha1\nprint(dif.days)   # 365",
+          "explicacion": [
+            "<p><code>timedelta</code> representa una duración. Se puede sumar o restar a un datetime.</p>",
+            "<p>La diferencia entre dos datetime da un timedelta. Puedes ver <code>.days</code>, <code>.seconds</code>, <code>.total_seconds()</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "from datetime import datetime\ndatetime.now",
+          "razon": "Falta paréntesis. Necesitas llamar a la función.",
+          "correcto": "datetime.now()"
+        },
+        {
+          "error": "Importar 'datetime' completo y usarlo como 'datetime.now()'",
+          "razon": "Si haces import datetime, necesitas datetime.datetime.now().",
+          "correcto": "from datetime import datetime   o   import datetime"
+        },
+        {
+          "error": "Comparar fechas como strings",
+          "razon": "Las comparaciones de strings no coinciden con el orden cronológico.",
+          "correcto": "Usa objetos datetime, que sí se comparan correctamente."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> para medir rendimiento, usa <code>time.perf_counter()</code> en vez de datetime. Es más preciso.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>from datetime import datetime</code> es el import más común. <code>import datetime</code> completo también sirve pero es más verboso.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>strftime</code> formatea, <code>strptime</code> parsea desde string.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, mide el tiempo de tus métodos para comparar eficiencia.</p>"
+      ],
+      "ejercicios": [
+        "Muestra la fecha y hora actual.",
+        "Formatea la fecha actual como 'día/mes/año'.",
+        "Calcula cuántos días faltan hasta el 31 de diciembre.",
+        "Suma 30 días a una fecha cualquiera.",
+        "Mide cuánto tarda en ejecutarse un bucle de 1 millón de iteraciones."
+      ],
+      "resumen": "datetime maneja fechas y horas. datetime.now() da la actual. strftime formatea. timedelta representa duraciones. Restar dos datetime da un timedelta."
+    },
+    {
+      "id": "pip-paquetes",
+      "numero": "7",
+      "titulo": "pip y paquetes externos",
+      "emoji": "📦",
+      "subtitulo": "Instalar librerías que no vienen con Python",
+      "que_es": [
+        "<p>La biblioteca estándar de Python es enorme, pero a veces necesitas librerías externas. Para eso está <strong>pip</strong>, el gestor de paquetes de Python.</p>",
+        "<p>Con <code>pip install paquete</code> instalas un paquete de PyPI (el repositorio oficial). Después lo importas como cualquier módulo.</p>",
+        "<p>Algunos paquetes esenciales para análisis numérico: <strong>numpy</strong>, <strong>scipy</strong>, <strong>matplotlib</strong>, <strong>sympy</strong>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los paquetes externos te permiten:</p>",
+        "<ul><li><strong>Álgebra lineal</strong>: numpy.</li><li><strong>Cálculo numérico</strong>: scipy.</li><li><strong>Gráficas</strong>: matplotlib.</li><li><strong>Matemática simbólica</strong>: sympy.</li><li><strong>Análisis de datos</strong>: pandas.</li></ul>"
+      ],
+      "sintaxis": "# En la terminal:\n# pip install numpy\n# pip install matplotlib\n# pip list                # ver instalados\n# pip show numpy          # info de un paquete\n# pip uninstall numpy     # desinstalar\n\n# En Python:\nimport numpy as np",
+      "ejemplos": [
+        {
+          "titulo": "numpy: álgebra lineal rápida",
+          "codigo": "import numpy as np\n\n# Crear un array\nx = np.array([1, 2, 3, 4, 5])\nprint(x)\nprint(x.dtype)   # int64\n\n# Operaciones vectorizadas\nprint(x * 2)     # [2, 4, 6, 8, 10]\nprint(x ** 2)    # [1, 4, 9, 16, 25]\nprint(np.sqrt(x))  # [1, 1.41, 1.73, 2, 2.24]",
+          "explicacion": [
+            "<p>numpy es <strong>la</strong> librería de cálculo numérico. Todo se hace con arrays que operan en bloque, sin bucles.</p>",
+            "<p>Operar con numpy es muchísimo más rápido que con listas de Python.</p>",
+            "<p>Se importa como <code>np</code> por convención universal.</p>"
+          ]
+        },
+        {
+          "titulo": "matplotlib: gráficas",
+          "codigo": "# import matplotlib.pyplot as plt\n# import numpy as np\n#\n# x = np.linspace(0, 2*np.pi, 100)\n# y = np.sin(x)\n#\n# plt.plot(x, y)\n# plt.title(\"Seno\")\n# plt.xlabel(\"x\")\n# plt.ylabel(\"sin(x)\")\n# plt.show()",
+          "explicacion": [
+            "<p>matplotlib es la librería de gráficas estándar en Python.</p>",
+            "<p><code>pyplot</code> tiene la API de estilo MATLAB. Se importa como <code>plt</code>.</p>",
+            "<p>En esta web, instala matplotlib desde la tienda para ver las gráficas.</p>"
+          ]
+        },
+        {
+          "titulo": "scipy: métodos numéricos listos",
+          "codigo": "# import numpy as np\n# from scipy.optimize import brentq\n#\n# f = lambda x: x**3 - x - 2\n# raiz = brentq(f, 1, 2)\n# print(f\"Raíz: {raiz:.10f}\")",
+          "explicacion": [
+            "<p>scipy trae métodos numéricos optimizados: búsqueda de raíces, optimización, integración, interpolación, etc.</p>",
+            "<p>Para producción, casi siempre es mejor usar scipy que implementar el método a mano.</p>",
+            "<p>Pero entender el método (como en esta guía) es esencial para saber qué usa scipy por debajo.</p>"
+          ]
+        },
+        {
+          "titulo": "Ver los paquetes instalados",
+          "codigo": "# En la terminal (no en Python):\n# pip list\n#\n# Paquete      Versión\n# -------      -------\n# numpy        1.26.4\n# matplotlib   3.8.4\n# scipy        1.11.4\n# ...\n\n# Ver info de uno:\n# pip show numpy",
+          "explicacion": [
+            "<p><code>pip list</code> muestra todo lo instalado.</p>",
+            "<p><code>pip show paquete</code> da información detallada.</p>",
+            "<p>En esta web, la tienda de extensiones hace algo similar con Pyodide.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "import numpy  sin haberlo instalado",
+          "razon": "ModuleNotFoundError. Hay que instalarlo antes.",
+          "correcto": "pip install numpy   (en la terminal)"
+        },
+        {
+          "error": "pip install numpy  en un entorno virtual equivocado",
+          "razon": "Instalas en un Python y usas otro. Suele confundir mucho.",
+          "correcto": "Verifica con 'which python' y 'pip --version'."
+        },
+        {
+          "error": "Confundir pip con python",
+          "razon": "pip se ejecuta en la terminal, no en Python.",
+          "correcto": "En Python se importa; en la terminal se instala."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> en esta web, no usas pip. Usa la <strong>tienda de extensiones</strong>. Hace lo mismo con Pyodide.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en tu equipo, usa entornos virtuales para no mezclar paquetes entre proyectos.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para análisis numérico, instala: <code>numpy matplotlib scipy sympy</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> pip a veces necesita <code>pip install --user</code> si no tienes permisos de administrador.</p>"
+      ],
+      "ejercicios": [
+        "En tu equipo, ejecuta `pip list` y observa los paquetes instalados.",
+        "Instala numpy con `pip install numpy`.",
+        "En esta web, abre la tienda de extensiones e instala numpy.",
+        "Prueba a usar numpy desde el editor de esta web."
+      ],
+      "resumen": "pip instala paquetes de PyPI. numpy, scipy, matplotlib, sympy son los esenciales para análisis numérico. En esta web, usa la tienda de extensiones en lugar de pip."
+    },
+    {
+      "id": "organizacion",
+      "numero": "8",
+      "titulo": "Organizar un proyecto en módulos",
+      "emoji": "🗂️",
+      "subtitulo": "Cómo estructurar código en varios archivos",
+      "que_es": [
+        "<p>Cuando un programa crece, tener todo en un archivo se vuelve inmanejable. La solución es dividirlo en <strong>módulos</strong> y <strong>paquetes</strong>.</p>",
+        "<ul><li><strong>Módulo</strong>: un archivo .py.</li><li><strong>Paquete</strong>: una carpeta con varios módulos y un archivo <code>__init__.py</code>.</li></ul>",
+        "<p>Así puedes agrupar funcionalidad relacionada y mantener cada pieza pequeña y enfocada.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Una buena organización te da:</p>",
+        "<ul><li><strong>Mantenibilidad</strong>: encuentras las cosas rápido.</li><li><strong>Reutilización</strong>: importas módulos desde varios sitios.</li><li><strong>Testabilidad</strong>: pruebas cada módulo por separado.</li><li><strong>Trabajo en equipo</strong>: cada persona en su archivo.</li></ul>"
+      ],
+      "sintaxis": "# Estructura de un proyecto\n#\n# mi_proyecto/\n# ├── main.py\n# ├── metodos/\n# │   ├── __init__.py\n# │   ├── biseccion.py\n# │   ├── newton.py\n# │   └── punto_fijo.py\n# ├── utils/\n# │   ├── __init__.py\n# │   └── errores.py\n# └── datos/\n#     └── entrada.txt",
+      "ejemplos": [
+        {
+          "titulo": "Estructura típica de un proyecto numérico",
+          "codigo": "# mi_proyecto/\n# │\n# ├── main.py               ← punto de entrada\n# ├── metodos/\n# │   ├── __init__.py       ← marca la carpeta como paquete\n# │   ├── biseccion.py\n# │   ├── newton.py\n# │   └── punto_fijo.py\n# └── utils/\n#     ├── __init__.py\n#     └── validaciones.py",
+          "explicacion": [
+            "<p>La carpeta <code>metodos/</code> es un paquete porque tiene <code>__init__.py</code>.</p>",
+            "<p>Cada método tiene su propio archivo. Así cada uno es fácil de leer y probar.</p>"
+          ]
+        },
+        {
+          "titulo": "Contenido de metodos/biseccion.py",
+          "codigo": "# metodos/biseccion.py\n\ndef biseccion(f, a, b, tol=1e-8, max_iter=100):\n    \"\"\"Encuentra una raíz de f en [a, b] por bisección.\"\"\"\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol:\n            return c, k\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    return c, max_iter",
+          "explicacion": [
+            "<p>El módulo solo contiene la función <code>biseccion</code>. Nada más.</p>",
+            "<p>Esto lo hace fácil de probar y de mantener.</p>"
+          ]
+        },
+        {
+          "titulo": "Contenido de main.py",
+          "codigo": "# main.py\nfrom metodos.biseccion import biseccion\nfrom metodos.newton import newton\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\nraiz1, it1 = biseccion(f, 1, 2)\nraiz2, it2 = newton(f, df, 1.5)\n\nprint(f\"Bisección: {raiz1:.10f} en {it1} iteraciones\")\nprint(f\"Newton:    {raiz2:.10f} en {it2} iteraciones\")",
+          "explicacion": [
+            "<p>El archivo principal importa los métodos desde el paquete <code>metodos</code>.</p>",
+            "<p>Usa <code>from metodos.biseccion import biseccion</code> para importar la función específica.</p>",
+            "<p>Así el código está limpio: solo se ve la lógica del programa principal.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Olvidar el __init__.py en un paquete",
+          "razon": "Sin él, Python 3.x aún puede importar, pero es más seguro y tradicional tenerlo.",
+          "correcto": "Crea un archivo __init__.py vacío en cada carpeta de paquete."
+        },
+        {
+          "error": "Importar módulos con rutas absolutas",
+          "razon": "El código deja de ser portable.",
+          "correcto": "Usa imports relativos o mantén una estructura clara."
+        },
+        {
+          "error": "Meter todo en main.py",
+          "razon": "El archivo se vuelve enorme e inmanejable.",
+          "correcto": "Divide en módulos por responsabilidad."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> una regla: si un archivo pasa de 300 líneas, divídelo.</p>",
+        "<p>💡 <strong>Truco 2:</strong> agrupa por responsabilidad, no por tipo: <code>metodos/</code>, <code>visualizacion/</code>, <code>datos/</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> el archivo <code>main.py</code> es solo el punto de entrada. La lógica va en los módulos.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en proyectos numéricos grandes, esto permite tener cada método en su propio archivo y probarlos por separado.</p>"
+      ],
+      "ejercicios": [
+        "Crea una carpeta `metodos/` con un `__init__.py` vacío.",
+        "Dentro, crea `biseccion.py` con una función `biseccion`.",
+        "En el archivo principal, importa y usa esa función.",
+        "Añade otro módulo `newton.py` con el método de Newton.",
+        "Organiza tu código para que `main.py` solo llame a las funciones importadas."
+      ],
+      "resumen": "Organiza proyectos grandes en módulos (archivos .py) y paquetes (carpetas con __init__.py). Cada método en su archivo. El main.py solo importa y llama. Es la base de proyectos mantenibles."
+    }
+  ]
+}

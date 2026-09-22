@@ -1,0 +1,429 @@
+{
+  "parte": 6,
+  "titulo": "Sets y diccionarios",
+  "emoji": "🎯",
+  "descripcion": "Ya viste listas y tuplas. Ahora toca dos colecciones muy distintas: los sets (conjuntos sin orden ni duplicados) y los diccionarios (pares clave-valor). Son las estructuras más potentes de Python para organizar datos por nombre en lugar de por posición.",
+  "temas": [
+    {
+      "id": "sets",
+      "numero": "1",
+      "titulo": "Sets — Colecciones sin duplicados",
+      "emoji": "🎯",
+      "subtitulo": "Conjuntos matemáticos en Python",
+      "que_es": [
+        "<p>Un <strong>set</strong> (conjunto) es una colección <strong>sin orden</strong> y <strong>sin duplicados</strong>. Se escribe entre llaves <code>{}</code>, igual que los diccionarios, pero sin pares clave-valor.</p>",
+        "<p>Si intentas agregar un elemento que ya está, no pasa nada: los sets no permiten repetidos.</p>",
+        "<p>Son muy rápidos para verificar pertenencia (<code>x in set</code>). En cambio, no puedes acceder por índice porque no tienen orden.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los sets se usan para:</p>",
+        "<ul><li><strong>Eliminar duplicados</strong>: convertir una lista a set.</li><li><strong>Pertenencia rápida</strong>: verificar si algo está en el conjunto.</li><li><strong>Operaciones matemáticas</strong>: unión, intersección, diferencia.</li><li><strong>Comparar colecciones</strong>: qué elementos tienen en común.</li></ul>"
+      ],
+      "sintaxis": "s = set()               # set vacío (¡no uses {} para vacío!)\ns = {1, 2, 3}          # set con elementos\ns = set([1, 2, 2, 3])  # desde lista, elimina duplicados\n\ns.add(x)        # agregar\ns.remove(x)     # quitar (error si no existe)\ns.discard(x)    # quitar (sin error)\ns | t           # unión\ns & t           # intersección\ns - t           # diferencia",
+      "ejemplos": [
+        {
+          "titulo": "Crear y agregar",
+          "codigo": "s = {1, 2, 3}\n\ns.add(4)\nprint(s)   # {1, 2, 3, 4}\n\ns.add(2)   # ya existe, no pasa nada\nprint(s)   # {1, 2, 3, 4}\n\ns.remove(3)\nprint(s)   # {1, 2, 4}",
+          "explicacion": [
+            "<p>Los sets no permiten duplicados. Agregar un elemento que ya existe no hace nada.</p>",
+            "<p><code>.remove(x)</code> da KeyError si x no existe. <code>.discard(x)</code> no da error.</p>"
+          ]
+        },
+        {
+          "titulo": "Eliminar duplicados de una lista",
+          "codigo": "numeros = [1, 2, 2, 3, 3, 3, 4, 4, 4, 4]\n\nsin_duplicados = list(set(numeros))\nprint(sin_duplicados)   # [1, 2, 3, 4]",
+          "explicacion": [
+            "<p>El truco más útil: convertir a set elimina automáticamente los duplicados.</p>",
+            "<p><strong>Ojo:</strong> el orden puede no conservarse. Si importa el orden, hay que hacerlo de otra forma.</p>"
+          ]
+        },
+        {
+          "titulo": "Operaciones matemáticas",
+          "codigo": "a = {1, 2, 3, 4}\nb = {3, 4, 5, 6}\n\nprint(a | b)   # unión: {1, 2, 3, 4, 5, 6}\nprint(a & b)   # intersección: {3, 4}\nprint(a - b)   # diferencia: {1, 2}\nprint(a ^ b)   # diferencia simétrica: {1, 2, 5, 6}",
+          "explicacion": [
+            "<p>Los sets soportan las operaciones de conjuntos matemáticos:</p>",
+            "<ul><li><code>|</code> → unión (todos los elementos).</li><li><code>&</code> → intersección (los que están en ambos).</li><li><code>-</code> → diferencia (los que están en a pero no en b).</li><li><code>^</code> → diferencia simétrica (los que están en uno pero no en ambos).</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Pertenencia rápida",
+          "codigo": "grande = set(range(1000000))\n\n# Verificar si 999999 está:\nprint(999999 in grande)   # True (instantáneo)\n\n# Comparar con lista:\nimport time\nlista = list(range(1000000))\nt0 = time.time()\nprint(999999 in lista)\nt1 = time.time()\nprint(f\"Lista: {t1-t0:.6f} segundos\")\n\nt0 = time.time()\nprint(999999 in grande)\nt1 = time.time()\nprint(f\"Set: {t1-t0:.6f} segundos\")",
+          "explicacion": [
+            "<p>Buscar en un set es <strong>mucho más rápido</strong> que en una lista:</p>",
+            "<ul><li>Lista: O(n) — recorre todos los elementos.</li><li>Set: O(1) — búsqueda directa por hash.</li></ul>",
+            "<p>Si haces muchas verificaciones de pertenencia, usa sets.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "s = {}   esperando set vacío",
+          "razon": "{} crea un diccionario vacío, no un set. Para set vacío: set().",
+          "correcto": "s = set()"
+        },
+        {
+          "error": "s[0]",
+          "razon": "Los sets no tienen orden, no se pueden indexar.",
+          "correcto": "Para acceder por posición, convierte a lista: list(s)[0]"
+        },
+        {
+          "error": "s.add([1, 2])",
+          "razon": "Las listas no son hashables. No pueden ser elementos de un set.",
+          "correcto": "s.add((1, 2))   # tuplas sí"
+        },
+        {
+          "error": "s.remove(x)  cuando x no existe",
+          "razon": "Da KeyError.",
+          "correcto": "s.discard(x)   # sin error"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> para eliminar duplicados: <code>list(set(lista))</code>. Es lo más simple.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>in</code> en un set es O(1). Si haces muchas búsquedas, usa set.</p>",
+        "<p>💡 <strong>Truco 3:</strong> los sets no conservan el orden. Si lo necesitas, usa <code>dict.fromkeys(lista)</code> en su lugar (en Python 3.7+).</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, los sets sirven para verificar pertenencia rápida a un conjunto de valores.</p>"
+      ],
+      "ejercicios": [
+        "Convierte [1, 2, 2, 3, 3, 3] en un set y muestra el resultado.",
+        "Une los sets {1, 2, 3} y {3, 4, 5}.",
+        "Encuentra la intersección de {1, 2, 3} y {2, 3, 4}.",
+        "Verifica si 5 está en un set de los números del 1 al 10.",
+        "Diferencia simétrica entre {1, 2, 3} y {2, 3, 4}."
+      ],
+      "resumen": "Los sets son colecciones sin orden ni duplicados. Sirven para eliminar repetidos, verificar pertenencia rápido y hacer operaciones matemáticas (unión, intersección, diferencia). El set vacío es set(), no {}."
+    },
+    {
+      "id": "diccionarios",
+      "numero": "2",
+      "titulo": "Diccionarios — Pares clave-valor",
+      "emoji": "📖",
+      "subtitulo": "Buscar valores por su nombre, no por su posición",
+      "que_es": [
+        "<p>Un <strong>diccionario</strong> guarda pares <strong>clave-valor</strong>. Se escribe entre llaves <code>{}</code>.</p>",
+        "<p>En vez de acceder por índice (0, 1, 2...), accedes por <strong>clave</strong> (un nombre, un número, una tupla). Cada clave tiene un valor asociado.</p>",
+        "<p>Son muy rápidos para buscar: no recorren toda la estructura, usan una tabla hash interna.</p>",
+        "<p>Las claves deben ser <strong>únicas</strong> y <strong>hashables</strong> (strings, números, tuplas). Los valores pueden ser cualquier cosa.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los diccionarios se usan para:</p>",
+        "<ul><li><strong>Datos etiquetados</strong>: <code>{\"nombre\": \"Ana\", \"edad\": 25}</code>.</li><li><strong>Conteos</strong>: cuántas veces aparece cada palabra.</li><li><strong>Configuraciones</strong>: parámetros por nombre.</li><li><strong>Cachés</strong>: resultados ya calculados.</li><li><strong>Estructuras JSON</strong>: al leer/escribir datos.</li></ul>"
+      ],
+      "sintaxis": "d = {}                              # vacío\nd = {\"a\": 1, \"b\": 2}                # con pares\nd = dict(a=1, b=2)                  # constructor\n\n# Acceso\nd[\"a\"]         # valor de la clave \"a\"\nd.get(\"x\", 0) # valor o default si no existe\n\n# Modificación\nd[\"c\"] = 3\n\n# Iteración\nfor k in d: ...\nfor k, v in d.items(): ...",
+      "ejemplos": [
+        {
+          "titulo": "Crear y acceder",
+          "codigo": "persona = {\n    \"nombre\": \"Ana\",\n    \"edad\": 25,\n    \"ciudad\": \"Madrid\"\n}\n\nprint(persona[\"nombre\"])   # Ana\nprint(persona[\"edad\"])     # 25\n\n# Clave que no existe:\n# print(persona[\"email\"])   # KeyError\nprint(persona.get(\"email\"))       # None\nprint(persona.get(\"email\", \"N/A\"))  # N/A",
+          "explicacion": [
+            "<p>Se accede por clave: <code>d[\"nombre\"]</code>.</p>",
+            "<p>Si la clave no existe, <code>d[clave]</code> da <code>KeyError</code>. Con <code>.get()</code> puedes devolver un valor por defecto.</p>"
+          ]
+        },
+        {
+          "titulo": "Modificar y agregar",
+          "codigo": "persona = {\"nombre\": \"Ana\"}\n\npersona[\"edad\"] = 25          # agregar\npersona[\"nombre\"] = \"Ana María\"   # modificar\n\ndel persona[\"edad\"]           # eliminar\n\nprint(persona)   # {'nombre': 'Ana María'}",
+          "explicacion": [
+            "<p>Asignar a una clave que existe la modifica. Asignar a una que no existe la crea.</p>",
+            "<p><code>del d[clave]</code> elimina un par.</p>"
+          ]
+        },
+        {
+          "titulo": "Recorrer un diccionario",
+          "codigo": "persona = {\"nombre\": \"Ana\", \"edad\": 25, \"ciudad\": \"Madrid\"}\n\n# Claves\nfor k in persona:\n    print(k)\n\n# Valores\nfor v in persona.values():\n    print(v)\n\n# Pares\nfor k, v in persona.items():\n    print(f\"{k}: {v}\")",
+          "explicacion": [
+            "<p>Se puede recorrer de varias formas:</p>",
+            "<ul><li><code>for k in d</code> → claves.</li><li><code>d.values()</code> → valores.</li><li><code>d.items()</code> → pares (clave, valor).</li><li><code>d.keys()</code> → claves (equivalente al primero).</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Contar ocurrencias (patrón clásico)",
+          "codigo": "texto = \"hola mundo hola python hola\"\npalabras = texto.split()\n\nconteo = {}\nfor p in palabras:\n    conteo[p] = conteo.get(p, 0) + 1\n\nprint(conteo)\n# {'hola': 3, 'mundo': 1, 'python': 1}",
+          "explicacion": [
+            "<p>Este es <strong>el patrón más útil</strong> con diccionarios: contar cosas.</p>",
+            "<p><code>conteo.get(p, 0)</code> devuelve el conteo actual o 0 si no existe. Le sumas 1 y lo guardas.</p>",
+            "<p>Es la forma estándar de contar ocurrencias. Lo usarás muchas veces.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "persona[\"email\"]  cuando no existe",
+          "razon": "Da KeyError.",
+          "correcto": "persona.get(\"email\")   o   if \"email\" in persona:"
+        },
+        {
+          "error": "Usar una lista como clave",
+          "razon": "Las listas no son hashables. Da TypeError.",
+          "correcto": "Usa tuplas: d[(1, 2)] = valor"
+        },
+        {
+          "error": "for k in d: print(d[k])",
+          "razon": "Funciona, pero es menos limpio que iterar por items().",
+          "correcto": "for k, v in d.items(): print(v)"
+        },
+        {
+          "error": "Modificar el diccionario mientras iteras",
+          "razon": "Puede dar RuntimeError.",
+          "correcto": "for k in list(d.keys()): ..."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>d.get(clave, default)</code> es tu mejor amigo. Evita KeyError.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para contar: <code>conteo[x] = conteo.get(x, 0) + 1</code>. Memorízalo.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>d.update(otro_dict)</code> fusiona dos diccionarios.</p>",
+        "<p>💡 <strong>Truco 4:</strong> desde Python 3.7, los diccionarios conservan el orden de inserción.</p>",
+        "<p>💡 <strong>Truco 5:</strong> en análisis numérico, los diccionarios son útiles para guardar parámetros de un método:</p>",
+        "<pre class='cmd-sintaxis'>params = {\"tol\": 1e-8, \"max_iter\": 100, \"metodo\": \"biseccion\"}</pre>"
+      ],
+      "ejercicios": [
+        "Crea un diccionario con tu nombre, edad y ciudad.",
+        "Añade una clave 'email' y luego elimina 'ciudad'.",
+        "Recorre el diccionario mostrando clave y valor.",
+        "Cuenta cuántas veces aparece cada palabra en 'hola mundo hola'.",
+        "Usa `get` para obtener un valor que no existe sin dar error."
+      ],
+      "resumen": "Los diccionarios guardan pares clave-valor entre {}. Se accede por clave, se modifica con asignación. .get() evita KeyError. El patrón de conteo con .get(x, 0) + 1 es fundamental."
+    },
+    {
+      "id": "metodos-diccionarios",
+      "numero": "3",
+      "titulo": "Métodos de diccionarios",
+      "emoji": "🛠️",
+      "subtitulo": "Las operaciones más útiles con diccionarios",
+      "que_es": [
+        "<p>Los diccionarios tienen muchos <strong>métodos</strong> incorporados para consultar claves, valores, agregar, quitar y fusionar.</p>",
+        "<p>Algunos devuelven vistas (que se actualizan si el diccionario cambia). Otros devuelven listas o modifican el diccionario.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usan a diario:</p>",
+        "<ul><li><strong>Consultar</strong>: <code>keys()</code>, <code>values()</code>, <code>items()</code>.</li><li><strong>Agregar</strong>: <code>update()</code>, <code>setdefault()</code>.</li><li><strong>Quitar</strong>: <code>pop()</code>, <code>popitem()</code>, <code>clear()</code>.</li><li><strong>Copiar</strong>: <code>copy()</code>.</li></ul>"
+      ],
+      "sintaxis": "d.keys()                # vista de claves\nd.values()              # vista de valores\nd.items()               # vista de pares\nd.get(k, default)       # valor o default\nd.setdefault(k, def)    # valor o crea con def\nd.update(otro)          # fusionar\nd.pop(k)                # quitar y devolver\nd.popitem()             # quitar el último par\nd.clear()               # vaciar\nd.copy()                # copia superficial",
+      "ejemplos": [
+        {
+          "titulo": "Consultar claves, valores y pares",
+          "codigo": "persona = {\"nombre\": \"Ana\", \"edad\": 25, \"ciudad\": \"Madrid\"}\n\nprint(list(persona.keys()))     # ['nombre', 'edad', 'ciudad']\nprint(list(persona.values()))   # ['Ana', 25, 'Madrid']\nprint(list(persona.items()))    # [('nombre', 'Ana'), ...]",
+          "explicacion": [
+            "<p><code>.keys()</code>, <code>.values()</code> e <code>.items()</code> devuelven <strong>vistas</strong>. Si quieres una lista, envuélvelas en <code>list()</code>.</p>",
+            "<p><code>.items()</code> es la más útil: devuelve pares (clave, valor).</p>"
+          ]
+        },
+        {
+          "titulo": "Fusionar con update",
+          "codigo": "a = {\"x\": 1, \"y\": 2}\nb = {\"y\": 20, \"z\": 30}\n\na.update(b)\nprint(a)   # {'x': 1, 'y': 20, 'z': 30}",
+          "explicacion": [
+            "<p><code>.update()</code> fusiona b dentro de a. Si hay claves repetidas, gana el valor de b.</p>",
+            "<p>Modifica a, no devuelve nada.</p>"
+          ]
+        },
+        {
+          "titulo": "setdefault: valor por defecto si no existe",
+          "codigo": "conteo = {}\n\nconteo.setdefault(\"a\", []).append(1)\nconteo.setdefault(\"a\", []).append(2)\nconteo.setdefault(\"b\", []).append(10)\n\nprint(conteo)   # {'a': [1, 2], 'b': [10]}",
+          "explicacion": [
+            "<p><code>.setdefault(k, def)</code> devuelve el valor de k si existe, o lo crea con def si no.</p>",
+            "<p>Es útil para inicializar listas en diccionarios sin comprobar antes.</p>"
+          ]
+        },
+        {
+          "titulo": "pop y popitem",
+          "codigo": "d = {\"a\": 1, \"b\": 2, \"c\": 3}\n\nvalor = d.pop(\"b\")\nprint(valor)   # 2\nprint(d)       # {'a': 1, 'c': 3}\n\npar = d.popitem()\nprint(par)     # ('c', 3)\nprint(d)       # {'a': 1}",
+          "explicacion": [
+            "<p><code>pop(k)</code> elimina y devuelve el valor de la clave k.</p>",
+            "<p><code>popitem()</code> elimina y devuelve el último par agregado (LIFO).</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "d.keys()[0]",
+          "razon": "Las vistas no son indexables.",
+          "correcto": "list(d.keys())[0]"
+        },
+        {
+          "error": "d.pop(k)  cuando k no existe",
+          "razon": "Da KeyError.",
+          "correcto": "d.pop(k, None)   # devuelve None si no existe"
+        },
+        {
+          "error": "Modificar un diccionario mientras lo recorres con items()",
+          "razon": "Da RuntimeError.",
+          "correcto": "for k, v in list(d.items()): ..."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>d.get(k, 0) + 1</code> es el patrón de conteo. No lo olvides.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>setdefault(k, [])</code> es ideal para agrupar valores en listas.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>dict.fromkeys(lista, valor)</code> crea un diccionario con claves de la lista y el mismo valor.</p>",
+        "<p>💡 <strong>Truco 4:</strong> desde Python 3.9, puedes fusionar con <code>a | b</code> (operador).</p>"
+      ],
+      "ejercicios": [
+        "Crea un diccionario y muestra sus claves con `keys`.",
+        "Fusiona dos diccionarios con `update`.",
+        "Usa `setdefault` para agrupar números en pares e impares.",
+        "Elimina una clave con `pop` y guarda el valor.",
+        "Usa `popitem` para sacar el último par agregado."
+      ],
+      "resumen": "Los métodos de diccionarios permiten consultar (keys, values, items), fusionar (update), inicializar (setdefault), quitar (pop, popitem) y copiar (copy). items() es el más usado para recorrer."
+    },
+    {
+      "id": "comprensiones-dict",
+      "numero": "4",
+      "titulo": "Comprensiones de diccionarios y sets",
+      "emoji": "⚡",
+      "subtitulo": "Crear diccionarios y sets de forma compacta",
+      "que_es": [
+        "<p>Ya viste las comprensiones de listas. Existen también para diccionarios y sets, con sintaxis muy parecidas.</p>",
+        "<ul><li>Lista: <code>[exp for x in it]</code>.</li><li>Set: <code>{exp for x in it}</code>.</li><li>Diccionario: <code>{clave: valor for x in it}</code>.</li></ul>",
+        "<p>Son formas compactas de construir colecciones a partir de otras, aplicando transformaciones o filtros.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usan para:</p>",
+        "<ul><li><strong>Construir diccionarios de conteo</strong>.</li><li><strong>Transformar listas a sets</strong> eliminando duplicados.</li><li><strong>Invertir diccionarios</strong>: cambiar claves por valores.</li><li><strong>Filtrar y transformar</strong> en una línea.</li></ul>"
+      ],
+      "sintaxis": "# Comprensión de set\n{expresion for x in iterable if condicion}\n\n# Comprensión de diccionario\n{clave: valor for x in iterable if condicion}",
+      "ejemplos": [
+        {
+          "titulo": "Set por comprensión",
+          "codigo": "cuadrados_unicos = {x**2 for x in [1, 1, 2, 2, 3, 3]}\nprint(cuadrados_unicos)   # {1, 4, 9}\n\nletras = {c.lower() for c in \"Hola Mundo\" if c.isalpha()}\nprint(letras)   # {'h', 'o', 'l', 'a', 'm', 'u', 'n', 'd'}",
+          "explicacion": [
+            "<p>Igual que las listas por comprensión, pero con <code>{}</code>. El resultado es un set, así que elimina duplicados automáticamente.</p>"
+          ]
+        },
+        {
+          "titulo": "Diccionario por comprensión",
+          "codigo": "numeros = [1, 2, 3, 4]\ncuadrados = {x: x**2 for x in numeros}\nprint(cuadrados)   # {1: 1, 2: 4, 3: 9, 4: 16}",
+          "explicacion": [
+            "<p>La sintaxis es <code>{clave: valor for x in iterable}</code>.</p>",
+            "<p>Para cada x, se crea un par clave-valor. En este caso, x es la clave y x**2 el valor.</p>"
+          ]
+        },
+        {
+          "titulo": "Invertir un diccionario",
+          "codigo": "original = {\"a\": 1, \"b\": 2, \"c\": 3}\ninvertido = {v: k for k, v in original.items()}\nprint(invertido)   # {1: 'a', 2: 'b', 3: 'c'}",
+          "explicacion": [
+            "<p>Patrón muy útil: intercambiar claves por valores.</p>",
+            "<p><code>for k, v in original.items()</code> da cada par. La comprensión crea el par invertido.</p>",
+            "<p><strong>Ojo:</strong> si hay valores duplicados, se pierden claves. Los diccionarios no permiten claves repetidas.</p>"
+          ]
+        },
+        {
+          "titulo": "Filtrar un diccionario",
+          "codigo": "edades = {\"Ana\": 25, \"Luis\": 17, \"Eva\": 30, \"Pedro\": 15}\n\nmayores = {n: e for n, e in edades.items() if e >= 18}\nprint(mayores)   # {'Ana': 25, 'Eva': 30}",
+          "explicacion": [
+            "<p>Puedes filtrar los pares de un diccionario con un <code>if</code>.</p>",
+            "<p>Útil para seleccionar solo los elementos que cumplen cierta condición.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "{x for x in [1,2,3]}  esperando diccionario",
+          "razon": "Es un set, no un diccionario. Para diccionario necesitas pares clave: valor.",
+          "correcto": "{x: x*2 for x in [1,2,3]}   # diccionario"
+        },
+        {
+          "error": "Claves duplicadas en comprensión de dict",
+          "razon": "Si dos pares tienen la misma clave, el último gana. Silenciosamente.",
+          "correcto": "Verifica que las claves sean únicas."
+        },
+        {
+          "error": "Comprensiones muy complejas",
+          "razon": "Si tienen muchos if anidados o lógica complicada, mejor un bucle normal.",
+          "correcto": "Prioriza la legibilidad."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>{x: x**2 for x in range(10)}</code> genera un diccionario de cuadrados rápidamente.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para contar palabras: <code>{p: palabras.count(p) for p in set(palabras)}</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, las comprensiones son útiles para construir diccionarios de parámetros o resultados por método.</p>"
+      ],
+      "ejercicios": [
+        "Crea un diccionario con los cuadrados del 1 al 5 usando comprensión.",
+        "Invierte el diccionario {'a': 1, 'b': 2}.",
+        "Filtra las edades mayores a 18 del diccionario {'Ana': 25, 'Luis': 17}.",
+        "Crea un set con los cuadrados únicos de [1, 1, 2, 2, 3].",
+        "Crea un diccionario de palabras y su longitud para ['hola', 'mundo']."
+      ],
+      "resumen": "Existen comprensiones para sets ({expr for x in it}) y diccionarios ({k: v for x in it}). Sirven para crear colecciones complejas en una línea. Patrón útil: invertir diccionarios."
+    },
+    {
+      "id": "cuando-usar",
+      "numero": "5",
+      "titulo": "¿Cuándo usar cada colección?",
+      "emoji": "🤔",
+      "subtitulo": "Guía para elegir la estructura correcta",
+      "que_es": [
+        "<p>Python tiene 4 tipos principales de colecciones: <code>list</code>, <code>tuple</code>, <code>dict</code>, <code>set</code>. Cada uno tiene sus ventajas y sus casos de uso. Elegir bien es parte de escribir buen código.</p>",
+        "<p>Esta guía te ayuda a decidir cuál usar según el problema.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Saber elegir la colección adecuada te da:</p>",
+        "<ul><li><strong>Código más rápido</strong>: cada estructura tiene sus fortalezas.</li><li><strong>Código más limpio</strong>: la estructura correcta dice qué estás haciendo.</li><li><strong>Menos bugs</strong>: algunas operaciones son seguras en ciertas estructuras.</li></ul>"
+      ],
+      "sintaxis": "list  → cuando importa el orden y puede cambiar\ntuple → cuando NO debe cambiar\ndict  → cuando accedes por nombre/clave\nset   → cuando solo importa si algo está o no",
+      "ejemplos": [
+        {
+          "titulo": "Lista vs Tupla",
+          "codigo": "# Lista: valores que cambian\nprecios = [100, 200, 300]\nprecios.append(400)   # OK\n\n# Tupla: valores fijos\ncoordenadas = (10.5, -3.2)\n# coordenadas[0] = 5   # Error\n\n# Cuándo usar cada una:\n# Lista  → edades, temperaturas, resultados, acumuladores\n# Tupla  → coordenadas, RGB, parámetros fijos, return múltiple",
+          "explicacion": [
+            "<p><strong>Lista</strong> si los valores van a cambiar.</p>",
+            "<p><strong>Tupla</strong> si son constantes y quieres garantizar que no se modifiquen.</p>"
+          ]
+        },
+        {
+          "titulo": "Lista vs Set",
+          "codigo": "# Lista: orden, duplicados, índices\nnumeros = [3, 1, 2, 1, 3]\nprint(numeros[0])       # 3\nprint(numeros.count(1)) # 2\n\n# Set: sin duplicados, sin orden, búsqueda rápida\nunicos = {3, 1, 2}\nprint(2 in unicos)      # True (muy rápido)\n\n# Cuándo usar cada uno:\n# Lista → orden importa, puedes tener duplicados, necesitas índice\n# Set   → solo importa si algo está o no, sin duplicados",
+          "explicacion": [
+            "<p><strong>Lista</strong> si necesitas orden, índices o elementos repetidos.</p>",
+            "<p><strong>Set</strong> si solo te importa la pertenencia y no quieres duplicados.</p>"
+          ]
+        },
+        {
+          "titulo": "Dict vs el resto",
+          "codigo": "# Dict: acceder por clave, no por índice\npersona = {\"nombre\": \"Ana\", \"edad\": 25}\nprint(persona[\"nombre\"])\n\n# Equivalente con lista y tupla:\npersona2 = [(\"nombre\", \"Ana\"), (\"edad\", 25)]\n# mucho más incómodo\n\n# Cuándo usar dict:\n# - Acceso por nombre/clave\n# - Datos etiquetados\n# - Contar cosas\n# - Configuraciones",
+          "explicacion": [
+            "<p><strong>Diccionario</strong> cuando necesitas acceder por nombre, no por posición.</p>",
+            "<p>También para contar, cachear, o etiquetar datos.</p>"
+          ]
+        },
+        {
+          "titulo": "Tabla resumen",
+          "codigo": "# Tabla de decisión\n#\n# ¿Los valores van a cambiar?\n#   Sí → list\n#   No → tuple\n#\n# ¿Necesitas acceder por nombre/clave?\n#   Sí → dict\n#\n# ¿Solo te importa si algo está o no?\n#   Sí → set\n#\n# ¿Necesitas orden?\n#   Sí → list o tuple\n#   No → set o dict (aunque dict conserva orden en 3.7+)",
+          "explicacion": [
+            "<p>Pregúntate esto en orden y sabrás qué usar. La mayoría de las veces será <code>list</code> o <code>dict</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar list para búsquedas frecuentes",
+          "razon": "list es O(n) para 'in'. Si haces muchas búsquedas, usa set.",
+          "correcto": "Si buscas mucho: set\nSi accedes por índice: list"
+        },
+        {
+          "error": "Usar dict donde bastaría una lista",
+          "razon": "Los dicts ocupan más memoria y son más lentos si solo necesitas orden.",
+          "correcto": "Si solo necesitas una secuencia ordenada: list"
+        },
+        {
+          "error": "Usar tuple donde necesitas modificar",
+          "razon": "Las tuplas son inmutables. Si tienes que cambiar algo, usa list.",
+          "correcto": "¿Va a cambiar? list. ¿No? tuple."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> por defecto, piensa en <code>list</code>. Cambia a otra solo si hay razón clara.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para contar y acceder por clave, <code>dict</code>. Para verificar pertenencia, <code>set</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico: listas para iteraciones, tuplas para resultados fijos, dicts para parámetros, sets para conjuntos de valores.</p>",
+        "<p>💡 <strong>Truco 4:</strong> si dudas entre list y set, pregúntate: ¿importa el orden y los duplicados? Si sí → list. Si no → set.</p>"
+      ],
+      "ejercicios": [
+        "Elige la colección correcta para guardar las temperaturas de la semana. ¿List, tuple, dict o set?",
+        "Elige la colección correcta para guardar las coordenadas (x, y) de un punto.",
+        "Elige la colección correcta para guardar las edades de tus amigos por nombre.",
+        "Elige la colección correcta para guardar las palabras únicas de un texto.",
+        "Convierte una lista con duplicados en un set para ver los valores únicos."
+      ],
+      "resumen": "Usa list para secuencias mutables, tuple para fijas, dict para acceso por clave, set para pertenencia rápida. Por defecto list; cambia solo si hay razón clara."
+    }
+  ]
+}

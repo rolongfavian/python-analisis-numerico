@@ -1,11 +1,11 @@
 {
   "parte": 2,
-  "titulo": "Tipos de datos",
+  "titulo": "Variables y tipos",
   "emoji": "🔢",
-  "descripcion": "En Python, cada valor tiene un tipo: no es lo mismo un número que un texto, ni un booleano que un decimal. Conocer los tipos es fundamental para saber qué puedes hacer con cada valor y qué no.",
+  "descripcion": "Ya sabes crear variables. Ahora vamos a profundizar en los tipos de datos: qué es un número entero, un decimal, un texto, un booleano, y por qué Python distingue entre ellos. Conocer los tipos es esencial para no mezclar cosas que no se pueden mezclar.",
   "temas": [
     {
-      "id": "que-son-tipos",
+      "id": "tipos-de-datos",
       "numero": "1",
       "titulo": "¿Qué es un tipo de dato?",
       "emoji": "🏷️",
@@ -59,13 +59,19 @@
         {
           "error": "print(type(5))  →  esperando solo 'int'",
           "razon": "Python devuelve <class 'int'>, no int a secas. Es una representación de objeto.",
-          "correcto": "Acepta que devuelve <class 'X'> y usa .__name__ si quieres solo el nombre:\nprint(type(5).__name__)  →  'int'"
+          "correcto": "print(type(5).__name__)  →  'int'"
         }
       ],
       "tips": [
         "<p>💡 <strong>Truco 1:</strong> <code>print(type(x).__name__)</code> te da solo el nombre del tipo, sin <code>&lt;class '...'&gt;</code>.</p>",
         "<p>💡 <strong>Truco 2:</strong> puedes verificar si un valor es de un tipo con <code>isinstance(x, int)</code>. Devuelve True o False.</p>",
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, casi todo son <code>float</code>. Los <code>int</code> se usan para contadores (iteraciones, índices).</p>"
+      ],
+      "ejercicios": [
+        "Muestra el tipo de: 5, 3.14, 'hola', True, None, [1,2,3], {'a':1}.",
+        "Crea dos variables, una con `5` y otra con `'5'`, y muestra la suma de cada una consigo misma.",
+        "Verifica con `isinstance` si 3.14 es float y si es int.",
+        "Predice el tipo resultante de `10 / 2` y compruébalo con `type()`."
       ],
       "resumen": "Cada valor en Python tiene un tipo que determina qué puedes hacer con él. Los más comunes son int, float, str, bool y None. Se consultan con type()."
     },
@@ -133,6 +139,12 @@
         "<p>💡 <strong>Truco 1:</strong> puedes usar <code>_</code> para separar miles: <code>1_000_000</code> es igual a <code>1000000</code>, pero más legible.</p>",
         "<p>💡 <strong>Truco 2:</strong> <code>divmod(a, b)</code> devuelve una tupla con el cociente y el resto: <code>divmod(17, 5)</code> → <code>(3, 2)</code>.</p>",
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, usa int para <code>max_iter</code>, <code>k</code> (iteración), y float para <code>tol</code>, <code>error</code>, <code>raiz</code>.</p>"
+      ],
+      "ejercicios": [
+        "Convierte 5000 segundos a horas, minutos y segundos.",
+        "Calcula 2 elevado a 100 sin usar una calculadora.",
+        "Verifica si 17 es divisible por 5 usando el operador `%`.",
+        "Usa `divmod` para obtener el cociente y el resto de 100 ÷ 7."
       ],
       "resumen": "int es un número sin decimales. Python no tiene límite de tamaño para enteros. Se usa para contar, indexar y valores exactos."
     },
@@ -204,6 +216,12 @@
         "<p>💡 <strong>Truco 2:</strong> para formatear la salida: <code>print(f\"{x:.4f}\")</code> muestra 4 decimales.</p>",
         "<p>💡 <strong>Truco 3:</strong> si necesitas precisión exacta (contabilidad, por ejemplo), usa <code>decimal</code> o <code>fractions</code>. Pero para análisis numérico, floats son lo estándar.</p>",
         "<p>💡 <strong>Regla de oro:</strong> nunca uses <code>==</code> con floats. Siempre <code>abs(a - b) &lt; tol</code>.</p>"
+      ],
+      "ejercicios": [
+        "Verifica si `0.1 + 0.2 == 0.3` y explica por qué.",
+        "Usa `math.isclose` para comparar `1/3` con `0.3333333`.",
+        "Muestra el épsilon de la máquina usando `sys.float_info.epsilon`.",
+        "Calcula el área de un círculo con radio 2.5 y muestra el resultado con 3 decimales."
       ],
       "resumen": "float es un número con decimales. Tiene precisión limitada (~15-17 dígitos). Nunca se compara con ==, siempre con tolerancia."
     },
@@ -283,6 +301,13 @@
         "<p>💡 <strong>Truco 3:</strong> <code>\"a,b,c\".split(\",\")</code> → <code>['a', 'b', 'c']</code>. Muy útil para parsear.</p>",
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, usa f-strings para mostrar resultados: <code>print(f\"Iter {k}: x = {x:.8f}\")</code>.</p>"
       ],
+      "ejercicios": [
+        "Crea un saludo usando f-strings con tu nombre y edad.",
+        "Toma la cadena 'Hola mundo' y muestra solo la palabra 'mundo'.",
+        "Usa `.split()` para convertir 'a,b,c,d' en una lista.",
+        "Invierte un string usando slicing (`[::-1]`).",
+        "Cuenta cuántas veces aparece la letra 'a' en 'banana'."
+      ],
       "resumen": "str es una cadena de caracteres inmutable. Se crea con comillas. Tiene muchos métodos (.upper, .strip, .split, .replace). Las f-strings son la forma moderna de mezclar variables con texto."
     },
     {
@@ -353,6 +378,12 @@
         "<p>💡 <strong>Truco 2:</strong> en análisis numérico, un flag puede indicar convergencia: <code>convergio = False</code>, y luego <code>convergio = True</code> cuando <code>error &lt; tol</code>.</p>",
         "<p>💡 <strong>Truco 3:</strong> no escribas <code>if x == True:</code>. Escribe <code>if x:</code>. Más limpio.</p>"
       ],
+      "ejercicios": [
+        "Verifica si 10 es mayor que 5 y muestra el resultado.",
+        "Combina dos condiciones con `and` y muestra el resultado.",
+        "Usa `bool()` para verificar qué valores son falsy: 0, '', [], None.",
+        "Escribe una condición que sea True solo si un número está entre 0 y 100."
+      ],
       "resumen": "bool tiene solo dos valores: True y False. Se obtienen de comparaciones o se escriben directamente. Son la base de las decisiones en el código."
     },
     {
@@ -418,6 +449,12 @@
         "<p>💡 <strong>Truco 1:</strong> <code>None</code> es falsy: <code>if not x:</code> es True si x es None.</p>",
         "<p>💡 <strong>Truco 2:</strong> en análisis numérico, <code>None</code> puede marcar \"sin convergencia\": <code>raiz = None</code>.</p>",
         "<p>💡 <strong>Truco 3:</strong> si una función puede devolver 0 o None, ten cuidado: <code>if resultado:</code> es False en ambos casos. Usa <code>if resultado is not None:</code>.</p>"
+      ],
+      "ejercicios": [
+        "Crea una variable con valor None y verifica con `is None`.",
+        "Escribe una función que devuelva None si el argumento es negativo.",
+        "Comprueba qué devuelve una función que solo hace print (sin return).",
+        "Busca un elemento en una lista y devuelve None si no está."
       ],
       "resumen": "None es el valor que significa \"nada\". Es único. Se compara con 'is', no con '=='. Sirve para inicializar, marcar ausencia o indicar \"no encontrado\"."
     },
@@ -502,82 +539,13 @@
         "<p>💡 <strong>Truco 2:</strong> <code>float(\"1e3\")</code> funciona y da 1000.0. Python entiende notación científica.</p>",
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, casi todo se convierte a float. <code>x = float(x)</code> para asegurarte.</p>"
       ],
+      "ejercicios": [
+        "Pide un número al usuario con `input`, conviértelo a int y muestra su doble.",
+        "Convierte el número `3.99` a int y compáralo con `round(3.99)`.",
+        "Convierte el texto `'123'` a int y súmale 7.",
+        "Muestra con `bool()` qué valores son falsy: 0, '', [], {}, None."
+      ],
       "resumen": "Las conversiones se hacen con int(), float(), str() y bool(). int() trunca (no redondea). Las conversiones pueden fallar si el valor no es compatible."
-    },
-    {
-      "id": "type-e-isinstance",
-      "numero": "8",
-      "titulo": "type() e isinstance() — Verificar tipos",
-      "emoji": "🔍",
-      "subtitulo": "Cómo saber de qué tipo es un valor",
-      "que_es": [
-        "<p>En Python a veces necesitas saber qué tipo tiene un valor. Hay dos funciones para esto:</p>",
-        "<ul><li><code>type(x)</code> → devuelve el tipo exacto del valor.</li><li><code>isinstance(x, T)</code> → devuelve True si x es de tipo T (o de una subclase).</li></ul>",
-        "<p>La diferencia principal: <code>isinstance</code> respeta la herencia, <code>type</code> no. Para verificar tipos, casi siempre quieres <code>isinstance</code>.</p>"
-      ],
-      "para_que_sirve": [
-        "<p>Verificar tipos sirve para:</p>",
-        "<ul><li><strong>Validar entradas</strong>: comprobar que el usuario dio un número, no un texto.</li><li><strong>Adaptar el comportamiento</strong>: hacer una cosa si es lista, otra si es string.</li><li><strong>Depurar</strong>: descubrir por qué falla una operación.</li><li><strong>Documentar</strong>: dejar claro qué tipo espera una función.</li></ul>"
-      ],
-      "sintaxis": "type(x)\nisinstance(x, tipo)\n\n# Ejemplos\nprint(type(5))                    # <class 'int'>\nprint(isinstance(5, int))         # True\nprint(isinstance(5, float))       # False",
-      "ejemplos": [
-        {
-          "titulo": "type() devuelve el tipo",
-          "codigo": "print(type(5))\nprint(type(3.14))\nprint(type(\"hola\"))\nprint(type(True))\nprint(type(None))\nprint(type([1, 2]))\nprint(type({\"a\": 1}))",
-          "explicacion": [
-            "<p><code>type(x)</code> devuelve un objeto que representa el tipo. Se imprime como <code>&lt;class 'nombre'&gt;</code>.</p>",
-            "<p>Si quieres solo el nombre del tipo, usa <code>type(x).__name__</code>.</p>"
-          ]
-        },
-        {
-          "titulo": "isinstance() verifica pertenencia",
-          "codigo": "print(isinstance(5, int))       # True\nprint(isinstance(5, float))     # False\nprint(isinstance(5.0, float))   # True\nprint(isinstance(5.0, int))     # False\nprint(isinstance(\"hola\", str))  # True\nprint(isinstance([1,2], list))  # True",
-          "explicacion": [
-            "<p><code>isinstance(x, T)</code> devuelve True si <code>x</code> es de tipo <code>T</code>.</p>",
-            "<p>Es la forma recomendada de verificar tipos, sobre todo porque funciona con la herencia (una subclase también cuenta como su padre).</p>"
-          ]
-        },
-        {
-          "titulo": "Verificar varios tipos a la vez",
-          "codigo": "x = 5\nprint(isinstance(x, (int, float)))   # True\n\ny = \"hola\"\nprint(isinstance(y, (int, float)))   # False",
-          "explicacion": [
-            "<p>Puedes pasar una tupla de tipos a <code>isinstance</code>. Devuelve True si el valor es de cualquiera de ellos.</p>",
-            "<p>Útil para verificar \"es un número de cualquier tipo\".</p>"
-          ]
-        },
-        {
-          "titulo": "Uso típico en validación",
-          "codigo": "def duplicar(x):\n    if isinstance(x, (int, float)):\n        return x * 2\n    else:\n        return \"Solo acepto números\"\n\nprint(duplicar(5))       # 10\nprint(duplicar(3.14))    # 6.28\nprint(duplicar(\"hola\"))  # Solo acepto números",
-          "explicacion": [
-            "<p>Este patrón se usa mucho para validar argumentos:</p>",
-            "<ul><li>Si el valor es número, haz la operación.</li><li>Si no, devuelve un mensaje de error.</li></ul>",
-            "<p>Es mejor que dejar que el código falle con un TypeError confuso.</p>"
-          ]
-        }
-      ],
-      "errores_comunes": [
-        {
-          "error": "type(x) == int",
-          "razon": "Funciona, pero type() no respeta la herencia. Mejor usar isinstance.",
-          "correcto": "isinstance(x, int)"
-        },
-        {
-          "error": "print(type(5) == \"int\")",
-          "razon": "type(5) devuelve un objeto, no un string. Comparar con \"int\" da False.",
-          "correcto": "print(type(5).__name__ == \"int\")   o   isinstance(5, int)"
-        },
-        {
-          "error": "if isinstance(x, 'int'):",
-          "razon": "El tipo debe ser la clase int, no el string 'int'.",
-          "correcto": "if isinstance(x, int):"
-        }
-      ],
-      "tips": [
-        "<p>💡 <strong>Truco 1:</strong> <code>type(x).__name__</code> da solo el nombre del tipo como string: <code>\"int\"</code>, <code>\"float\"</code>, etc.</p>",
-        "<p>💡 <strong>Truco 2:</strong> en Python, casi nunca necesitas verificar tipos. Es más \"pythonico\" intentar la operación y capturar el error. Pero cuando sí lo necesitas, usa <code>isinstance</code>.</p>",
-        "<p>💡 <strong>Truco 3:</strong> para depurar, imprime <code>type(x)</code> o <code>type(x).__name__</code> cuando no sepas por qué algo falla.</p>"
-      ],
-      "resumen": "type(x) devuelve el tipo exacto. isinstance(x, T) verifica pertenencia respetando la herencia. Para verificar tipos, casi siempre usa isinstance."
     }
   ]
 }

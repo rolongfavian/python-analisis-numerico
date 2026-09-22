@@ -1,0 +1,475 @@
+{
+  "parte": 12,
+  "titulo": "Clases y objetos",
+  "emoji": "🏛️",
+  "descripcion": "Hasta ahora has usado funciones y datos por separado. La programación orientada a objetos (POO) te permite agrupar datos y comportamiento en una misma entidad. Es la forma de modelar cosas del mundo real y de organizar código complejo.",
+  "temas": [
+    {
+      "id": "clases-objetos",
+      "numero": "1",
+      "titulo": "¿Qué es una clase?",
+      "emoji": "🏗️",
+      "subtitulo": "Plantillas para crear objetos",
+      "que_es": [
+        "<p>Una <strong>clase</strong> es una plantilla que describe cómo serán los objetos creados a partir de ella. Define qué <strong>datos</strong> tendrá (atributos) y qué <strong>cosas</strong> podrá hacer (métodos).</p>",
+        "<p>Un <strong>objeto</strong> (o instancia) es un ejemplar concreto de esa clase. Si la clase es el plano de una casa, el objeto es una casa construida con ese plano.</p>",
+        "<p>Cada objeto tiene sus propios valores en los atributos, pero comparte la estructura y los métodos de su clase.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>La programación orientada a objetos (POO) se usa para:</p>",
+        "<ul><li><strong>Modelar cosas del mundo real</strong>: una persona, un punto, un vector.</li><li><strong>Agrupar datos y comportamiento</strong>: en vez de tener funciones sueltas que manejan datos sueltos.</li><li><strong>Organizar código grande</strong>: cada clase es una pieza independiente.</li><li><strong>Reutilizar con herencia</strong>: una clase puede heredar de otra.</li></ul>",
+        "<p>En análisis numérico, las clases son útiles para representar <strong>vectores</strong>, <strong>matrices</strong>, <strong>funciones</strong> o <strong>métodos numéricos completos</strong> con estado interno (iteraciones, historial, etc.).</p>"
+      ],
+      "sintaxis": "# Definir una clase\nclass NombreClase:\n    def __init__(self, parametros):\n        self.atributo = valor\n    \n    def metodo(self):\n        return algo\n\n# Crear un objeto\nobjeto = NombreClase(argumentos)\n\n# Usar\nobjeto.atributo\nobjeto.metodo()",
+      "ejemplos": [
+        {
+          "titulo": "Primera clase: Punto",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n\np = Punto(3, 4)\nprint(p.x)   # 3\nprint(p.y)   # 4",
+          "explicacion": [
+            "<p><code>class Punto</code> define la clase. <code>__init__</code> es el constructor: se ejecuta al crear el objeto.</p>",
+            "<p><code>self</code> es la referencia al objeto. <code>self.x = x</code> guarda el valor en el objeto.</p>",
+            "<p><code>p = Punto(3, 4)</code> crea un objeto. <code>p.x</code> accede a su atributo.</p>"
+          ]
+        },
+        {
+          "titulo": "Dos objetos, dos estados",
+          "codigo": "p1 = Punto(1, 2)\np2 = Punto(5, 7)\n\nprint(p1.x, p1.y)   # 1 2\nprint(p2.x, p2.y)   # 5 7",
+          "explicacion": [
+            "<p>Cada objeto tiene sus propios valores. No se pisan.</p>",
+            "<p>Son instancias independientes de la misma clase.</p>"
+          ]
+        },
+        {
+          "titulo": "Constructor con valores por defecto",
+          "codigo": "class Punto:\n    def __init__(self, x=0, y=0):\n        self.x = x\n        self.y = y\n\np1 = Punto()\np2 = Punto(5)\np3 = Punto(5, 7)\n\nprint(p1.x, p1.y)   # 0 0\nprint(p2.x, p2.y)   # 5 0\nprint(p3.x, p3.y)   # 5 7",
+          "explicacion": [
+            "<p>Puedes dar valores por defecto en el constructor, como en las funciones.</p>",
+            "<p>Así <code>Punto()</code> crea el origen (0, 0).</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "def __init__(x, y):  sin self",
+          "razon": "El primer parámetro siempre es self. Sin él, Python no sabe a qué objeto se refiere.",
+          "correcto": "def __init__(self, x, y):"
+        },
+        {
+          "error": "Punto(3, 4)  esperando que se llame __init__ automáticamente sin más",
+          "razon": "Sí se llama automáticamente, pero no puedes olvidar el constructor. Python llama a __init__ al crear.",
+          "correcto": "Correcto: __init__ se ejecuta al crear el objeto."
+        },
+        {
+          "error": "Usar p.x = 10  fuera del constructor",
+          "razon": "Funciona, pero no es recomendable. Mejor inicializar todo en __init__.",
+          "correcto": "Inicializa todos los atributos en __init__."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> los nombres de las clases van en CamelCase: <code>Punto</code>, <code>Vector3D</code>, <code>MetodoNewton</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>self</code> es solo una convención. Podría llamarse de otra forma, pero nunca lo hagas.</p>",
+        "<p>💡 <strong>Truco 3:</strong> inicializa todos los atributos en <code>__init__</code>, aunque sea con <code>None</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, una clase <code>Punto</code> o <code>Vector</code> es un buen primer ejercicio.</p>"
+      ],
+      "ejercicios": [
+        "Crea una clase `Punto` con x e y.",
+        "Crea una instancia y muestra sus atributos.",
+        "Añade valores por defecto al constructor.",
+        "Crea dos objetos distintos y comprueba que tienen estados independientes."
+      ],
+      "resumen": "Una clase es una plantilla. Un objeto es una instancia. __init__ es el constructor. self es la referencia al objeto. Los nombres de clases van en CamelCase."
+    },
+    {
+      "id": "metodos",
+      "numero": "2",
+      "titulo": "Métodos — Funciones dentro de una clase",
+      "emoji": "⚙️",
+      "subtitulo": "El comportamiento de tus objetos",
+      "que_es": [
+        "<p>Un <strong>método</strong> es una función definida dentro de una clase. Se llama sobre un objeto y puede acceder a sus atributos con <code>self</code>.</p>",
+        "<p>Los métodos definen <strong>qué puede hacer</strong> un objeto. Junto con los atributos, forman su <strong>interfaz</strong>.</p>",
+        "<p>Se llaman con <code>objeto.metodo(argumentos)</code>. Python pasa <code>self</code> automáticamente.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los métodos se usan para:</p>",
+        "<ul><li><strong>Operar sobre los datos</strong> del propio objeto.</li><li><strong>Ocultar la complejidad</strong>: el usuario usa <code>p.distancia()</code>, no piensa en cómo se calcula.</li><li><strong>Modificar el estado</strong> del objeto.</li><li><strong>Consultar información</strong> sin modificarla.</li></ul>"
+      ],
+      "sintaxis": "class Clase:\n    def __init__(self, x):\n        self.x = x\n    \n    def metodo(self, arg):\n        return self.x + arg\n\nobj = Clase(10)\nobj.metodo(5)   # 15 (self.x es 10, arg es 5)",
+      "ejemplos": [
+        {
+          "titulo": "Método simple",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def mostrar(self):\n        print(f\"({self.x}, {self.y})\")\n\np = Punto(3, 4)\np.mostrar()   # (3, 4)",
+          "explicacion": [
+            "<p><code>mostrar</code> es un método. Se llama con <code>p.mostrar()</code>.</p>",
+            "<p>Dentro, accede a <code>self.x</code> y <code>self.y</code>.</p>",
+            "<p>No lleva argumentos porque <code>self</code> se pasa automáticamente.</p>"
+          ]
+        },
+        {
+          "titulo": "Método con parámetros",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def distancia_a(self, otro):\n        dx = self.x - otro.x\n        dy = self.y - otro.y\n        return (dx**2 + dy**2) ** 0.5\n\np1 = Punto(0, 0)\np2 = Punto(3, 4)\nprint(p1.distancia_a(p2))   # 5.0",
+          "explicacion": [
+            "<p><code>distancia_a</code> recibe otro punto como argumento.</p>",
+            "<p>Calcula la distancia euclidiana entre los dos.</p>",
+            "<p><code>self</code> es el objeto sobre el que se llama (<code>p1</code>). <code>otro</code> es <code>p2</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Método que modifica el estado",
+          "codigo": "class Contador:\n    def __init__(self):\n        self.valor = 0\n    \n    def incrementar(self):\n        self.valor += 1\n    \n    def reiniciar(self):\n        self.valor = 0\n\nc = Contador()\nc.incrementar()\nc.incrementar()\nprint(c.valor)   # 2\nc.reiniciar()\nprint(c.valor)   # 0",
+          "explicacion": [
+            "<p>Los métodos pueden modificar los atributos del objeto.</p>",
+            "<p>Aquí <code>incrementar</code> y <code>reiniciar</code> cambian <code>self.valor</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Clase para método de bisección",
+          "codigo": "class Biseccion:\n    def __init__(self, f, tol=1e-8, max_iter=100):\n        self.f = f\n        self.tol = tol\n        self.max_iter = max_iter\n        self.historial = []\n    \n    def resolver(self, a, b):\n        if self.f(a) * self.f(b) >= 0:\n            raise ValueError(\"Bolzano no se cumple\")\n        for k in range(self.max_iter):\n            c = (a + b) / 2\n            self.historial.append((k, a, b, c, abs(self.f(c))))\n            if abs(self.f(c)) < self.tol:\n                return c, k\n            if self.f(a) * self.f(c) < 0:\n                b = c\n            else:\n                a = c\n        raise RuntimeError(\"No convergió\")\n\nf = lambda x: x**3 - x - 2\nbis = Biseccion(f)\nraiz, iters = bis.resolver(1, 2)\nprint(f\"Raíz: {raiz:.10f}, iteraciones: {iters}\")\nprint(f\"Iteraciones registradas: {len(bis.historial)}\")",
+          "explicacion": [
+            "<p>La clase encapsula el método: guarda <code>f</code>, <code>tol</code>, <code>max_iter</code> y el <code>historial</code>.</p>",
+            "<p>Así cada instancia puede tener su propio estado.</p>",
+            "<p>El método <code>resolver</code> usa todos esos datos.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "def metodo():  sin self",
+          "razon": "Los métodos siempre llevan self como primer parámetro.",
+          "correcto": "def metodo(self):"
+        },
+        {
+          "error": "Olvidar llamar con obj.metodo()",
+          "razon": "metodo() sin objeto da NameError.",
+          "correcto": "obj.metodo()"
+        },
+        {
+          "error": "Llamar metodo(self) explícitamente",
+          "razon": "Python pasa self automáticamente. No lo pongas al llamar.",
+          "correcto": "obj.metodo(argumentos)  ← sin self"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> los métodos que no necesitan <code>self</code> se pueden marcar como <code>@staticmethod</code>, pero casi nunca hace falta.</p>",
+        "<p>💡 <strong>Truco 2:</strong> los métodos con nombre descriptivo son como una API del objeto: <code>p.distancia_a(q)</code>, <code>v.norma()</code>, <code>m.determinante()</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, encapsular un método en una clase permite guardar historial, iteraciones, error final, etc.</p>"
+      ],
+      "ejercicios": [
+        "Añade un método `mostrar` a la clase Punto.",
+        "Añade un método `distancia_al_origen`.",
+        "Añade un método que sume dos puntos y devuelva uno nuevo.",
+        "Crea una clase `Contador` con métodos `incrementar`, `reiniciar` y `valor_actual`."
+      ],
+      "resumen": "Los métodos son funciones dentro de la clase. Reciben self automáticamente. Pueden modificar o leer los atributos. Se llaman con obj.metodo()."
+    },
+    {
+      "id": "dunder",
+      "numero": "3",
+      "titulo": "Métodos especiales (__str__, __repr__, __eq__...)",
+      "emoji": "✨",
+      "subtitulo": "Hacer que tus objetos se comporten como tipos nativos",
+      "que_es": [
+        "<p>Los <strong>métodos dunder</strong> (de double underscore, doble guion bajo) son métodos especiales que Python llama automáticamente en ciertas situaciones.</p>",
+        "<p>Permiten que tus objetos se comporten como los tipos nativos: se impriman bien, se comparen, se sumen, etc.</p>",
+        "<p>Algunos importantes:</p>",
+        "<ul><li><code>__str__</code>: cómo se ve al hacer <code>print(obj)</code>.</li><li><code>__repr__</code>: cómo se ve al escribir <code>obj</code> en la consola.</li><li><code>__eq__</code>: cómo se compara con <code>==</code>.</li><li><code>__lt__</code>: cómo se ordena con <code>&lt;</code>.</li><li><code>__add__</code>: cómo se suma con <code>+</code>.</li><li><code>__len__</code>: qué devuelve <code>len(obj)</code>.</li></ul>"
+      ],
+      "para_que_sirve": [
+        "<p>Los dunders se usan para:</p>",
+        "<ul><li><strong>Mejor depuración</strong>: <code>print(obj)</code> muestra algo útil.</li><li><strong>Comparar objetos</strong>: <code>p1 == p2</code> compara por valor.</li><li><strong>Ordenar</strong>: <code>sorted(lista_de_objetos)</code>.</li><li><strong>Aritmética</strong>: <code>v1 + v2</code>, <code>v * 2</code>.</li><li><strong>Compatibilidad</strong>: tus objetos se comportan como los nativos.</li></ul>"
+      ],
+      "sintaxis": "class Clase:\n    def __str__(self):\n        return \"representación para print\"\n    \n    def __repr__(self):\n        return \"representación para consola\"\n    \n    def __eq__(self, otro):\n        return self.x == otro.x\n    \n    def __add__(self, otro):\n        return Clase(self.x + otro.x)",
+      "ejemplos": [
+        {
+          "titulo": "__str__ y __repr__",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n    \n    def __repr__(self):\n        return f\"Punto({self.x}, {self.y})\"\n\np = Punto(3, 4)\nprint(p)          # (3, 4)\nprint(repr(p))    # Punto(3, 4)",
+          "explicacion": [
+            "<p><code>__str__</code> es para el usuario final. Se usa con <code>print()</code>.</p>",
+            "<p><code>__repr__</code> es para el desarrollador. Se usa en la consola y en listas.</p>",
+            "<p>Ambos devuelven strings. Sin ellos, <code>print(p)</code> muestra algo feo como <code>&lt;__main__.Punto object at 0x...&gt;</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "__eq__: comparación por valor",
+          "codigo": "class Punto:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __eq__(self, otro):\n        return self.x == otro.x and self.y == otro.y\n\np1 = Punto(3, 4)\np2 = Punto(3, 4)\np3 = Punto(5, 6)\n\nprint(p1 == p2)   # True\nprint(p1 == p3)   # False\n\n# Sin __eq__, p1 == p2 sería False (compara identidad)",
+          "explicacion": [
+            "<p>Sin <code>__eq__</code>, dos objetos se comparan por identidad (misma dirección de memoria).</p>",
+            "<p>Con <code>__eq__</code>, los comparas por valor, como quieras.</p>"
+          ]
+        },
+        {
+          "titulo": "__add__: sumar objetos",
+          "codigo": "class Vector:\n    def __init__(self, x, y):\n        self.x = x\n        self.y = y\n    \n    def __add__(self, otro):\n        return Vector(self.x + otro.x, self.y + otro.y)\n    \n    def __str__(self):\n        return f\"({self.x}, {self.y})\"\n\nv1 = Vector(1, 2)\nv2 = Vector(3, 4)\nv3 = v1 + v2\nprint(v3)   # (4, 6)",
+          "explicacion": [
+            "<p><code>__add__</code> define qué pasa cuando usas <code>+</code> con dos objetos.</p>",
+            "<p>Devuelve un nuevo vector con la suma componente a componente.</p>",
+            "<p>Así el código se ve natural: <code>v3 = v1 + v2</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "__len__ y __getitem__",
+          "codigo": "class MiLista:\n    def __init__(self, datos):\n        self.datos = datos\n    \n    def __len__(self):\n        return len(self.datos)\n    \n    def __getitem__(self, i):\n        return self.datos[i]\n\nml = MiLista([10, 20, 30, 40])\nprint(len(ml))       # 4\nprint(ml[0])         # 10\nprint(ml[2])         # 30\nprint(ml[-1])        # 40\n\nfor x in ml:\n    print(x)",
+          "explicacion": [
+            "<p>Con <code>__len__</code>, <code>len(ml)</code> funciona.</p>",
+            "<p>Con <code>__getitem__</code>, puedes indexar y recorrer con for.</p>",
+            "<p>Tu clase se comporta como una lista.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Definir __str__ sin return",
+          "razon": "Debe devolver un string. Si no, da TypeError.",
+          "correcto": "def __str__(self): return \"...\""
+        },
+        {
+          "error": "__eq__ sin __hash__",
+          "razon": "Si defines __eq__, el objeto deja de ser hashable por defecto. Útil si vas a usar sets o dicts.",
+          "correcto": "Añade __hash__ si necesitas usar el objeto como clave."
+        },
+        {
+          "error": "Pensar que __repr__ es igual que __str__",
+          "razon": "Sirven para cosas distintas. __repr__ debe ser una expresión válida que recree el objeto.",
+          "correcto": "__repr__ → Punto(3, 4)\n__str__ → (3, 4)"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> define <code>__repr__</code> en todas tus clases. Ayuda mucho al depurar.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>__repr__</code> idealmente debe ser <code>Clase(args)</code>, para que <code>eval()</code> lo reconstruya.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>__str__</code> en una clase <code>Punto</code> o <code>Vector</code> mejora mucho los prints.</p>",
+        "<p>💡 <strong>Truco 4:</strong> <code>__add__</code> y <code>__mul__</code> permiten que tus vectores se comporten como vectores matemáticos.</p>"
+      ],
+      "ejercicios": [
+        "Añade `__str__` a la clase Punto para que imprima '(x, y)'.",
+        "Añade `__repr__` para que se vea 'Punto(x, y)'.",
+        "Añade `__eq__` para comparar por valor.",
+        "Añade `__add__` para sumar dos puntos.",
+        "Añade `__len__` a una clase que envuelva una lista."
+      ],
+      "resumen": "Los dunders son métodos especiales que Python llama automáticamente. __str__ y __repr__ controlan la representación. __eq__ la igualdad. __add__ la suma. Haz que tus objetos se comporten como nativos."
+    },
+    {
+      "id": "atributos-clase",
+      "numero": "4",
+      "titulo": "Atributos de clase vs de instancia",
+      "emoji": "🏷️",
+      "subtitulo": "Compartidos vs propios de cada objeto",
+      "que_es": [
+        "<p>En una clase puedes tener dos tipos de atributos:</p>",
+        "<ul><li><strong>De instancia</strong>: propios de cada objeto. Se definen en <code>__init__</code> con <code>self.x</code>.</li><li><strong>De clase</strong>: compartidos por todos los objetos de esa clase. Se definen fuera de <code>__init__</code>, directamente en el cuerpo de la clase.</li></ul>",
+        "<p>Los atributos de clase son útiles para constantes, contadores globales o valores por defecto.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los atributos de clase sirven para:</p>",
+        "<ul><li><strong>Constantes de la clase</strong>: <code>PI = 3.14159</code>.</li><li><strong>Contadores compartidos</strong>: cuántos objetos se han creado.</li><li><strong>Valores por defecto comunes</strong>.</li><li><strong>Configuraciones globales de la clase</strong>.</li></ul>"
+      ],
+      "sintaxis": "class Clase:\n    # Atributo de clase (compartido)\n    contador = 0\n    PI = 3.14159\n    \n    def __init__(self, x):\n        # Atributo de instancia (propio)\n        self.x = x\n        Clase.contador += 1",
+      "ejemplos": [
+        {
+          "titulo": "Atributo de clase compartido",
+          "codigo": "class Circulo:\n    PI = 3.14159   # atributo de clase\n    \n    def __init__(self, radio):\n        self.radio = radio   # atributo de instancia\n\nc1 = Circulo(5)\nc2 = Circulo(10)\n\nprint(c1.radio)     # 5\nprint(c2.radio)     # 10\nprint(Circulo.PI)   # 3.14159\nprint(c1.PI)        # 3.14159 (también accesible)",
+          "explicacion": [
+            "<p><code>PI</code> es igual para todos los círculos. Por eso es de clase.</p>",
+            "<p><code>radio</code> es distinto en cada círculo. Por eso es de instancia.</p>"
+          ]
+        },
+        {
+          "titulo": "Contador de instancias",
+          "codigo": "class Persona:\n    contador = 0\n    \n    def __init__(self, nombre):\n        self.nombre = nombre\n        Persona.contador += 1\n\np1 = Persona(\"Ana\")\np2 = Persona(\"Luis\")\np3 = Persona(\"Eva\")\n\nprint(Persona.contador)   # 3\nprint(p1.nombre)          # Ana",
+          "explicacion": [
+            "<p>Cada vez que se crea una persona, el contador de clase aumenta.</p>",
+            "<p>Todas las instancias comparten <code>Persona.contador</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Cuidado: modificar un atributo de clase desde una instancia",
+          "codigo": "class Config:\n    debug = False\n\nc1 = Config()\nc2 = Config()\n\nc1.debug = True   # crea un ATRIBUTO DE INSTANCIA, no modifica el de clase\n\nprint(c1.debug)         # True\nprint(c2.debug)         # False\nprint(Config.debug)     # False\n\n# Para modificar el de clase:\nConfig.debug = True\nprint(c2.debug)         # True (ahora sí)",
+          "explicacion": [
+            "<p>Asignar <code>c1.debug = True</code> crea un atributo de instancia que <strong>oculta</strong> el de clase solo para ese objeto.</p>",
+            "<p>Para modificar el atributo de clase, usa <code>Config.debug = True</code>.</p>",
+            "<p>Es una fuente común de bugs. Ten cuidado.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Definir atributo de clase en __init__",
+          "razon": "Si lo defines con self.x, es de instancia. Si lo quieres de clase, defínelo fuera de __init__.",
+          "correcto": "class C:\n    PI = 3.14   # de clase\n    def __init__(self):\n        self.radio = 0   # de instancia"
+        },
+        {
+          "error": "Modificar atributo de clase desde instancia",
+          "razon": "Creas un atributo de instancia que oculta el de clase.",
+          "correcto": "Usa Clase.atributo = valor"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa atributos de clase para constantes que no cambian: <code>PI</code>, <code>G</code>, <code>c</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para contadores, siempre modifica con <code>Clase.contador += 1</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, un atributo de clase <code>nombre_metodo = \"Bisección\"</code> puede ser útil para imprimir resúmenes.</p>"
+      ],
+      "ejercicios": [
+        "Crea una clase `Circulo` con `PI` como atributo de clase y `radio` de instancia.",
+        "Añade un contador de instancias que aumente en cada creación.",
+        "Comprueba que modificar `obj.atributo` no cambia `Clase.atributo`.",
+        "Modifica el atributo de clase correctamente con `Clase.atributo = valor`."
+      ],
+      "resumen": "Los atributos de clase se comparten entre todos los objetos. Los de instancia son propios de cada objeto. Para modificar los de clase, usa Clase.atributo = valor."
+    },
+    {
+      "id": "herencia",
+      "numero": "5",
+      "titulo": "Herencia",
+      "emoji": "🧬",
+      "subtitulo": "Reutilizar código entre clases relacionadas",
+      "que_es": [
+        "<p>La <strong>herencia</strong> permite crear una clase nueva (hija) que reutiliza atributos y métodos de otra (madre o padre).</p>",
+        "<p>La clase hija puede:</p>",
+        "<ul><li><strong>Usar</strong> lo que heredó tal cual.</li><li><strong>Sobrescribir</strong> (redefinir) métodos heredados.</li><li><strong>Añadir</strong> métodos y atributos nuevos.</li><li><strong>Extender</strong> un método llamando al padre con <code>super()</code>.</li></ul>",
+        "<p>Es una forma de decir: \"esta clase es como la otra, pero con estos cambios\".</p>"
+      ],
+      "para_que_sirve": [
+        "<p>La herencia sirve para:</p>",
+        "<ul><li><strong>Reutilizar</strong> código común entre clases relacionadas.</li><li><strong>Organizar</strong> jerarquías de clases.</li><li><strong>Polimorfismo</strong>: tratar objetos distintos con la misma interfaz.</li></ul>"
+      ],
+      "sintaxis": "class Madre:\n    def metodo(self):\n        return \"algo\"\n\nclass Hija(Madre):\n    def metodo(self):\n        # Sobrescribe\n        return \"otra cosa\"\n    \n    def nuevo(self):\n        return \"más cosas\"",
+      "ejemplos": [
+        {
+          "titulo": "Herencia básica",
+          "codigo": "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    \n    def hablar(self):\n        return \"...\"\n\nclass Perro(Animal):\n    def hablar(self):\n        return \"Guau\"\n\nclass Gato(Animal):\n    def hablar(self):\n        return \"Miau\"\n\nperro = Perro(\"Rex\")\ngato = Gato(\"Michi\")\n\nprint(perro.nombre, perro.hablar())   # Rex Guau\nprint(gato.nombre, gato.hablar())     # Michi Miau",
+          "explicacion": [
+            "<p><code>Perro</code> y <code>Gato</code> heredan de <code>Animal</code>.</p>",
+            "<p>Reutilizan el atributo <code>nombre</code> y el método <code>__init__</code>.</p>",
+            "<p>Sobrescriben <code>hablar</code> con su propio comportamiento.</p>"
+          ]
+        },
+        {
+          "titulo": "Usar super()",
+          "codigo": "class Animal:\n    def __init__(self, nombre):\n        self.nombre = nombre\n    \n    def descripcion(self):\n        return f\"Un animal llamado {self.nombre}\"\n\nclass Perro(Animal):\n    def __init__(self, nombre, raza):\n        super().__init__(nombre)   # llama al __init__ del padre\n        self.raza = raza\n    \n    def descripcion(self):\n        base = super().descripcion()\n        return f\"{base}, de raza {self.raza}\"\n\np = Perro(\"Rex\", \"Labrador\")\nprint(p.descripcion())   # Un animal llamado Rex, de raza Labrador",
+          "explicacion": [
+            "<p><code>super()</code> llama al método del padre. Así no repites código.</p>",
+            "<p>En <code>__init__</code>, <code>super().__init__(nombre)</code> inicializa la parte del padre.</p>",
+            "<p>En <code>descripcion</code>, <code>super().descripcion()</code> reutiliza la del padre y añade más.</p>"
+          ]
+        },
+        {
+          "titulo": "Herencia en análisis numérico",
+          "codigo": "class Metodo:\n    def __init__(self, f, tol=1e-8, max_iter=100):\n        self.f = f\n        self.tol = tol\n        self.max_iter = max_iter\n        self.historial = []\n    \n    def resolver(self):\n        raise NotImplementedError(\"Subclase debe implementar resolver\")\n\nclass Biseccion(Metodo):\n    def resolver(self, a, b):\n        if self.f(a) * self.f(b) >= 0:\n            raise ValueError(\"Bolzano no se cumple\")\n        for k in range(self.max_iter):\n            c = (a + b) / 2\n            self.historial.append(c)\n            if abs(self.f(c)) < self.tol:\n                return c, k\n            if self.f(a) * self.f(c) < 0:\n                b = c\n            else:\n                a = c\n\nclass Newton(Metodo):\n    def resolver(self, x0, df):\n        x = x0\n        for k in range(self.max_iter):\n            x_nuevo = x - self.f(x) / df(x)\n            self.historial.append(x_nuevo)\n            if abs(x_nuevo - x) < self.tol:\n                return x_nuevo, k\n            x = x_nuevo\n\nf = lambda x: x**3 - x - 2\ndf = lambda x: 3*x**2 - 1\n\nbis = Biseccion(f)\nraiz_b, it_b = bis.resolver(1, 2)\nprint(f\"Bisección: {raiz_b:.10f}, iteraciones: {it_b}\")\n\nnew = Newton(f)\nraiz_n, it_n = new.resolver(1.5, df)\nprint(f\"Newton:    {raiz_n:.10f}, iteraciones: {it_n}\")",
+          "explicacion": [
+            "<p>La clase base <code>Metodo</code> define la estructura común: <code>f</code>, <code>tol</code>, <code>max_iter</code>, <code>historial</code>.</p>",
+            "<p>Las subclases implementan <code>resolver</code> con su algoritmo específico.</p>",
+            "<p>El método <code>resolver</code> de la base lanza <code>NotImplementedError</code> para forzar a las subclases a implementarlo.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Olvidar llamar a super().__init__()",
+          "razon": "El padre no se inicializa, sus atributos no existen.",
+          "correcto": "class Hija(Madre):\n    def __init__(self, x):\n        super().__init__(x)"
+        },
+        {
+          "error": "Herencia cuando composición es mejor",
+          "razon": "No todo es \"es un\". A veces la clase hija simplemente \"tiene un\" componente.",
+          "correcto": "Si Hija 'es un tipo de' Madre, herencia. Si Hija 'tiene un' objeto de otra clase, composición."
+        },
+        {
+          "error": "Jerarquías de herencia muy profundas",
+          "razon": "Se vuelve difícil entender de dónde viene cada método.",
+          "correcto": "Preferir composición sobre herencia cuando sea posible."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> la herencia se lee como \"es un\": un Perro <strong>es un</strong> Animal.</p>",
+        "<p>💡 <strong>Truco 2:</strong> si dudas entre herencia y composición, suele ganar composición. Es más flexible.</p>",
+        "<p>💡 <strong>Truco 3:</strong> no abuses de la herencia. Jerarquías muy profundas son difíciles de mantener.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, puedes tener una clase base <code>Metodo</code> y subclases <code>Biseccion</code>, <code>Newton</code>, <code>PuntoFijo</code>.</p>"
+      ],
+      "ejercicios": [
+        "Crea una clase `Animal` con `hablar()`.",
+        "Crea `Perro` y `Gato` heredando y sobrescribiendo `hablar`.",
+        "Usa `super()` para llamar al `__init__` del padre.",
+        "Crea una clase base `Metodo` y subclases para bisección y Newton.",
+        "Explica la diferencia entre 'es un' y 'tiene un'."
+      ],
+      "resumen": "La herencia permite que una clase reutilice código de otra. Se lee como 'es un'. Usa super() para llamar al padre. En análisis numérico, clases base y subclases organizan los métodos."
+    },
+    {
+      "id": "encapsulacion",
+      "numero": "6",
+      "titulo": "Encapsulación y propiedades",
+      "emoji": "🔒",
+      "subtitulo": "Controlar el acceso a los atributos",
+      "que_es": [
+        "<p>En Python no hay atributos <em>privados</em> de verdad, como en otros lenguajes. Pero hay <strong>convenciones</strong>:</p>",
+        "<ul><li><code>nombre</code> → atributo público.</li><li><code>_nombre</code> → protegido (\"no lo toques desde fuera\").</li><li><code>__nombre</code> → privado (Python lo oculta con name mangling).</li></ul>",
+        "<p>Las <strong>propiedades</strong> (<code>@property</code>) permiten acceder a métodos como si fueran atributos. Son la forma pitónica de controlar el acceso.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>La encapsulación sirve para:</p>",
+        "<ul><li><strong>Ocultar detalles</strong> internos de una clase.</li><li><strong>Validar</strong> valores al asignarlos.</li><li><strong>Cambiar la implementación</strong> sin romper el código que la usa.</li></ul>"
+      ],
+      "sintaxis": "class Clase:\n    def __init__(self):\n        self._protegido = 0\n        self.__privado = 0\n    \n    @property\n    def x(self):\n        return self._x\n    \n    @x.setter\n    def x(self, valor):\n        if valor < 0:\n            raise ValueError(\"x no puede ser negativo\")\n        self._x = valor",
+      "ejemplos": [
+        {
+          "titulo": "Atributos públicos, protegidos y privados",
+          "codigo": "class Cuenta:\n    def __init__(self, saldo):\n        self.saldo = saldo          # público\n        self._moneda = \"EUR\"        # protegido (convención)\n        self.__pin = \"1234\"         # privado (name mangling)\n\nc = Cuenta(100)\nprint(c.saldo)          # 100\nprint(c._moneda)        # EUR (accesible, pero no deberías)\n# print(c.__pin)        # AttributeError\nprint(c._Cuenta__pin)   # '1234'  ← se puede acceder, Python no lo prohíbe",
+          "explicacion": [
+            "<p>Python no bloquea el acceso, solo usa convenciones:</p>",
+            "<ul><li><code>nombre</code> → público.</li><li><code>_nombre</code> → protegido (no lo toques).</li><li><code>__nombre</code> → privado (Python renombra a <code>_Clase__nombre</code>).</li></ul>",
+            "<p>El name mangling de <code>__pin</code> es solo para evitar colisiones accidentales, no por seguridad real.</p>"
+          ]
+        },
+        {
+          "titulo": "Property: getter y setter",
+          "codigo": "class Circulo:\n    def __init__(self, radio):\n        self._radio = radio\n    \n    @property\n    def radio(self):\n        return self._radio\n    \n    @radio.setter\n    def radio(self, valor):\n        if valor <= 0:\n            raise ValueError(\"El radio debe ser positivo\")\n        self._radio = valor\n    \n    @property\n    def area(self):\n        # Propiedad calculada, sin setter\n        return 3.14159 * self._radio ** 2\n\nc = Circulo(5)\nprint(c.radio)   # 5\nprint(c.area)    # 78.53975\n\nc.radio = 10\nprint(c.area)    # 314.159\n\n# c.radio = -1   # ValueError",
+          "explicacion": [
+            "<p><code>@property</code> convierte un método en un atributo de solo lectura.</p>",
+            "<p><code>@radio.setter</code> define qué pasa al asignar.</p>",
+            "<p><code>area</code> es una propiedad <strong>calculada</strong>: no guarda el valor, lo calcula cada vez.</p>",
+            "<p>Al usuario le parece un atributo normal: <code>c.radio</code>, <code>c.area</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Propiedad calculada en análisis numérico",
+          "codigo": "class Resultado:\n    def __init__(self, raiz, iteraciones):\n        self.raiz = raiz\n        self.iteraciones = iteraciones\n    \n    @property\n    def convergencia(self):\n        if self.iteraciones < 5:\n            return \"rápida\"\n        elif self.iteraciones < 15:\n            return \"normal\"\n        else:\n            return \"lenta\"\n\nr1 = Resultado(1.5213797, 3)\nr2 = Resultado(1.5213797, 20)\n\nprint(r1.convergencia)   # rápida\nprint(r2.convergencia)   # lenta",
+          "explicacion": [
+            "<p>La propiedad <code>convergencia</code> se calcula al vuelo según las iteraciones.</p>",
+            "<p>El usuario accede como si fuera un atributo: <code>r1.convergencia</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar __nombre pensando que es privado de verdad",
+          "razon": "Python solo hace name mangling. Se puede acceder con _Clase__nombre.",
+          "correcto": "Trátalo como convención, no como seguridad."
+        },
+        {
+          "error": "Definir solo el getter sin el setter y luego intentar asignar",
+          "razon": "Si solo defines @property, la asignación da AttributeError.",
+          "correcto": "Añade @x.setter si necesitas asignar."
+        },
+        {
+          "error": "Recursión infinita en setter: self.radio = valor",
+          "razon": "Llama al setter otra vez, bucle infinito.",
+          "correcto": "Usa self._radio = valor dentro del setter."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> en Python, la privacidad es <strong>convención</strong>, no imposición. Confía en el usuario.</p>",
+        "<p>💡 <strong>Truco 2:</strong> usa <code>@property</code> cuando quieras calcular un valor al vuelo o validar asignaciones.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si empiezas con atributos públicos y luego quieres añadir validación, con <code>@property</code> puedes hacerlo sin romper el código existente.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, propiedades calculadas como <code>norma</code>, <code>area</code>, <code>convergencia</code> son muy útiles.</p>"
+      ],
+      "ejercicios": [
+        "Crea una clase con un atributo público y otro con _protegido.",
+        "Comprueba que __privado no es accesible directamente.",
+        "Añade un @property a una clase tuya.",
+        "Añade un @setter que valide que el valor sea positivo.",
+        "Crea una propiedad calculada como `area` o `longitud`."
+      ],
+      "resumen": "En Python la privacidad es convención. _ protegido, __ privado. @property convierte métodos en atributos. @setter valida asignaciones. Úsalas para controlar el acceso."
+    }
+  ]
+}

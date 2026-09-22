@@ -1,8 +1,8 @@
 {
   "parte": 3,
-  "titulo": "Operaciones",
+  "titulo": "Operadores",
   "emoji": "➕",
-  "descripcion": "Los programas no solo guardan valores: los combinan, los comparan, los transforman. Aquí aprendes todas las operaciones que puedes hacer en Python, desde las matemáticas básicas hasta las comparaciones lógicas que forman la base de cualquier decisión.",
+  "descripcion": "Los operadores son los símbolos que combinan, comparan y transforman valores. Son el corazón de cualquier cálculo. Aquí verás los 7 operadores aritméticos, los de comparación, los lógicos y todo lo que puedes hacer con ellos.",
   "temas": [
     {
       "id": "aritmeticas",
@@ -86,6 +86,13 @@
         "<p>💡 <strong>Truco 2:</strong> <code>%</code> sirve para saber si un número es par o impar: <code>x % 2 == 0</code> → par.</p>",
         "<p>💡 <strong>Truco 3:</strong> <code>%</code> también sirve para ciclar: <code>i % n</code> va de 0 a n-1 y vuelve a 0.</p>",
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, <code>**</code> se usa muchísimo: polinomios, errores al cuadrado, normas, etc.</p>"
+      ],
+      "ejercicios": [
+        "Calcula cuántos minutos y segundos hay en 3725 segundos (usa // y %).",
+        "Verifica si 1729 es par usando el operador `%`.",
+        "Calcula la raíz cuadrada de 144 usando `**`.",
+        "Aplica la fórmula del área de un círculo con radio 7 (π × r²) y muestra el resultado.",
+        "Resuelve `2 + 3 * 4 ** 2` mentalmente y comprueba con Python."
       ],
       "resumen": "Los 7 operadores aritméticos son +, -, *, /, //, %, **. La división con / siempre da float. La precedencia respeta el orden matemático."
     },
@@ -172,6 +179,13 @@
         "<p>💡 <strong>Truco 3:</strong> puedes comparar strings con <code>&lt;</code> y <code>&gt;</code> para ordenar alfabéticamente.</p>",
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, la comparación clave es <code>error &lt; tol</code>, que decide si un método iterativo ha convergido.</p>"
       ],
+      "ejercicios": [
+        "Verifica si 5 es igual a 5.0. Explica el resultado.",
+        "Compara si 10 es mayor que 3 y menor que 20 al mismo tiempo.",
+        "Verifica si 'hola' es igual a 'Hola' y explica por qué.",
+        "Comprueba si `0.1 + 0.2 == 0.3` y explica el resultado.",
+        "Comprueba si `math.isclose(0.1 + 0.2, 0.3)` da True."
+      ],
       "resumen": "Los operadores de comparación (==, !=, <, >, <=, >=) devuelven True o False. Los floats nunca se comparan con ==, siempre con tolerancia. = asigna, == compara."
     },
     {
@@ -257,6 +271,13 @@
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, se usan para verificar convergencia con doble criterio:</p>",
         "<pre class='cmd-sintaxis'>if error < tol and iteraciones < max_iter:\n    print(\"Convergió\")</pre>"
       ],
+      "ejercicios": [
+        "Verifica si 5 es mayor que 3 Y menor que 10.",
+        "Verifica si un número es par O divisible por 5.",
+        "Usa `not` para negar una condición.",
+        "Escribe una condición que sea True solo si un número está fuera del rango [0, 100].",
+        "Comprueba si `True and (5 > 3)` da True."
+      ],
       "resumen": "and, or y not combinan condiciones. and exige todo, or pide al menos uno, not invierte. Son la base de las decisiones compuestas."
     },
     {
@@ -335,6 +356,13 @@
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, los acumuladores son clave: contar iteraciones, sumar errores, etc.</p>",
         "<p>💡 <strong>Truco 4:</strong> <code>x += [1]</code> con listas añade un elemento. Pero ojo: <code>x += [1]</code> y <code>x = x + [1]</code> no son exactamente iguales con listas. Lo veremos más adelante.</p>"
       ],
+      "ejercicios": [
+        "Suma los números del 1 al 50 usando un acumulador.",
+        "Cuenta cuántos números del 1 al 100 son divisibles por 3.",
+        "Intercambia los valores de dos variables en una línea.",
+        "Empieza con x=10, multiplica por 3, resta 5, divide entre 2. Muestra el resultado final.",
+        "Asigna 3 valores a 3 variables en una sola línea y muéstralos."
+      ],
       "resumen": "La asignación aumentada (+=, -=, *=, /=, etc.) combina operación con asignación. Se usa para acumular y contar. La asignación múltiple permite varias variables en una línea."
     },
     {
@@ -374,7 +402,6 @@
         {
           "titulo": "Verificar claves en diccionarios",
           "codigo": "persona = {\"nombre\": \"Ana\", \"edad\": 25}\n\nprint(\"nombre\" in persona)   # True\nprint(\"email\" in persona)    # False\nprint(\"email\" not in persona) # True",
-          "expl": "",
           "explicacion": [
             "<p>Con diccionarios, <code>in</code> verifica si la <strong>clave</strong> existe, no el valor.</p>",
             "<p>Si quieres verificar los valores, usa <code>valor in dicc.values()</code>.</p>"
@@ -405,6 +432,12 @@
         "<p>💡 <strong>Truco 1:</strong> <code>x in lista</code> es O(n): recorre la lista entera si no encuentra. Para listas grandes, considera usar un set.</p>",
         "<p>💡 <strong>Truco 2:</strong> en análisis numérico, puedes verificar convergencia con <code>if \"convergió\" in mensaje:</code>.</p>",
         "<p>💡 <strong>Truco 3:</strong> combínalo con <code>not</code> para validaciones: <code>if \"error\" not in respuesta:</code>.</p>"
+      ],
+      "ejercicios": [
+        "Verifica si 'a' está en 'banana'.",
+        "Verifica si 7 está en `[1, 3, 5, 7, 9]`.",
+        "Verifica si 'email' NO está en el diccionario `{'nombre': 'Ana'}`.",
+        "Escribe una condición que verifique si un número está en el rango [1, 2, 3, 5, 8, 13]."
       ],
       "resumen": "in y not in verifican pertenencia en listas, strings, tuplas, diccionarios y sets. En diccionarios, verifican las claves. Son más limpios que un bucle manual."
     },
@@ -482,80 +515,18 @@
         "<p>💡 <strong>Truco 2:</strong> en análisis numérico, escribe las fórmulas con paréntesis claros: <code>x = (a + b) / 2</code> es más legible que <code>x = a + b / 2</code> (que sería incorrecto).</p>",
         "<p>💡 <strong>Truco 3:</strong> puedes consultar la precedencia completa en la documentación oficial de Python.</p>"
       ],
+      "ejercicios": [
+        "Evalúa `2 + 3 * 4` y comprueba el resultado.",
+        "Cambia el orden con paréntesis para obtener 20.",
+        "Evalúa `-2 ** 2` y explica por qué da -4.",
+        "Predice el resultado de `10 - 4 + 2 * 3` y compruébalo.",
+        "Escribe la fórmula del promedio de tres números asegurándote de que sume antes de dividir."
+      ],
       "resumen": "Python evalúa primero paréntesis, luego potencias, luego multiplicaciones/divisiones, luego sumas/restas, luego comparaciones, luego not/and/or. Si dudas, usa paréntesis."
     },
     {
-      "id": "bitwise",
+      "id": "strings-operaciones",
       "numero": "7",
-      "titulo": "Operadores bit a bit (bitwise)",
-      "emoji": "🔧",
-      "subtitulo": "Operaciones sobre los bits de un número",
-      "que_es": [
-        "<p>Los operadores <strong>bit a bit</strong> trabajan sobre la representación binaria de los números. No son muy comunes en análisis numérico, pero vale la pena conocerlos porque a veces aparecen.</p>",
-        "<ul><li><code>&</code> → AND bit a bit</li><li><code>|</code> → OR bit a bit</li><li><code>^</code> → XOR bit a bit</li><li><code>~</code> → NOT bit a bit</li><li><code>&lt;&lt;</code> → desplazar a la izquierda</li><li><code>&gt;&gt;</code> → desplazar a la derecha</li></ul>",
-        "<p>Se llaman \"bit a bit\" porque operan bit por bit, no sobre el número completo.</p>"
-      ],
-      "para_que_sirve": [
-        "<p>Se usan sobre todo en:</p>",
-        "<ul><li><strong>Programación de bajo nivel</strong>: controlar hardware.</li><li><strong>Optimización</strong>: multiplicar o dividir por potencias de 2 con desplazamientos.</li><li><strong>Flags</strong>: guardar varios booleanos en un solo número.</li><li><strong>Criptografía</strong>: operaciones sobre bloques.</li><li><strong>Algoritmos específicos</strong>: compresión, hash, etc.</li></ul>",
-        "<p>En análisis numérico casi nunca los necesitarás, pero están ahí por si acaso.</p>"
-      ],
-      "sintaxis": "a & b       # AND bit a bit\na | b       # OR bit a bit\na ^ b       # XOR bit a bit\n~a          # NOT bit a bit\na << n      # desplazar a la izquierda n bits\na >> n      # desplazar a la derecha n bits",
-      "ejemplos": [
-        {
-          "titulo": "AND, OR y XOR",
-          "codigo": "a = 5   # binario: 0101\nb = 3   # binario: 0011\n\nprint(a & b)   # 0001 = 1\nprint(a | b)   # 0111 = 7\nprint(a ^ b)   # 0110 = 6\nprint(~a)      # -6 (complemento a dos)",
-          "explicacion": [
-            "<p>Operan bit por bit:</p>",
-            "<ul><li><code>&</code>: 1 solo donde ambos tienen 1.</li><li><code>|</code>: 1 donde al menos uno tiene 1.</li><li><code>^</code>: 1 donde son distintos.</li><li><code>~</code>: invierte todos los bits.</li></ul>"
-          ]
-        },
-        {
-          "titulo": "Desplazamientos: multiplicar y dividir por 2",
-          "codigo": "x = 5\n\nprint(x << 1)   # 10  (x * 2)\nprint(x << 2)   # 20  (x * 4)\nprint(x << 3)   # 40  (x * 8)\n\nprint(x >> 1)   # 2   (x // 2)\nprint(x >> 2)   # 1   (x // 4)",
-          "explicacion": [
-            "<p>Desplazar a la izquierda equivale a multiplicar por 2 elevado al número de bits:</p>",
-            "<ul><li><code>x &lt;&lt; n</code> = <code>x * (2 ** n)</code>.</li><li><code>x &gt;&gt; n</code> = <code>x // (2 ** n)</code>.</li></ul>",
-            "<p>Son muy rápidos en hardware, pero en Python moderno no vale la pena usarlos solo por velocidad.</p>"
-          ]
-        },
-        {
-          "titulo": "Uso práctico: verificar paridad",
-          "codigo": "for n in [4, 7, 10, 15]:\n    if n & 1:\n        print(n, \"es impar\")\n    else:\n        print(n, \"es par\")",
-          "explicacion": [
-            "<p>Un número es impar si su último bit es 1. Se verifica con <code>n &amp; 1</code>:</p>",
-            "<ul><li><code>4 &amp; 1</code> = 0 → par.</li><li><code>7 &amp; 1</code> = 1 → impar.</li></ul>",
-            "<p>Es equivalente a <code>n % 2 == 1</code>. Ambas formas funcionan, la de módulo es más común.</p>"
-          ]
-        }
-      ],
-      "errores_comunes": [
-        {
-          "error": "2 ^ 3   esperando 8",
-          "razon": "^ es XOR, no potencia. La potencia es **.",
-          "correcto": "2 ** 3   →  8"
-        },
-        {
-          "error": "~5   esperando -5",
-          "razon": "~ invierte bits, no cambia el signo. ~5 da -6 (complemento a dos).",
-          "correcto": "Para cambiar signo: -5"
-        },
-        {
-          "error": "Usar & donde querías and",
-          "razon": "& es para bits, and es para booleanos. No es lo mismo.",
-          "correcto": "Para booleanos: and, or, not. Para bits: &, |, ~."
-        }
-      ],
-      "tips": [
-        "<p>💡 <strong>Truco 1:</strong> en la mayoría de casos, no necesitas operadores bit a bit. Son para casos muy específicos.</p>",
-        "<p>💡 <strong>Truco 2:</strong> <code>x &amp; 1</code> es la forma más rápida de verificar si x es par o impar.</p>",
-        "<p>💡 <strong>Truco 3:</strong> si vienes de C o Java, cuidado: en Python <code>^</code> es XOR, no potencia.</p>"
-      ],
-      "resumen": "Los operadores bit a bit (&, |, ^, ~, <<, >>) trabajan sobre la representación binaria. Se usan poco en análisis numérico, pero vale la pena conocerlos."
-    },
-    {
-      "id": "operaciones-strings",
-      "numero": "8",
       "titulo": "Operaciones con strings",
       "emoji": "🔤",
       "subtitulo": "Concatenar, repetir, comparar y transformar texto",
@@ -636,6 +607,13 @@
         "<p>💡 <strong>Truco 3:</strong> para alinear números en columnas, usa f-strings con formato: <code>f\"{x:8.4f}\"</code> ocupa 8 caracteres con 4 decimales.</p>",
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, imprimir tablas de iteraciones es común:</p>",
         "<pre class='cmd-sintaxis'>print(f\"{'Iter':&gt;5} {'x':&gt;15} {'err':&gt;12}\")\nfor k, x, err in historial:\n    print(f\"{k:&gt;5} {x:&gt;15.10f} {err:&gt;12.3e}\")</pre>"
+      ],
+      "ejercicios": [
+        "Crea un saludo usando concatenación con '+' y con f-strings.",
+        "Repite el carácter '#' 30 veces para hacer una línea separadora.",
+        "Toma la cadena 'Ana,25,Madrid' y sepárala con `split`.",
+        "Une la lista ['a', 'b', 'c'] con guiones usando `join`.",
+        "Formatea el número π con 4 decimales usando f-strings."
       ],
       "resumen": "Los strings se pueden concatenar con +, repetir con *, buscar con in y comparar con == y <. Los métodos split() y join() convierten entre string y lista. Las f-strings formatean valores dentro del texto."
     }

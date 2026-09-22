@@ -2,7 +2,7 @@
   "parte": 1,
   "titulo": "Primeros pasos",
   "emoji": "🐣",
-  "descripcion": "Antes de escribir código de verdad, necesitas entender qué es Python, cómo se ejecuta, y los comandos más básicos que vas a usar todo el tiempo. Esta parte es la base de todo lo demás.",
+  "descripcion": "Antes de escribir código de verdad, necesitas entender qué es Python, cómo se ejecuta y los comandos más básicos que vas a usar todo el tiempo. Esta parte es la base de todo lo demás.",
   "temas": [
     {
       "id": "que-es-python",
@@ -11,9 +11,9 @@
       "emoji": "🐍",
       "subtitulo": "El lenguaje que se lee casi como inglés",
       "que_es": [
-        "<p><strong>Python</strong> es un lenguaje de programación. Un lenguaje de programación es una forma de darle instrucciones a la computadora paso a paso, como si le escribieras una receta de cocina.</p>",
-        "<p>La computadora no entiende español ni inglés. Entiende unos y ceros (lenguaje binario). Python es un <strong>traductor</strong> entre tú y la máquina: tú escribes algo legible, y Python lo convierte en órdenes que la computadora puede ejecutar.</p>",
-        "<p>¿Por qué Python y no otro lenguaje? Porque fue diseñado para ser <strong>fácil de leer</strong>. Otros lenguajes usan símbolos raros y reglas complicadas. Python usa palabras normales: <code>if</code>, <code>for</code>, <code>print</code>, <code>return</code>. Esto lo hace perfecto para aprender.</p>"
+        "<p><strong>Python</strong> es un lenguaje de programación de alto nivel, interpretado y de código abierto. Fue creado por Guido van Rossum y su primera versión se publicó el 20 de febrero de 1991.</p>",
+        "<p>¿Por qué Python y no otro lenguaje? Porque fue diseñado para ser <strong>fácil de leer</strong>. Otros lenguajes usan símbolos raros y reglas complicadas. Python usa palabras normales: <code>if</code>, <code>for</code>, <code>print</code>, <code>return</code>. Esto lo hace perfecto para aprender.</p>",
+        "<p><strong>Dato curioso:</strong> el nombre no viene del reptil, sino del grupo de comedia británico <em>Monty Python's Flying Circus</em>. Sus creadores querían un nombre corto, un poco misterioso y fácil de recordar.</p>"
       ],
       "para_que_sirve": [
         "<p>Python se usa en muchísimos campos:</p>",
@@ -39,6 +39,14 @@
             "<ul><li>La primera muestra el resultado de 2 + 3 → <code>5</code></li><li>La segunda muestra 10 × 5 → <code>50</code></li><li>La tercera muestra 100 ÷ 4 → <code>25.0</code></li></ul>",
             "<p><strong>Ojo:</strong> fíjate que la división da <code>25.0</code> con decimal, no <code>25</code>. Python siempre devuelve decimales al dividir con <code>/</code>. Lo veremos más adelante.</p>"
           ]
+        },
+        {
+          "titulo": "Verificando la versión de Python",
+          "codigo": "import sys\nprint(sys.version)",
+          "explicacion": [
+            "<p>Cuando empieces a programar en un equipo nuevo, siempre es bueno saber qué versión de Python tienes. Python 2 y Python 3 son incompatibles, así que este chequeo es importante.</p>",
+            "<p><code>sys.version</code> devuelve un texto con la versión completa.</p>"
+          ]
         }
       ],
       "errores_comunes": [
@@ -57,6 +65,11 @@
         "<p>💡 <strong>Truco:</strong> si escribes <code>print</code> y le das a <kbd>Tab</kbd>, el editor suele autocompletarlo. Aprovéchalo.</p>",
         "<p>💡 <strong>Buena práctica:</strong> el clásico primer programa siempre es \"Hola, mundo\". Es una tradición de la programación que viene desde 1972.</p>"
       ],
+      "ejercicios": [
+        "Escribe un programa que muestre tu nombre completo en pantalla.",
+        "Calcula y muestra el resultado de 15 + 27, y luego de 100 - 42.",
+        "Muestra en pantalla la frase: 'Estoy aprendiendo Python'."
+      ],
       "resumen": "Python es un lenguaje de programación fácil de leer, usado para ciencia de datos, IA, web y análisis numérico. En este curso lo usarás para resolver ecuaciones."
     },
     {
@@ -74,7 +87,7 @@
       "para_que_sirve": [
         "<p>Saber dónde ejecutar tu código es la base de todo. Cada forma tiene sus ventajas:</p>",
         "<ul><li><strong>Navegador</strong>: rápido, no instalas nada, funciona en cualquier dispositivo.</li><li><strong>Local</strong>: tienes acceso completo al sistema, más velocidad, más librerías.</li><li><strong>Cuaderno</strong>: ideal para análisis de datos y experimentación.</li></ul>",
-        "<p>En este curso, como estamos en una web, el código se ejecuta <strong>en tu propio navegador</strong>. No se envía a ningún servidor, es privado.</p>"
+        "<p>En esta guía, cada ejemplo tiene su propio editor y su botón Ejecutar. Los editores son <strong>independientes</strong>: si defines una variable en uno, no la puedes usar en otro.</p>"
       ],
       "sintaxis": null,
       "ejemplos": [
@@ -94,6 +107,14 @@
             "<p>En un archivo <code>.py</code>, todo el código se ejecuta de arriba a abajo cuando abres el archivo con Python.</p>",
             "<p>No hay celdas separadas. Si algo falla en el medio, lo de abajo no se ejecuta.</p>"
           ]
+        },
+        {
+          "titulo": "Código con errores de sintaxis",
+          "codigo": "print(\"Hola\")\n# print(\"Esto es un comentario\")\n# La línea de abajo tiene un error:\n# print(10 + \"5\")",
+          "explicacion": [
+            "<p>En un script, si una línea tiene un error, todo el archivo falla al ejecutarse.</p>",
+            "<p>Por eso es útil usar comentarios para desactivar temporalmente partes del código mientras pruebas.</p>"
+          ]
         }
       ],
       "errores_comunes": [
@@ -110,9 +131,14 @@
       ],
       "tips": [
         "<p>💡 <strong>Truco:</strong> en un cuaderno, puedes ejecutar una celda con <kbd>Shift</kbd> + <kbd>Enter</kbd>.</p>",
-        "<p>💡 <strong>Buena práctica:</strong> en esta web, cada ejemplo tiene su propio editor y su propio botón Ejecutar. Los editores son <strong>independientes</strong>: si defines una variable en uno, no la puedes usar en otro.</p>"
+        "<p>💡 <strong>Buena práctica:</strong> en esta web, cada ejemplo tiene su propio editor y su propio botón Ejecutar. Los editores son independientes.</p>"
       ],
-      "resumen": "Python necesita un intérprete. Se puede ejecutar en el navegador, en la terminal, en un cuaderno (Jupyter/Colab) o en un editor (VS Code). Aquí se ejecuta en tu navegador."
+      "ejercicios": [
+        "Abre un editor de texto, escribe `print('Hola')` y guárdalo como `saludo.py`.",
+        "Ejecuta el archivo con `python3 saludo.py` (o `python saludo.py` en Windows).",
+        "Modifica el archivo para que muestre tu nombre y un mensaje. Vuelve a ejecutarlo."
+      ],
+      "resumen": "Python necesita un intérprete. Se puede ejecutar en el navegador, en la terminal, en un cuaderno o en un editor. Aquí se ejecuta en tu navegador."
     },
     {
       "id": "print",
@@ -164,6 +190,14 @@
             "<p>Por defecto, cada <code>print</code> termina con un <strong>salto de línea</strong>. Puedes cambiarlo con <code>end</code>:</p>",
             "<ul><li>Las dos primeras líneas juntas dan: <code>Hola mundo</code> (porque el primer print no hace salto, pone un espacio).</li><li>Las dos últimas dan: <code>Línea 1</code> y <code>Línea 2</code> en líneas separadas.</li></ul>"
           ]
+        },
+        {
+          "titulo": "Ejemplo 5: imprimir un mensaje personalizado",
+          "codigo": "nombre = \"Ana\"\nprint(f\"Hola, {nombre}\")",
+          "explicacion": [
+            "<p>Las <strong>f-strings</strong> (el texto con <code>f</code> antes) permiten mezclar variables dentro del texto. Es la forma moderna y recomendada.</p>",
+            "<p>Lo veremos en detalle en la parte de Strings, pero es bueno que lo conozcas desde el principio.</p>"
+          ]
         }
       ],
       "errores_comunes": [
@@ -186,11 +220,6 @@
           "error": "print(2 + 3 = 5)",
           "razon": "Dentro del print solo van valores, no comparaciones. Si quieres mostrar una comparación, hazla antes.",
           "correcto": "print(\"2 + 3 =\", 2 + 3)"
-        },
-        {
-          "error": "print(\"Hola\" \"mundo\")",
-          "razon": "Sin coma, Python junta los textos en uno solo. A veces es lo que quieres, pero otras no.",
-          "correcto": "print(\"Hola\", \"mundo\")  →  Hola mundo\nprint(\"Hola\" \"mundo\")  →  Holamundo"
         }
       ],
       "tips": [
@@ -199,6 +228,12 @@
         "<p>💡 <strong>Truco 3:</strong> para imprimir varias líneas, usa <code>\\n</code> dentro del texto: <code>print(\"Línea 1\\nLínea 2\")</code>.</p>",
         "<p>💡 <strong>Buena práctica:</strong> en análisis numérico, usa <code>print</code> con formato para ver el progreso de un método:</p>",
         "<pre class='cmd-sintaxis'>for k in range(1, 6):\n    print(f\"Iteración {k}: x = {k * 0.5:.4f}\")</pre>"
+      ],
+      "ejercicios": [
+        "Muestra tu nombre, tu edad y tu ciudad usando un solo print con comas.",
+        "Usa sep para imprimir tu nombre, un guion y tu edad, separados por ' | '.",
+        "Calcula 10 + 20 y muestra el resultado precedido por 'La suma es: '.",
+        "Usa print con end=' ' para unir dos frases en una misma línea."
       ],
       "resumen": "print() muestra información en pantalla. Es la herramienta más básica para ver qué está pasando en tu programa. Admite varios valores, se puede cambiar el separador (sep) y el final (end)."
     },
@@ -283,6 +318,13 @@
         "<p>💡 <strong>Truco 3:</strong> usa nombres descriptivos. <code>precio_con_iva</code> es mejor que <code>p</code>. El código se lee muchas más veces de las que se escribe.</p>",
         "<p>💡 <strong>Buena práctica:</strong> en análisis numérico usa nombres como <code>tol</code>, <code>max_iter</code>, <code>error_abs</code>, <code>raiz</code>. Son cortos pero claros.</p>"
       ],
+      "ejercicios": [
+        "Crea tres variables: tu nombre, tu edad y tu altura. Muestra cada una en pantalla.",
+        "Asigna a `x` el valor 10, luego reasígnalo a 20 y muestra el valor final.",
+        "Intercambia los valores de dos variables usando `a, b = b, a`.",
+        "Crea una variable `radio` con valor 5 y calcula el área de un círculo (π × r²) usando print.",
+        "Intenta crear una variable llamada `1edad` y observa el error que da Python."
+      ],
       "resumen": "Las variables son cajas con nombre donde guardas valores. Se crean con <code>=</code>. Tienen reglas de nombre (sin espacios, sin empezar con número, sin palabras reservadas). Pueden cambiar de valor en cualquier momento."
     },
     {
@@ -299,7 +341,7 @@
       "para_que_sirve": [
         "<p>Los comentarios son más importantes de lo que parecen:</p>",
         "<ul><li><strong>Recordar por qué hiciste algo</strong>: dentro de un mes no te acordarás de por qué usaste esa fórmula rara.</li><li><strong>Explicar código complejo</strong>: algoritmos matemáticos, fórmulas de análisis numérico.</li><li><strong>Dejar notas para otros</strong>: si compartes tu código, los comentarios son tu forma de hablar con quien lo lea.</li><li><strong>Desactivar líneas temporalmente</strong>: si una línea falla, la comentas y sigues trabajando.</li></ul>",
-            "<p><strong>Regla de oro:</strong> los comentarios explican <em>por qué</em>, no <em>qué</em>. Si el código ya es claro, no hace falta comentar cada línea.</p>"
+        "<p><strong>Regla de oro:</strong> los comentarios explican <em>por qué</em>, no <em>qué</em>. Si el código ya es claro, no hace falta comentar cada línea.</p>"
       ],
       "sintaxis": "# Esto es un comentario de una línea\n\nprint(\"Hola\")  # También puede ir al final\n\n# print(\"Esta línea no se ejecuta\")",
       "ejemplos": [
@@ -328,11 +370,11 @@
           ]
         },
         {
-          "titulo": "Ejemplo 4: múltiples líneas comentadas",
-          "codigo": "# Esta sección prueba varias cosas\n# x = 5\n# y = 10\n# print(x + y)\n# print(x * y)\nprint(\"Fin\")",
+          "titulo": "Ejemplo 4: docstring para documentar funciones",
+          "codigo": "def raiz_cuadrada(x):\n    \"\"\"Devuelve la raíz cuadrada de x.\n    \n    x debe ser mayor o igual que cero.\n    \"\"\"\n    return x ** 0.5\n\nprint(raiz_cuadrada(16))",
           "explicacion": [
-            "<p>Cuando comentas varias líneas, cada una lleva su propio <code>#</code>. No hay un comentario \"en bloque\" como en otros lenguajes.</p>",
-            "<p><strong>Truco:</strong> en la mayoría de editores, si seleccionas varias líneas y pulsas <kbd>Ctrl</kbd>+<kbd>/</kbd>, se comentan todas de golpe.</p>"
+            "<p>Los <strong>docstrings</strong> son comentarios especiales entre triple comilla <code>\"\"\"...\"\"\"</code>. Se usan para documentar funciones y clases.</p>",
+            "<p>A diferencia de los comentarios con <code>#</code>, los docstrings son accesibles desde el código: <code>help(raiz_cuadrada)</code> los muestra.</p>"
           ]
         }
       ],
@@ -355,10 +397,16 @@
       ],
       "tips": [
         "<p>💡 <strong>Truco 1:</strong> los comentarios no cuentan para el rendimiento. Puedes poner los que quieras sin afectar al programa.</p>",
-        "<p>💡 <strong>Truco 2:</strong> si tienes un error y no sabes dónde, comenta bloques grandes para aislarlo. Ves reduciendo hasta encontrar la línea.</p>",
+        "<p>💡 <strong>Truco 2:</strong> si tienes un error y no sabes dónde, comenta bloques grandes para aislarlo. Vas reduciendo hasta encontrar la línea.</p>",
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, escribe la fórmula matemática como comentario encima del código. Ayuda muchísimo:</p>",
         "<pre class='cmd-sintaxis'># x_{k+1} = x_k - f(x_k) / f'(x_k)\nx_nuevo = x - f(x) / df(x)</pre>",
         "<p>💡 <strong>Buena práctica:</strong> no comentes lo obvio. <code>x = 5  # asigna 5 a x</code> no aporta nada. Comenta lo que no es evidente.</p>"
+      ],
+      "ejercicios": [
+        "Escribe un comentario explicando qué hace `print('Hola')`.",
+        "Comenta una línea de código y observa cómo deja de ejecutarse.",
+        "Escribe una función con docstring que explique qué hace.",
+        "En un código tuyo, añade un comentario que explique el por qué de una decisión (no el qué)."
       ],
       "resumen": "Los comentarios empiezan con <code>#</code> y Python los ignora. Sirven para explicar el código, dejar notas o desactivar líneas. Explican el <em>por qué</em>, no el <em>qué</em>."
     },
@@ -410,7 +458,7 @@
           "codigo": "nombre = input(\"Nombre: \")\nedad = int(input(\"Edad: \"))\nciudad = input(\"Ciudad: \")\n\nprint(f\"{nombre} tiene {edad} años y vive en {ciudad}.\")",
           "explicacion": [
             "<p>Puedes pedir tantos datos como quieras. Cada uno en una línea.</p>",
-            "<p>El <code>print</code> usa una <strong>f-string</strong> (texto precedido de <code>f</code>) para mezclar variables dentro del texto. Es una forma muy limpia de construir mensajes. Lo veremos más adelante.</p>"
+            "<p>El <code>print</code> usa una <strong>f-string</strong> (texto precedido de <code>f</code>) para mezclar variables dentro del texto.</p>"
           ]
         }
       ],
@@ -432,7 +480,7 @@
         },
         {
           "error": "numero = int(input(\"Número: \"))  # usuario escribe \"abc\"",
-          "razon": "Si el usuario escribe algo que no es un número, int() falla con ValueError. Habría que capturar el error (lo veremos en la parte de errores).",
+          "razon": "Si el usuario escribe algo que no es un número, int() falla con ValueError.",
           "correcto": "try:\n    numero = int(input(\"Número: \"))\nexcept ValueError:\n    print(\"Eso no es un número\")"
         }
       ],
@@ -443,181 +491,14 @@
         "<pre class='cmd-sintaxis'>a, b = input(\"Intervalo [a b]: \").split()\na, b = float(a), float(b)</pre>",
         "<p>💡 <strong>Buena práctica:</strong> en un curso como este, casi nunca necesitarás <code>input()</code>: los parámetros se definen directamente en el código. Pero es bueno saberlo para programas interactivos.</p>"
       ],
+      "ejercicios": [
+        "Pide al usuario su nombre y salúdalo con un mensaje personalizado.",
+        "Pide dos números y muestra su suma, resta, multiplicación y división.",
+        "Pide la base y la altura de un rectángulo y calcula su área.",
+        "Pide un número y muestra su cuadrado y su cubo.",
+        "Pide la temperatura en grados Celsius y conviértela a Fahrenheit (F = C × 9/5 + 32)."
+      ],
       "resumen": "<code>input()</code> detiene el programa y pide datos al usuario. Siempre devuelve un texto. Si quieres un número, conviértelo con <code>int()</code> o <code>float()</code>."
-    },
-    {
-      "id": "numeros-basicos",
-      "numero": "7",
-      "titulo": "Números en Python",
-      "emoji": "🔢",
-      "subtitulo": "Enteros, decimales y las operaciones básicas",
-      "que_es": [
-        "<p>Python distingue entre varios tipos de números. Los más importantes son dos:</p>",
-        "<ul><li><strong>int</strong> (entero): números sin decimales. Pueden ser positivos, negativos o cero.</li><li><strong>float</strong> (decimal): números con parte decimal, como 3.14 o -0.5.</li></ul>",
-        "<p>Python decide el tipo automáticamente según cómo escribas el número: si tiene punto decimal, es float. Si no, es int.</p>",
-        "<p>También hay un tipo para números complejos (con parte imaginaria), pero no lo usaremos mucho en análisis numérico básico.</p>"
-      ],
-      "para_que_sirve": [
-        "<p>Los números están por todas partes:</p>",
-        "<ul><li><strong>Contar cosas</strong>: edades, cantidades, iteraciones → int.</li><li><strong>Medir cosas</strong>: alturas, precios, resultados de divisiones → float.</li><li><strong>Hacer cálculos</strong>: cualquier operación matemática.</li><li><strong>Representar datos científicos</strong>: notación científica como 1.5e-8.</li></ul>"
-      ],
-      "sintaxis": "# Enteros\nx = 5\ny = -10\nz = 0\n\n# Decimales\npi = 3.14159\ne = 2.71828\nnotacion_cientifica = 1.5e-8   # 0.000000015",
-      "ejemplos": [
-        {
-          "titulo": "Ejemplo 1: enteros y sus operaciones",
-          "codigo": "a = 17\nb = 5\n\nprint(\"Suma:\", a + b)          # 22\nprint(\"Resta:\", a - b)         # 12\nprint(\"Producto:\", a * b)      # 85\nprint(\"División:\", a / b)      # 3.4 (¡float!)\nprint(\"División entera:\", a // b)  # 3\nprint(\"Módulo:\", a % b)        # 2\nprint(\"Potencia:\", a ** 2)      # 289",
-          "explicacion": [
-            "<p>Los operadores básicos:</p>",
-            "<ul><li><code>+</code> → suma</li><li><code>-</code> → resta</li><li><code>*</code> → multiplicación</li><li><code>/</code> → división (siempre devuelve float)</li><li><code>//</code> → división entera (descarta los decimales)</li><li><code>%</code> → módulo (el resto de la división)</li><li><code>**</code> → potencia</li></ul>",
-            "<p><strong>Ojo con <code>/</code>:</strong> <code>4 / 2</code> da <code>2.0</code>, no <code>2</code>. Aunque el resultado sea entero, siempre devuelve float.</p>"
-          ]
-        },
-        {
-          "titulo": "Ejemplo 2: la diferencia entre // y /",
-          "codigo": "print(17 / 5)    # 3.4\nprint(17 // 5)   # 3\nprint(17 % 5)    # 2",
-          "explicacion": [
-            "<p>Esto es fundamental entenderlo:</p>",
-            "<ul><li><code>17 / 5</code> → 3.4 (división normal)</li><li><code>17 // 5</code> → 3 (¿cuántas veces cabe 5 en 17? 3 veces)</li><li><code>17 % 5</code> → 2 (¿qué sobra? 17 = 5×3 + 2, así que sobran 2)</li></ul>",
-            "<p>La relación es: <code>17 = 5 * (17 // 5) + (17 % 5)</code>, o sea, <code>17 = 5 * 3 + 2</code>.</p>"
-          ]
-        },
-        {
-          "titulo": "Ejemplo 3: decimales y precisión",
-          "codigo": "pi = 3.14159\nradio = 2.5\narea = pi * radio ** 2\n\nprint(\"Área:\", area)\nprint(\"Área redondeada:\", round(area, 2))",
-          "explicacion": [
-            "<p>Los decimales funcionan igual que los enteros, pero sus resultados pueden tener muchos dígitos.</p>",
-            "<p><code>round(numero, decimales)</code> redondea a la cantidad de decimales que le indiques:</p>",
-            "<ul><li><code>round(19.6349375, 2)</code> → <code>19.63</code></li></ul>",
-            "<p><strong>Ojo:</strong> los decimales en computadora tienen errores pequeños. <code>0.1 + 0.2</code> no da exactamente <code>0.3</code>. Es un tema que se trata en análisis numérico.</p>"
-          ]
-        },
-        {
-          "titulo": "Ejemplo 4: notación científica",
-          "codigo": "muy_grande = 1.5e6      # 1.500.000\nmuy_pequeno = 1.5e-8    # 0.000000015\n\nprint(muy_grande)\nprint(muy_pequeno)",
-          "explicacion": [
-            "<p>Cuando los números son muy grandes o muy pequeños, se usa notación científica con <code>e</code>:</p>",
-            "<ul><li><code>1.5e6</code> = 1.5 × 10⁶ = 1.500.000</li><li><code>1.5e-8</code> = 1.5 × 10⁻⁸ = 0.000000015</li></ul>",
-            "<p>Muy útil en análisis numérico para tolerancias: <code>tol = 1e-8</code> es más legible que <code>0.00000001</code>.</p>"
-          ]
-        }
-      ],
-      "errores_comunes": [
-        {
-          "error": "x = 5,5",
-          "razon": "En Python el separador decimal es el punto (.), no la coma. La coma separa valores distintos.",
-          "correcto": "x = 5.5"
-        },
-        {
-          "error": "x = 1/0",
-          "razon": "No se puede dividir entre cero. Python da ZeroDivisionError.",
-          "correcto": "Verificar antes que el divisor no sea cero."
-        },
-        {
-          "error": "print(0.1 + 0.2 == 0.3)",
-          "razon": "Da False por errores de precisión. Los floats no son exactos.",
-          "correcto": "print(abs(0.1 + 0.2 - 0.3) < 1e-10)"
-        },
-        {
-          "error": "x = 10**1000",
-          "razon": "No es error, pero Python puede tardar o consumir mucha memoria con números enormes. Los int en Python no tienen límite, pero eso tiene coste.",
-          "correcto": "Usa int con moderación si los números son enormes."
-        }
-      ],
-      "tips": [
-        "<p>💡 <strong>Truco 1:</strong> para ver el tipo de un número, usa <code>type(5)</code> o <code>type(5.0)</code>.</p>",
-        "<p>💡 <strong>Truco 2:</strong> <code>int(3.7)</code> no redondea, <strong>trunca</strong> (corta los decimales): da <code>3</code>. Para redondear, usa <code>round()</code>.</p>",
-        "<p>💡 <strong>Truco 3:</strong> si quieres hacer cálculos muy precisos (más de 15 decimales), usa la librería <code>decimal</code> o <code>mpmath</code>. Python por defecto no es exacto.</p>",
-        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, <code>abs(x - y) < tol</code> es la forma correcta de comparar floats. Nunca <code>x == y</code>.</p>"
-      ],
-      "resumen": "Python tiene dos tipos principales de números: int (sin decimales) y float (con decimales). Los operadores son +, -, *, /, //, %, **. Los floats tienen errores de precisión que hay que manejar con tolerancias."
-    },
-    {
-      "id": "strings-basicos",
-      "numero": "8",
-      "titulo": "Strings — Texto en Python",
-      "emoji": "📝",
-      "subtitulo": "Cómo trabajar con texto: comillas, concatenación y formato",
-      "que_es": [
-        "<p>Un <strong>string</strong> (o <em>cadena de texto</em>) es una secuencia de caracteres encerrada entre comillas. Puede tener cualquier cosa: letras, números, símbolos, espacios, emojis.</p>",
-        "<p>Las comillas pueden ser simples (<code>'hola'</code>) o dobles (<code>\"hola\"</code>). Python las trata igual, pero debes ser consistente: si abres con una, cierras con la misma.</p>",
-        "<p>Los strings son <strong>inmutables</strong>: una vez creados, no se pueden modificar. Si quieres cambiar uno, tienes que crear uno nuevo.</p>"
-      ],
-      "para_que_sirve": [
-        "<p>El texto es la forma principal de comunicarse con el usuario:</p>",
-        "<ul><li><strong>Mensajes</strong>: mostrar resultados, avisos, errores.</li><li><strong>Nombres y etiquetas</strong>: identificar cosas.</li><li><strong>Rutas de archivos</strong>: <code>\"datos.csv\"</code>.</li><li><strong>Documentación</strong>: docstrings para explicar funciones.</li><li><strong>Entrada del usuario</strong>: lo que devuelve <code>input()</code>.</li></ul>"
-      ],
-      "sintaxis": "s1 = 'texto con comillas simples'\ns2 = \"texto con comillas dobles\"\ns3 = \"puedo tener 'comillas simples' dentro\"\ns4 = 'puedo tener \"comillas dobles\" dentro'\n\n# String multilínea\ns5 = \"\"\"Línea 1\nLínea 2\nLínea 3\"\"\"",
-      "ejemplos": [
-        {
-          "titulo": "Ejemplo 1: operaciones básicas con strings",
-          "codigo": "saludo = \"Hola\"\nnombre = \"Ana\"\n\n# Concatenación (unir)\nprint(saludo + \", \" + nombre)\n\n# Repetición\nprint(\"ab\" * 3)\n\n# Longitud\nprint(len(saludo))\n\n# Acceder a un carácter (empieza en 0)\nprint(nombre[0])\nprint(nombre[-1])",
-          "explicacion": [
-            "<p>Con strings puedes hacer:</p>",
-            "<ul><li><code>+</code> → unir dos strings: <code>\"Hola\" + \", \" + \"Ana\"</code> = <code>\"Hola, Ana\"</code></li><li><code>*</code> → repetir: <code>\"ab\" * 3</code> = <code>\"ababab\"</code></li><li><code>len()</code> → longitud: <code>len(\"Hola\")</code> = 4</li><li><code>[i]</code> → carácter en posición i. Empieza en 0.</li><li><code>[-1]</code> → último carácter (índices negativos cuentan desde el final).</li></ul>"
-          ]
-        },
-        {
-          "titulo": "Ejemplo 2: no se puede sumar texto y número",
-          "codigo": "# Esto da ERROR:\n# print(\"Tengo \" + 25 + \" años\")\n\n# Formas correctas:\nprint(\"Tengo \" + str(25) + \" años\")\nprint(\"Tengo\", 25, \"años\")\nprint(f\"Tengo {25} años\")",
-          "explicacion": [
-            "<p>Python no mezcla strings con números automáticamente. Tienes que convertirlos tú.</p>",
-            "<p>Tres formas de hacerlo:</p>",
-            "<ul><li><strong>Convertir con str()</strong>: <code>str(25)</code> convierte el número a texto.</li><li><strong>Usar comas en print</strong>: Python separa con espacio automáticamente.</li><li><strong>f-string</strong>: la forma más moderna y limpia. Lo vemos en el siguiente ejemplo.</li></ul>"
-          ]
-        },
-        {
-          "titulo": "Ejemplo 3: f-strings (formato moderno)",
-          "codigo": "nombre = \"Ana\"\nedad = 25\naltura = 1.68\n\nprint(f\"{nombre} tiene {edad} años y mide {altura} metros\")\n\n# También puedes formatear números\npi = 3.14159\nprint(f\"Pi con 2 decimales: {pi:.2f}\")\nprint(f\"Pi con 4 decimales: {pi:.4f}\")",
-          "explicacion": [
-            "<p>Las <strong>f-strings</strong> son strings precedidos de <code>f</code>. Dentro, cualquier cosa entre <code>{}</code> se evalúa como código Python:</p>",
-            "<ul><li><code>{nombre}</code> → el valor de la variable nombre.</li><li><code>{edad}</code> → el valor de edad.</li><li><code>{altura}</code> → el valor de altura.</li></ul>",
-            "<p>También puedes formatear números:</p>",
-            "<ul><li><code>{pi:.2f}</code> → 3.14 (2 decimales, formato float).</li><li><code>{pi:.4f}</code> → 3.1416 (4 decimales).</li></ul>",
-            "<p>Las f-strings son la forma recomendada en Python moderno. Las usaremos mucho en análisis numérico para mostrar resultados.</p>"
-          ]
-        },
-        {
-          "titulo": "Ejemplo 4: métodos útiles de strings",
-          "codigo": "texto = \"  Hola Mundo  \"\n\nprint(texto.upper())        # HOLA MUNDO\nprint(texto.lower())        # hola mundo\nprint(texto.strip())        # \"Hola Mundo\" (sin espacios)\nprint(texto.replace(\"o\", \"0\"))  # cambia 'o' por '0'\nprint(texto.split())        # ['Hola', 'Mundo']\nprint(\"Mundo\" in texto)     # True",
-          "explicacion": [
-            "<p>Los strings tienen muchos <strong>métodos</strong> incorporados. Son funciones que se llaman con un punto después del string:</p>",
-            "<ul><li><code>.upper()</code> → todo mayúsculas.</li><li><code>.lower()</code> → todo minúsculas.</li><li><code>.strip()</code> → quita espacios al inicio y al final.</li><li><code>.replace(a, b)</code> → cambia todas las apariciones de a por b.</li><li><code>.split()</code> → divide en una lista por espacios (o por el separador que le indiques).</li><li><code>in</code> → verifica si un texto está contenido en otro.</li></ul>",
-            "<p>Estos métodos <strong>no modifican el string original</strong> (son inmutables). Devuelven un string nuevo.</p>"
-          ]
-        }
-      ],
-      "errores_comunes": [
-        {
-          "error": "\"Hola\" + 5",
-          "razon": "No se puede unir texto con número directamente. Da TypeError.",
-          "correcto": "\"Hola\" + str(5)   o   f\"Hola {5}\""
-        },
-        {
-          "error": "nombre = 'Ana\"",
-          "razon": "Comillas desbalanceadas. Abres con simple pero cierras con doble.",
-          "correcto": "nombre = 'Ana'   o   nombre = \"Ana\""
-        },
-        {
-          "error": "print(\"Hola)\nprint(\"mundo\")",
-          "razon": "Falta cerrar la comilla del primer print. Python se confunde con los siguientes.",
-          "correcto": "print(\"Hola\")\nprint(\"mundo\")"
-        },
-        {
-          "error": "texto[100]",
-          "razon": "Si el índice está fuera del rango del string, Python da IndexError.",
-          "correcto": "texto[len(texto) - 1]   o   texto[-1]"
-        }
-      ],
-      "tips": [
-        "<p>💡 <strong>Truco 1:</strong> para imprimir comillas dentro de un string, usa el otro tipo de comillas: <code>\"Él dijo 'hola'\"</code> o <code>'Él dijo \"hola\"'</code>.</p>",
-        "<p>💡 <strong>Truco 2:</strong> el carácter <code>\\n</code> dentro de un string es un salto de línea: <code>print(\"Línea 1\\nLínea 2\")</code> imprime dos líneas.</p>",
-        "<p>💡 <strong>Truco 3:</strong> <code>\\t</code> es un tabulador: <code>print(\"A\\tB\")</code> separa con tabulación.</p>",
-        "<p>💡 <strong>Truco 4:</strong> para strings muy largos, usa triple comilla: <code>\"\"\"texto largo\"\"\"</code>. Puede tener saltos de línea reales.</p>",
-        "<p>💡 <strong>Buena práctica en análisis numérico:</strong> las f-strings son tus aliadas para mostrar iteraciones:</p>",
-        "<pre class='cmd-sintaxis'>print(f\"Iter {k:3d}: x = {x:.8f}  err = {err:.3e}\")</pre>",
-        "<p>Eso imprime algo como: <code>Iter   5: x = 1.36523001  err = 2.345e-08</code>.</p>"
-      ],
-      "resumen": "Los strings son texto entre comillas. Se pueden unir (<code>+</code>), repetir (<code>*</code>), medir (<code>len()</code>), indexar (<code>[i]</code>) y transformar con métodos (<code>.upper()</code>, <code>.strip()</code>, etc.). Las f-strings son la forma moderna de mezclar variables dentro de texto."
     }
   ]
 }

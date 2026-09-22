@@ -1,5 +1,5 @@
 {
-  "parte": 6,
+  "parte": 9,
   "titulo": "Funciones",
   "emoji": "⚙️",
   "descripcion": "Una función es un bloque de código con nombre que hace una tarea concreta. Se puede usar muchas veces sin repetir el código. Son la base de cualquier programa serio: te permiten organizar, reutilizar y probar tu código.",
@@ -50,7 +50,7 @@
         },
         {
           "titulo": "Diferencia entre print y return",
-          "codigo": "def f_print(x):\n    print(x**2)\n\ndef f_return(x):\n    return x**2\n\n# Con print: no puedes usar el resultado\nresultado = f_print(5)\nprint(\"Resultado con print:\", resultado)   # None\n\n# Con return: sí puedes usar el resultado\nresultado = f_return(5)\nprint(\"Resultado con return:\", resultado)   # 25",
+          "codigo": "def f_print(x):\n    print(x**2)\n\ndef f_return(x):\n    return x**2\n\nresultado = f_print(5)\nprint(\"Resultado con print:\", resultado)   # None\n\nresultado = f_return(5)\nprint(\"Resultado con return:\", resultado)   # 25",
           "explicacion": [
             "<p><strong>Muy importante:</strong> <code>print</code> muestra en pantalla. <code>return</code> devuelve el valor.</p>",
             "<p>Una función sin <code>return</code> devuelve <code>None</code>. Si luego usas ese valor, obtienes None y todo falla.</p>",
@@ -85,6 +85,13 @@
         "<p>💡 <strong>Truco 2:</strong> una función debería hacer <strong>una sola cosa</strong>. Si hace demasiado, divídela.</p>",
         "<p>💡 <strong>Truco 3:</strong> documenta tus funciones con un docstring (lo veremos en el tema 8).</p>",
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, las funciones matemáticas se definen con <code>def f(x): return ...</code> o con lambdas si son cortas.</p>"
+      ],
+      "ejercicios": [
+        "Crea una función que reciba un nombre y muestre un saludo.",
+        "Crea una función que reciba dos números y devuelva su suma.",
+        "Define `f(x) = x² + 3x + 2` como función Python.",
+        "Crea una función que reciba el radio y devuelva el área de un círculo.",
+        "Llama tres veces a la misma función con distintos argumentos."
       ],
       "resumen": "def define una función. return devuelve un valor. Sin return, la función devuelve None. Las funciones permiten reutilizar y organizar el código."
     },
@@ -163,6 +170,13 @@
         "<p>💡 <strong>Truco 2:</strong> en análisis numérico, es común pasar parámetros por nombre para no equivocarse: <code>biseccion(f=f, a=1, b=2, tol=1e-8)</code>.</p>",
         "<p>💡 <strong>Truco 3:</strong> si una función tiene más de 4-5 parámetros, probablemente estás haciendo algo mal. Divídela.</p>"
       ],
+      "ejercicios": [
+        "Crea una función que sume dos números y pruébala con argumentos posicionales.",
+        "Llama a la misma función con argumentos con nombre en distinto orden.",
+        "Crea una función con 3 parámetros y pásalos mezclando posicionales y nombrados.",
+        "Provoca un error pasando un posicional después de un nombrado.",
+        "Escribe una función que reciba una lista y devuelva la suma y el promedio."
+      ],
       "resumen": "Los parámetros son las variables que la función recibe. Los argumentos son los valores que le pasas. Se pueden pasar por posición (orden importa) o por nombre (orden no importa)."
     },
     {
@@ -239,6 +253,12 @@
         "<p>💡 <strong>Truco 2:</strong> nunca uses <code>[]</code>, <code>{}</code> o <code>set()</code> como default. Usa <code>None</code>.</p>",
         "<p>💡 <strong>Truco 3:</strong> si un default es un número (inmutable), no hay problema. Solo los mutables dan problemas.</p>",
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, los defaults bien elegidos hacen que tus funciones sean fáciles de usar.</p>"
+      ],
+      "ejercicios": [
+        "Crea una función que salude con un saludo por defecto.",
+        "Crea una función `potencia(base, exponente=2)` y pruébala con y sin exponente.",
+        "Explica qué pasa si usas una lista como valor por defecto.",
+        "Escribe una función `biseccion` con tol y max_iter por defecto."
       ],
       "resumen": "Los valores por defecto hacen parámetros opcionales. Van al final de la lista. Nunca uses listas o dicts como default: usa None y créalos dentro."
     },
@@ -318,8 +338,15 @@
         "<p>💡 <strong>Truco 3:</strong> si necesitas <code>*args</code> en una función numérica, probablemente estás complicando algo.</p>",
         "<p>💡 <strong>Truco 4:</strong> cuando llames a una función con <code>*</code> o <code>**</code>, verifica que los elementos coincidan con los parámetros.</p>"
       ],
+      "ejercicios": [
+        "Crea una función `sumar_todo(*args)` que sume cualquier cantidad de números.",
+        "Crea una función `info(**kwargs)` que muestre los pares clave-valor.",
+        "Llama a una función con argumentos desde una lista usando `*`.",
+        "Llama a una función con argumentos desde un diccionario usando `**`."
+      ],
       "resumen": "*args recibe argumentos posicionales en una tupla. **kwargs recibe argumentos nombrados en un dict. También sirven al llamar: f(*lista) y f(**dict)."
-    },
+    }
+    ,
     {
       "id": "scope",
       "numero": "5",
@@ -395,6 +422,12 @@
         "<p>💡 <strong>Truco 2:</strong> las funciones puras (reciben y devuelven, no tocan nada externo) son más fáciles de probar.</p>",
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, evita global. Cada método debe recibir sus parámetros y devolver sus resultados.</p>"
       ],
+      "ejercicios": [
+        "Crea una variable global y léela desde una función.",
+        "Intenta modificarla sin `global` y observa el error.",
+        "Usa `global` para modificarla correctamente.",
+        "Reescribe la función para que reciba el valor y lo devuelva sin usar global."
+      ],
       "resumen": "Las variables globales se definen fuera de funciones, las locales dentro. Las funciones pueden leer globales, pero no modificarlas sin 'global'. Evita depender de globales: pasa parámetros y devuelve resultados."
     },
     {
@@ -421,12 +454,12 @@
           "explicacion": [
             "<p>Se definen en una línea. El resultado de la expresión se devuelve automáticamente.</p>",
             "<p>Pueden tener varios parámetros, separados por comas.</p>",
-            "<p>Pueden usar expresiones condicionales: <code>a if a > b else b</code>.</p>"
+            "<p>Pueden usar expresiones condicionales: <code>a if a &gt; b else b</code>.</p>"
           ]
         },
         {
           "titulo": "Lambda en sort",
-          "codigo": "puntos = [(3, 5), (1, 2), (4, 1), (2, 8)]\n\n# Ordenar por el segundo elemento\npuntos.sort(key=lambda p: p[1])\nprint(puntos)   # [(4, 1), (1, 2), (3, 5), (2, 8)]\n\n# Ordenar por la suma\npuntos.sort(key=lambda p: p[0] + p[1])\nprint(puntos)   # [(4, 1), (1, 2), (3, 5), (2, 8)]",
+          "codigo": "puntos = [(3, 5), (1, 2), (4, 1), (2, 8)]\n\n# Ordenar por el segundo elemento\npuntos.sort(key=lambda p: p[1])\nprint(puntos)   # [(4, 1), (1, 2), (3, 5), (2, 8)]\n\n# Ordenar por la suma\npuntos.sort(key=lambda p: p[0] + p[1])\nprint(puntos)",
           "explicacion": [
             "<p><code>key</code> recibe una función que se aplica a cada elemento para obtener la clave de ordenamiento.</p>",
             "<p>Con lambda, dices en una línea qué usar para ordenar.</p>"
@@ -472,6 +505,13 @@
         "<p>💡 <strong>Truco 2:</strong> lambdas + sorted es una combinación muy potente para ordenar por cualquier criterio.</p>",
         "<p>💡 <strong>Truco 3:</strong> no asignes lambdas a variables si solo las usas una vez. Pásalas directamente.</p>",
         "<p>💡 <strong>Truco 4:</strong> en análisis numérico, <code>f = lambda x: x**3 - x - 2</code> es muy común. Es conciso y claro.</p>"
+      ],
+      "ejercicios": [
+        "Crea una lambda que calcule el doble de un número.",
+        "Crea una lambda que sume 3 números.",
+        "Ordena una lista de tuplas por el segundo elemento con lambda.",
+        "Usa map y lambda para elevar al cuadrado [1, 2, 3, 4].",
+        "Usa filter y lambda para quedarte con los pares de [1, 2, 3, 4, 5]."
       ],
       "resumen": "lambda crea funciones anónimas de una línea. Se usan para funciones simples que se pasan como argumento. En análisis numérico, son útiles para definir f y df rápidamente."
     },
@@ -542,6 +582,13 @@
         "<p>💡 <strong>Truco 2:</strong> si usas recursión, verifica que el caso base se alcance y que el problema se reduzca en cada paso.</p>",
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, casi nunca necesitas recursión. Los métodos iterativos se implementan con bucles.</p>"
       ],
+      "ejercicios": [
+        "Escribe una función recursiva que calcule el factorial de n.",
+        "Escribe una función recursiva que sume los números del 1 al n.",
+        "Escribe una función recursiva que calcule la potencia de un número.",
+        "Escribe una función recursiva que invierta una cadena.",
+        "Compara la versión recursiva y la iterativa de Fibonacci."
+      ],
       "resumen": "La recursión es una función que se llama a sí misma. Necesita un caso base y un caso recursivo. Es elegante pero suele ser menos eficiente que la iteración en Python."
     },
     {
@@ -610,6 +657,12 @@
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, documenta la fórmula matemática en el docstring:</p>",
         "<pre class='cmd-sintaxis'>def newton(f, df, x0, tol=1e-10):\n    \"\"\"Método de Newton-Raphson.\n    \n    Itera x_{k+1} = x_k - f(x_k) / f'(x_k) hasta convergencia.\n    \"\"\"</pre>",
         "<p>💡 <strong>Truco 4:</strong> herramientas como Sphinx o pdoc generan documentación HTML a partir de los docstrings.</p>"
+      ],
+      "ejercicios": [
+        "Añade un docstring a una función tuya.",
+        "Muestra el docstring con `help()` y con `.__doc__`.",
+        "Escribe un docstring completo con Args, Returns y Raises.",
+        "Consulta el docstring de `print` con `print.__doc__`."
       ],
       "resumen": "Los docstrings son texto entre \"\"\" que documenta funciones. Son accesibles vía help() y .__doc__. Incluyen resumen, args, returns y raises. Son la forma estándar de documentar en Python."
     }

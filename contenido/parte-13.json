@@ -1,0 +1,526 @@
+{
+  "parte": 13,
+  "titulo": "Archivos y datos",
+  "emoji": "📁",
+  "descripcion": "Los programas que solo trabajan con datos en memoria se olvidan de todo al cerrarse. Para que los datos persistan, hay que guardarlos en archivos. Aquí aprenderás a leer y escribir archivos de texto, CSV, JSON, y a manejar rutas de forma segura.",
+  "temas": [
+    {
+      "id": "abrir-archivos",
+      "numero": "1",
+      "titulo": "Abrir y cerrar archivos",
+      "emoji": "📂",
+      "subtitulo": "La forma correcta de trabajar con archivos",
+      "que_es": [
+        "<p>Para trabajar con un archivo, primero hay que <strong>abrirlo</strong>. Python usa la función <code>open()</code>, que recibe la ruta y el modo.</p>",
+        "<p>Los modos más comunes son:</p>",
+        "<ul><li><code>\"r\"</code> → leer (read). El archivo debe existir.</li><li><code>\"w\"</code> → escribir (write). Sobrescribe si existe, crea si no.</li><li><code>\"a\"</code> → añadir (append). Añade al final.</li><li><code>\"x\"</code> → crear. Falla si ya existe.</li></ul>",
+        "<p>Siempre hay que <strong>cerrar</strong> el archivo después. La forma moderna es usar <code>with open(...) as f</code>, que lo cierra automáticamente.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Trabajar con archivos se usa para:</p>",
+        "<ul><li><strong>Guardar resultados</strong>: datos de una simulación.</li><li><strong>Leer datos</strong>: configuraciones, entradas, datasets.</li><li><strong>Persistir</strong>: que la información no se pierda al cerrar el programa.</li><li><strong>Intercambiar</strong>: pasar datos entre programas o personas.</li></ul>",
+        "<p>En análisis numérico, guardas los resultados de un método (iteraciones, errores) en archivos para analizarlos después.</p>"
+      ],
+      "sintaxis": "# Con with (recomendado)\nwith open(\"archivo.txt\", \"r\") as f:\n    contenido = f.read()\n\n# Sin with (hay que cerrar manualmente)\nf = open(\"archivo.txt\", \"r\")\ncontenido = f.read()\nf.close()",
+      "ejemplos": [
+        {
+          "titulo": "Leer un archivo completo",
+          "codigo": "# Si no existe, puedes crearlo primero:\nwith open(\"prueba.txt\", \"w\") as f:\n    f.write(\"Hola\\n\")\n    f.write(\"Mundo\\n\")\n\n# Ahora lo leemos\nwith open(\"prueba.txt\", \"r\") as f:\n    contenido = f.read()\n    print(contenido)\n# Hola\n# Mundo",
+          "explicacion": [
+            "<p><code>open(nombre, modo)</code> abre el archivo.</p>",
+            "<p>El bloque <code>with</code> garantiza que el archivo se cierre solo al terminar, incluso si hay error.</p>",
+            "<p><code>f.read()</code> lee todo el contenido y lo devuelve como string.</p>"
+          ]
+        },
+        {
+          "titulo": "Escribir un archivo",
+          "codigo": "with open(\"salida.txt\", \"w\") as f:\n    f.write(\"Línea 1\\n\")\n    f.write(\"Línea 2\\n\")\n    f.write(\"Línea 3\\n\")\n\nwith open(\"salida.txt\", \"r\") as f:\n    print(f.read())",
+          "explicacion": [
+            "<p>El modo <code>\"w\"</code> sobrescribe el archivo. Si existía, se pierde su contenido anterior.</p>",
+            "<p>Cada <code>write</code> añade texto. El <code>\\n</code> es un salto de línea.</p>",
+            "<p><strong>Ojo:</strong> el <code>write</code> no añade saltos de línea automáticamente. Hay que ponerlos.</p>"
+          ]
+        },
+        {
+          "titulo": "Añadir al final (append)",
+          "codigo": "with open(\"salida.txt\", \"a\") as f:\n    f.write(\"Línea 4\\n\")\n\nwith open(\"salida.txt\", \"r\") as f:\n    print(f.read())\n# Línea 1\n# Línea 2\n# Línea 3\n# Línea 4",
+          "explicacion": [
+            "<p>El modo <code>\"a\"</code> no sobrescribe. Añade al final.</p>",
+            "<p>Es perfecto para logs o para ir acumulando resultados.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer línea por línea",
+          "codigo": "with open(\"salida.txt\", \"r\") as f:\n    for linea in f:\n        print(linea.strip())   # strip quita el \\n final",
+          "explicacion": [
+            "<p>Iterar el archivo con un for lee línea por línea sin cargar todo en memoria.</p>",
+            "<p>Es la forma recomendada para archivos grandes.</p>",
+            "<p><code>.strip()</code> quita el salto de línea al final de cada línea.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "open(\"archivo_inexistente.txt\", \"r\")",
+          "razon": "Si el archivo no existe y lo abres en modo 'r', da FileNotFoundError.",
+          "correcto": "Verifica que existe antes, o captura la excepción."
+        },
+        {
+          "error": "Olvidar cerrar el archivo",
+          "razon": "El archivo queda bloqueado o los datos no se escriben correctamente.",
+          "correcto": "Usa with open(...) as f."
+        },
+        {
+          "error": "open(\"archivo.txt\", \"w\")  pensando que añade",
+          "razon": "El modo 'w' sobrescribe el archivo. Si no quieres perder el contenido, usa 'a'.",
+          "correcto": "Usa 'a' para añadir al final."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> siempre usa <code>with open(...)</code>. Es más seguro y más limpio.</p>",
+        "<p>💡 <strong>Truco 2:</strong> el modo <code>\"w\"</code> borra el contenido anterior sin avisar. Ten cuidado.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para archivos grandes, itera línea por línea en lugar de <code>read()</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, usa <code>\"a\"</code> para escribir el historial de iteraciones en un log.</p>"
+      ],
+      "ejercicios": [
+        "Crea un archivo `saludo.txt` y escribe 'Hola, mundo'.",
+        "Lee el archivo y muestra su contenido.",
+        "Añade otra línea con el modo 'a'.",
+        "Lee el archivo línea por línea con un for.",
+        "Provoca un FileNotFoundError abriendo un archivo que no existe."
+      ],
+      "resumen": "open() abre archivos. with open() los cierra automáticamente. Modos: 'r' leer, 'w' escribir (sobrescribe), 'a' añadir, 'x' crear. Itera con for para archivos grandes."
+    },
+    {
+      "id": "rutas",
+      "numero": "2",
+      "titulo": "Rutas de archivos con pathlib",
+      "emoji": "🛤️",
+      "subtitulo": "La forma moderna y portable de manejar rutas",
+      "que_es": [
+        "<p>Las rutas de archivos son distintas en Windows (<code>C:\\\\Users\\\\...\\</code>) y en Linux/Mac (<code>/home/.../</code>). Esto causaba problemas al compartir código.</p>",
+        "<p><code>pathlib</code> es el módulo moderno de Python para manejar rutas. Trata las rutas como objetos, no como strings, y las hace <strong>portables</strong> entre sistemas.</p>",
+        "<p>Es la forma recomendada desde Python 3.4. Sustituye a <code>os.path</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa para:</p>",
+        "<ul><li><strong>Construir rutas</strong>: sin preocuparte por el separador.</li><li><strong>Verificar existencia</strong>: ¿existe este archivo?</li><li><strong>Listar</strong>: qué archivos hay en esta carpeta.</li><li><strong>Obtener info</strong>: nombre, extensión, tamaño.</li><li><strong>Crear carpetas</strong>: sin comprobar antes.</li></ul>"
+      ],
+      "sintaxis": "from pathlib import Path\n\np = Path(\"archivo.txt\")\np.exists()          # True/False\np.name              # 'archivo.txt'\np.stem              # 'archivo'\np.suffix            # '.txt'\np.parent            # carpeta contenedora\n\nPath(\"carpeta\") / \"sub\" / \"archivo.txt\"   # construir ruta",
+      "ejemplos": [
+        {
+          "titulo": "Crear rutas",
+          "codigo": "from pathlib import Path\n\n# Ruta simple\np = Path(\"datos.txt\")\nprint(p.name)      # datos.txt\nprint(p.stem)      # datos\nprint(p.suffix)    # .txt\nprint(p.parent)    # .\n\n# Ruta compuesta (con /, portable)\nq = Path(\"carpeta\") / \"sub\" / \"archivo.txt\"\nprint(q)           # carpeta/sub/archivo.txt",
+          "explicacion": [
+            "<p>El operador <code>/</code> une partes de ruta. Python elige el separador correcto según el sistema.</p>",
+            "<p>Así tu código funciona igual en Windows, Mac y Linux.</p>"
+          ]
+        },
+        {
+          "titulo": "Verificar y leer con pathlib",
+          "codigo": "from pathlib import Path\n\np = Path(\"salida.txt\")\n\nif p.exists():\n    contenido = p.read_text()\n    print(contenido)\nelse:\n    print(\"El archivo no existe\")\n    p.write_text(\"Hola, mundo\\n\")\n    print(\"Creado\")",
+          "explicacion": [
+            "<p><code>p.exists()</code> verifica si el archivo existe.</p>",
+            "<p><code>p.read_text()</code> lee, <code>p.write_text()</code> escribe. Todo en una línea.</p>",
+            "<p>Más limpio que <code>open()</code> para casos simples.</p>"
+          ]
+        },
+        {
+          "titulo": "Listar archivos de una carpeta",
+          "codigo": "from pathlib import Path\n\ncarpeta = Path(\".\")\n\nprint(\"Archivos actuales:\")\nfor p in carpeta.iterdir():\n    if p.is_file():\n        print(f\"  {p.name}  ({p.stat().st_size} bytes)\")\n\n# Solo archivos .txt\nprint(\"\\nArchivos .txt:\")\nfor p in carpeta.glob(\"*.txt\"):\n    print(f\"  {p.name}\")",
+          "explicacion": [
+            "<p><code>iterdir()</code> devuelve todos los elementos de la carpeta.</p>",
+            "<p><code>is_file()</code> distingue archivos de carpetas.</p>",
+            "<p><code>glob(\"*.txt\")</code> busca los que coinciden con el patrón.</p>"
+          ]
+        },
+        {
+          "titulo": "Crear carpetas y guardar resultados",
+          "codigo": "from pathlib import Path\n\ncarpeta = Path(\"resultados\")\ncarpeta.mkdir(exist_ok=True)   # crea la carpeta si no existe\n\narchivo = carpeta / \"raiz.txt\"\narchivo.write_text(\"raíz = 1.5213797\\n\")\n\nprint(f\"Guardado en {archivo}\")\nprint(f\"Existe: {archivo.exists()}\")\nprint(f\"Tamaño: {archivo.stat().st_size} bytes\")",
+          "explicacion": [
+            "<p><code>mkdir(exist_ok=True)</code> crea la carpeta, y no falla si ya existe.</p>",
+            "<p>Construyes la ruta con <code>/</code> y guardas con <code>write_text()</code>.</p>",
+            "<p><code>stat()</code> da información del archivo.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Path(\"carpeta\\\\sub\\\\archivo.txt\")",
+          "razon": "Usar \\\\ directamente hace el código dependiente de Windows.",
+          "correcto": "Path(\"carpeta\") / \"sub\" / \"archivo.txt\""
+        },
+        {
+          "error": "carpeta.mkdir()  si ya existe",
+          "razon": "Da FileExistsError.",
+          "correcto": "carpeta.mkdir(exist_ok=True)"
+        },
+        {
+          "error": "Confundir str y Path",
+          "razon": "Algunas funciones esperan string, no Path. Convierte con str(p).",
+          "correcto": "open(str(p), \"r\")   o   open(p, \"r\") (funciona con Path)"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa <code>pathlib</code> siempre que puedas. Es más limpio que <code>os.path</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>Path(\".\")</code> es la carpeta actual. <code>Path(\"..\")</code> es la carpeta padre.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>p.read_text()</code> y <code>p.write_text()</code> son perfectos para archivos pequeños.</p>",
+        "<p>💡 <strong>Truco 4:</strong> para guardar resultados de métodos numéricos, crea una carpeta <code>resultados/</code> y guarda ahí.</p>"
+      ],
+      "ejercicios": [
+        "Crea un `Path` para 'datos.txt' y muestra su nombre, extensión y carpeta.",
+        "Comprueba si 'datos.txt' existe.",
+        "Lista los archivos de la carpeta actual.",
+        "Lista solo los archivos '.txt'.",
+        "Crea una carpeta 'resultados' y guarda un archivo dentro."
+      ],
+      "resumen": "pathlib es la forma moderna de manejar rutas. Construye con /, verifica con exists(), lee con read_text(), escribe con write_text(). Lista con iterdir() y glob()."
+    },
+    {
+      "id": "csv",
+      "numero": "3",
+      "titulo": "Archivos CSV",
+      "emoji": "📊",
+      "subtitulo": "Tablas simples en texto plano",
+      "que_es": [
+        "<p><strong>CSV</strong> significa <em>Comma-Separated Values</em> (valores separados por comas). Es un formato de texto muy simple para tablas: cada línea es una fila, y cada valor va separado por comas (u otro separador).</p>",
+        "<p>Python trae el módulo <code>csv</code> en la biblioteca estándar. Sabe leer y escribir CSV respetando cosas complicadas como comillas, comas dentro de valores, saltos de línea, etc.</p>",
+        "<p>Es el formato más común para exportar datos de hojas de cálculo y bases de datos.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los CSV se usan para:</p>",
+        "<ul><li><strong>Exportar datos</strong>: resultados de experimentos, tablas.</li><li><strong>Importar</strong>: datos de Excel, Google Sheets, bases de datos.</li><li><strong>Intercambiar</strong>: entre programas distintos.</li><li><strong>Guardar</strong>: resultados de métodos numéricos por iteración.</li></ul>"
+      ],
+      "sintaxis": "import csv\n\n# Leer\nwith open(\"datos.csv\", \"r\") as f:\n    lector = csv.reader(f)\n    for fila in lector:\n        print(fila)   # fila es una lista\n\n# Escribir\nwith open(\"salida.csv\", \"w\", newline=\"\") as f:\n    escritor = csv.writer(f)\n    escritor.writerow([\"a\", \"b\", \"c\"])\n    escritor.writerow([1, 2, 3])",
+      "ejemplos": [
+        {
+          "titulo": "Escribir un CSV",
+          "codigo": "import csv\n\nwith open(\"iteraciones.csv\", \"w\", newline=\"\") as f:\n    escritor = csv.writer(f)\n    escritor.writerow([\"k\", \"x\", \"error\"])\n    escritor.writerow([1, 1.5, 1.0e-1])\n    escritor.writerow([2, 1.4166, 2.0e-2])\n    escritor.writerow([3, 1.41421, 3.0e-4])\n\nprint(\"CSV creado\")",
+          "explicacion": [
+            "<p><code>csv.writer</code> crea un escritor.</p>",
+            "<p><code>writerow</code> escribe una fila (una lista de valores).</p>",
+            "<p><strong>Importante:</strong> usa <code>newline=\"\"</code> al abrir para evitar líneas en blanco en Windows.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer un CSV",
+          "codigo": "import csv\n\nwith open(\"iteraciones.csv\", \"r\") as f:\n    lector = csv.reader(f)\n    for fila in lector:\n        print(fila)\n# ['k', 'x', 'error']\n# ['1', '1.5', '1.0e-1']\n# ['2', '1.4166', '2.0e-2']\n# ['3', '1.41421', '3.0e-4']",
+          "explicacion": [
+            "<p><code>csv.reader</code> devuelve cada fila como lista de strings.</p>",
+            "<p><strong>Ojo:</strong> todos los valores son strings. Si quieres números, hay que convertirlos.</p>",
+            "<p>La primera fila suele ser la cabecera (nombres de columnas).</p>"
+          ]
+        },
+        {
+          "titulo": "CSV con cabecera (DictReader)",
+          "codigo": "import csv\n\nwith open(\"iteraciones.csv\", \"r\") as f:\n    lector = csv.DictReader(f)\n    for fila in lector:\n        print(fila)\n# {'k': '1', 'x': '1.5', 'error': '1.0e-1'}\n# {'k': '2', 'x': '1.4166', 'error': '2.0e-2'}\n# {'k': '3', 'x': '1.41421', 'error': '3.0e-4'}",
+          "explicacion": [
+            "<p><code>DictReader</code> usa la primera fila como cabecera y devuelve cada fila como diccionario.</p>",
+            "<p>Mucho más cómodo: accedes por nombre de columna, no por índice.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer, convertir y calcular",
+          "codigo": "import csv\n\nwith open(\"iteraciones.csv\", \"r\") as f:\n    lector = csv.DictReader(f)\n    for fila in lector:\n        k = int(fila[\"k\"])\n        x = float(fila[\"x\"])\n        error = float(fila[\"error\"])\n        print(f\"Iter {k}: x = {x:.6f}, error = {error:.2e}\")",
+          "explicacion": [
+            "<p>Lee cada fila y convierte los valores a sus tipos correctos.</p>",
+            "<p>Ahora sí puedes operar con ellos.</p>",
+            "<p>Es el patrón estándar para procesar CSV numéricos.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "No usar newline=\"\" al escribir",
+          "razon": "En Windows se generan líneas en blanco entre filas.",
+          "correcto": "open(..., \"w\", newline=\"\")"
+        },
+        {
+          "error": "Olvidar convertir strings a números",
+          "razon": "Todos los valores leídos son strings, incluso si parecen números.",
+          "correcto": "int(fila[\"k\"]), float(fila[\"x\"])"
+        },
+        {
+          "error": "Asumir que el CSV usa comas",
+          "razon": "Puede usar punto y coma, tabulación, etc.",
+          "correcto": "csv.reader(f, delimiter=\";\")"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa <code>DictReader</code> y <code>DictWriter</code> para trabajar con cabeceras. Es más claro.</p>",
+        "<p>💡 <strong>Truco 2:</strong> si tu CSV usa punto y coma (típico en Europa), pasa <code>delimiter=\";\"</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, guardar el historial de iteraciones en CSV es perfecto para luego analizarlo en Excel.</p>",
+        "<p>💡 <strong>Truco 4:</strong> si el CSV tiene muchas columnas, un <code>DictReader</code> te evita líos de índices.</p>"
+      ],
+      "ejercicios": [
+        "Crea un CSV con 3 columnas: k, x, error.",
+        "Añade 5 filas con datos de ejemplo.",
+        "Lee el CSV con `csv.reader` y muestra cada fila.",
+        "Lee el CSV con `DictReader` y accede por nombre de columna.",
+        "Convierte los valores a números y calcula el error promedio."
+      ],
+      "resumen": "CSV son tablas en texto separadas por comas. El módulo csv lee y escribe. csv.reader devuelve listas, DictReader diccionarios. Usa newline='' al escribir. Convierte strings a números al leer."
+    },
+    {
+      "id": "json",
+      "numero": "4",
+      "titulo": "Archivos JSON",
+      "emoji": "📋",
+      "subtitulo": "Datos estructurados en formato estándar",
+      "que_es": [
+        "<p><strong>JSON</strong> (JavaScript Object Notation) es un formato de texto para intercambiar datos estructurados. Es el estándar de facto en la web y en configuraciones.</p>",
+        "<p>Un JSON se parece mucho a un diccionario o lista de Python, pero tiene reglas estrictas:</p>",
+        "<ul><li>Comillas dobles obligatorias.</li><li>Sin comas finales.</li><li>No admite comentarios.</li><li>Valores: string, número, booleano, null, array, objeto.</li></ul>",
+        "<p>Python trae el módulo <code>json</code> en la biblioteca estándar. Convierte entre dict/list y JSON.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>JSON se usa para:</p>",
+        "<ul><li><strong>Configuraciones</strong>: archivos de config de aplicaciones.</li><li><strong>APIs</strong>: casi todas las APIs devuelven JSON.</li><li><strong>Guardar estructuras</strong>: diccionarios y listas complejas.</li><li><strong>Intercambio</strong>: entre lenguajes distintos.</li></ul>"
+      ],
+      "sintaxis": "import json\n\n# Guardar\nwith open(\"datos.json\", \"w\") as f:\n    json.dump(diccionario, f, indent=2)\n\n# Leer\nwith open(\"datos.json\", \"r\") as f:\n    datos = json.load(f)\n\n# Strings a JSON\ns = json.dumps(diccionario, indent=2)\n\n# JSON a objeto\nd = json.loads(s)",
+      "ejemplos": [
+        {
+          "titulo": "Guardar un diccionario como JSON",
+          "codigo": "import json\n\ndatos = {\n    \"metodo\": \"biseccion\",\n    \"intervalo\": [1.0, 2.0],\n    \"tol\": 1e-8,\n    \"max_iter\": 100,\n    \"convergio\": True,\n    \"raiz\": 1.5213797,\n    \"iteraciones\": 23\n}\n\nwith open(\"resultado.json\", \"w\") as f:\n    json.dump(datos, f, indent=2)\n\nprint(\"JSON guardado\")",
+          "explicacion": [
+            "<p><code>json.dump(datos, f, indent=2)</code> escribe el diccionario como JSON con 2 espacios de indentación.</p>",
+            "<p>El resultado es legible por humanos y por máquinas.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer un JSON",
+          "codigo": "import json\n\nwith open(\"resultado.json\", \"r\") as f:\n    datos = json.load(f)\n\nprint(datos[\"metodo\"])       # biseccion\nprint(datos[\"raiz\"])         # 1.5213797\nprint(datos[\"intervalo\"])    # [1.0, 2.0]\nprint(datos[\"convergio\"])    # True",
+          "explicacion": [
+            "<p><code>json.load(f)</code> lee el archivo y devuelve el diccionario.</p>",
+            "<p>Ahora accedes con <code>datos[\"clave\"]</code> como cualquier dict.</p>"
+          ]
+        },
+        {
+          "titulo": "Convertir a string y viceversa",
+          "codigo": "import json\n\ndatos = {\"nombre\": \"Ana\", \"edad\": 25}\n\n# Objeto → string JSON\ns = json.dumps(datos)\nprint(s)   # '{\"nombre\": \"Ana\", \"edad\": 25}'\n\n# String JSON → objeto\nd = json.loads(s)\nprint(d[\"nombre\"])   # Ana\nprint(type(d))       # <class 'dict'>",
+          "explicacion": [
+            "<p><code>dumps</code> convierte a string (dump + s de string).</p>",
+            "<p><code>loads</code> convierte desde string.</p>",
+            "<p>Útil para enviar datos por red o guardarlos en base de datos.</p>"
+          ]
+        },
+        {
+          "titulo": "Guardar resultados de un método",
+          "codigo": "import json\n\ndef guardar_resultado(metodo, raiz, iteraciones, historial):\n    datos = {\n        \"metodo\": metodo,\n        \"raiz\": raiz,\n        \"iteraciones\": iteraciones,\n        \"historial\": historial,\n        \"metadata\": {\n            \"version\": \"1.0\",\n            \"fecha\": \"2024-03-15\"\n        }\n    }\n    with open(\"resultado.json\", \"w\") as f:\n        json.dump(datos, f, indent=2)\n\n# Uso\nguardar_resultado(\"biseccion\", 1.5213797, 23, [1.5, 1.75, 1.625])\nprint(\"Guardado\")",
+          "explicacion": [
+            "<p>Puedes guardar estructuras complejas con listas anidadas y diccionarios dentro.</p>",
+            "<p>El JSON respeta la jerarquía.</p>",
+            "<p>Es la forma estándar de guardar resultados de una simulación.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar comillas simples en JSON",
+          "razon": "JSON exige comillas dobles. Si escribes el archivo a mano, usa dobles.",
+          "correcto": "{\"nombre\": \"Ana\"}"
+        },
+        {
+          "error": "Coma final en el último elemento",
+          "razon": "JSON no permite comas finales.",
+          "correcto": "{\"a\": 1, \"b\": 2}"
+        },
+        {
+          "error": "Intentar serializar tipos no compatibles",
+          "razon": "Tipos como set, datetime o clases personalizadas no son serializables por defecto.",
+          "correcto": "Convierte a list, str, o usa un serializador personalizado."
+        },
+        {
+          "error": "json.dump(datos, \"archivo.json\")",
+          "razon": "El segundo argumento debe ser un archivo abierto, no una ruta.",
+          "correcto": "with open(\"archivo.json\", \"w\") as f:\n    json.dump(datos, f)"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa <code>indent=2</code> en <code>json.dump</code> para que sea legible. Sin él, todo va en una línea.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>ensure_ascii=False</code> permite guardar acentos y caracteres no ASCII directamente.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si intentas serializar un set, conviértelo a lista: <code>list(s)</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, JSON es perfecto para guardar parámetros y resultados de un método.</p>"
+      ],
+      "ejercicios": [
+        "Crea un diccionario con 3 datos y guárdalo como JSON.",
+        "Lee el JSON y muestra cada valor.",
+        "Convierte un diccionario a string con `dumps` y vuelve atrás con `loads`.",
+        "Guarda una lista de diccionarios en JSON.",
+        "Guarda un resultado de simulación con campos: metodo, raiz, iteraciones."
+      ],
+      "resumen": "JSON es un formato de texto para datos estructurados. json.dump guarda, json.load lee. dumps/loads convierten a/desde string. Usa indent=2 para legibilidad. Perfecto para configuraciones y resultados."
+    },
+    {
+      "id": "errores-archivos",
+      "numero": "5",
+      "titulo": "Manejo de errores de archivos",
+      "emoji": "🛡️",
+      "subtitulo": "Trabajar con archivos sin que el programa se rompa",
+      "que_es": [
+        "<p>Trabajar con archivos es una fuente común de errores: el archivo no existe, no tienes permisos, está siendo usado por otro programa, etc.</p>",
+        "<p>Los errores más comunes:</p>",
+        "<ul><li><code>FileNotFoundError</code>: el archivo no existe.</li><li><code>PermissionError</code>: no tienes permisos.</li><li><code>IsADirectoryError</code>: intentas leer una carpeta como archivo.</li><li><code>UnicodeDecodeError</code>: el archivo no está en UTF-8.</li></ul>",
+        "<p>La forma de manejarlos es con <code>try/except</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Manejar errores de archivos sirve para:</p>",
+        "<ul><li><strong>No romper</strong> el programa cuando un archivo falta.</li><li><strong>Informar</strong> al usuario de qué falló.</li><li><strong>Reintentar</strong>: si es un problema temporal, volver a intentar.</li><li><strong>Fallback</strong>: usar un valor por defecto si no se puede leer.</li></ul>"
+      ],
+      "sintaxis": "try:\n    with open(\"archivo.txt\", \"r\") as f:\n        contenido = f.read()\nexcept FileNotFoundError:\n    print(\"El archivo no existe\")\nexcept PermissionError:\n    print(\"No tienes permisos\")\nexcept Exception as e:\n    print(f\"Error: {e}\")",
+      "ejemplos": [
+        {
+          "titulo": "Capturar FileNotFoundError",
+          "codigo": "try:\n    with open(\"no_existe.txt\", \"r\") as f:\n        contenido = f.read()\nexcept FileNotFoundError:\n    print(\"El archivo no existe, uso valor por defecto\")\n    contenido = \"\"\n\nprint(f\"Contenido: '{contenido}'\")",
+          "explicacion": [
+            "<p>Capturas el error y sigues con un valor por defecto.</p>",
+            "<p>El programa no se rompe.</p>"
+          ]
+        },
+        {
+          "titulo": "Función robusta de lectura",
+          "codigo": "def leer_archivo(ruta, default=\"\"):\n    \"\"\"Lee un archivo o devuelve default si hay error.\"\"\"\n    try:\n        with open(ruta, \"r\") as f:\n            return f.read()\n    except FileNotFoundError:\n        print(f\"No se encontró {ruta}, devolviendo default\")\n        return default\n    except PermissionError:\n        print(f\"Sin permisos para leer {ruta}\")\n        return default\n    except Exception as e:\n        print(f\"Error inesperado: {e}\")\n        return default\n\nc = leer_archivo(\"no_existe.txt\")\nprint(f\"Contenido: '{c}'\")",
+          "explicacion": [
+            "<p>Esta función nunca falla: devuelve <code>default</code> si algo va mal.</p>",
+            "<p>El código que la llama no necesita try/except.</p>",
+            "<p>Este patrón es muy útil para código de producción.</p>"
+          ]
+        },
+        {
+          "titulo": "Verificar antes de abrir",
+          "codigo": "from pathlib import Path\n\np = Path(\"datos.txt\")\n\nif p.exists():\n    with open(p, \"r\") as f:\n        print(f.read())\nelse:\n    print(f\"{p} no existe, lo creo\")\n    p.write_text(\"Contenido inicial\\n\")",
+          "explicacion": [
+            "<p>Alternativa al try/except: verificar antes.</p>",
+            "<p>Es más limpio cuando solo te importa si existe o no.</p>",
+            "<p><strong>Ojo:</strong> puede haber una condición de carrera entre el chequeo y la apertura. try/except es más robusto.</p>"
+          ]
+        },
+        {
+          "titulo": "Reintentar con timeout",
+          "codigo": "import time\n\ndef leer_con_reintentos(ruta, intentos=3, espera=0.5):\n    for i in range(intentos):\n        try:\n            with open(ruta, \"r\") as f:\n                return f.read()\n        except FileNotFoundError:\n            print(f\"Intento {i+1}: no encontrado, esperando...\")\n            time.sleep(espera)\n    raise FileNotFoundError(f\"No se pudo leer {ruta} tras {intentos} intentos\")\n\ntry:\n    contenido = leer_con_reintentos(\"no_existe.txt\", intentos=2)\nexcept FileNotFoundError as e:\n    print(f\"Error final: {e}\")",
+          "explicacion": [
+            "<p>Útil cuando el archivo puede aparecer después de un tiempo (por ejemplo, generado por otro proceso).</p>",
+            "<p>Reintenta varias veces antes de rendirse.</p>",
+            "<p>Al final, lanza la excepción si todos los intentos fallaron.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "No capturar FileNotFoundError",
+          "razon": "El programa se rompe si el archivo no existe.",
+          "correcto": "Envuelve en try/except o verifica con Path.exists()."
+        },
+        {
+          "error": "except Exception: pass",
+          "razon": "Ocultas todos los errores, luego no sabes qué falló.",
+          "correcto": "Captura tipos específicos y al menos imprime el error."
+        },
+        {
+          "error": "Olvidar el encoding",
+          "razon": "En algunos sistemas, la codificación por defecto no es UTF-8 y falla con acentos.",
+          "correcto": "with open(ruta, \"r\", encoding=\"utf-8\") as f:"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> usa <code>encoding=\"utf-8\"</code> al abrir archivos con texto en español. Evita problemas.</p>",
+        "<p>💡 <strong>Truco 2:</strong> captura solo las excepciones que esperas. No captures <code>Exception</code> genérico salvo en casos muy justificados.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, guarda resultados con try/except para no perder todo el cálculo si falla la escritura.</p>",
+        "<p>💡 <strong>Truco 4:</strong> cuando guardes resultados importantes, hazlo en modo <code>\"a\"</code> y con flush periódico.</p>"
+      ],
+      "ejercicios": [
+        "Intenta abrir un archivo que no existe y captura el error.",
+        "Escribe una función `leer_archivo` que devuelva un valor por defecto si falla.",
+        "Verifica con `Path.exists()` antes de abrir.",
+        "Escribe una función con reintentos para leer un archivo.",
+        "Abre un archivo con `encoding='utf-8'`."
+      ],
+      "resumen": "Los errores de archivo se capturan con try/except. FileNotFoundError es el más común. Usa encoding='utf-8' para acentos. Verifica con Path.exists() o captura la excepción."
+    },
+    {
+      "id": "guardar-resultados",
+      "numero": "6",
+      "titulo": "Guardar resultados de un método numérico",
+      "emoji": "💾",
+      "subtitulo": "Un ejemplo completo: bisección con historial en CSV",
+      "que_es": [
+        "<p>Este tema es una <strong>integración</strong> de todo lo aprendido: usamos clases, funciones, archivos, JSON, CSV y try/except para hacer un programa que resuelve una ecuación y guarda los resultados de varias formas.</p>",
+        "<p>Es lo que se hace en la práctica: el algoritmo calcula, y guardamos el historial para analizarlo después.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Guardar resultados es fundamental para:</p>",
+        "<ul><li><strong>Analizar</strong> cómo converge un método.</li><li><strong>Comparar</strong> varios métodos.</li><li><strong>Documentar</strong> un experimento.</li><li><strong>Compartir</strong> con otros.</li></ul>"
+      ],
+      "sintaxis": "# Flujo típico:\n# 1. Definir la función y los parámetros\n# 2. Ejecutar el método guardando el historial\n# 3. Guardar el historial en CSV\n# 4. Guardar un resumen en JSON\n# 5. (Opcional) Cargar y analizar después",
+      "ejemplos": [
+        {
+          "titulo": "Bisección con historial",
+          "codigo": "import csv\nimport json\nfrom pathlib import Path\n\ndef biseccion(f, a, b, tol=1e-8, max_iter=100):\n    if f(a) * f(b) >= 0:\n        raise ValueError(\"Bolzano no se cumple\")\n    historial = []\n    for k in range(max_iter):\n        c = (a + b) / 2\n        fc = f(c)\n        error = (b - a) / 2\n        historial.append({\n            \"k\": k,\n            \"a\": a,\n            \"b\": b,\n            \"c\": c,\n            \"f(c)\": fc,\n            \"error\": error\n        })\n        if abs(fc) < tol or error < tol:\n            return c, k, historial\n        if f(a) * fc < 0:\n            b = c\n        else:\n            a = c\n    raise RuntimeError(f\"No convergió en {max_iter} iteraciones\")\n\nf = lambda x: x**3 - x - 2\ntry:\n    raiz, iters, hist = biseccion(f, 1, 2)\n    print(f\"Raíz: {raiz:.10f}, iteraciones: {iters}\")\nexcept (ValueError, RuntimeError) as e:\n    print(f\"Error: {e}\")",
+          "explicacion": [
+            "<p>El método guarda un <strong>historial</strong> de cada iteración: k, a, b, c, f(c) y error.</p>",
+            "<p>Devuelve la raíz, las iteraciones y el historial.</p>",
+            "<p>Ahora vamos a guardarlo en archivos.</p>"
+          ]
+        },
+        {
+          "titulo": "Guardar historial en CSV",
+          "codigo": "carpeta = Path(\"resultados\")\ncarpeta.mkdir(exist_ok=True)\n\narchivo_csv = carpeta / \"biseccion_iteraciones.csv\"\n\nwith open(archivo_csv, \"w\", newline=\"\") as f:\n    escritor = csv.writer(f)\n    escritor.writerow([\"k\", \"a\", \"b\", \"c\", \"f(c)\", \"error\"])\n    for fila in hist:\n        escritor.writerow([\n            fila[\"k\"],\n            f\"{fila['a']:.10f}\",\n            f\"{fila['b']:.10f}\",\n            f\"{fila['c']:.10f}\",\n            f\"{fila['f(c)']:.3e}\",\n            f\"{fila['error']:.3e}\"\n        ])\n\nprint(f\"Historial CSV guardado en {archivo_csv}\")",
+          "explicacion": [
+            "<p>Escribes el historial en CSV con formato.</p>",
+            "<p>Usas <code>:.10f</code> para decimales y <code>:.3e</code> para notación científica.</p>",
+            "<p>El archivo queda listo para abrir en Excel.</p>"
+          ]
+        },
+        {
+          "titulo": "Guardar resumen en JSON",
+          "codigo": "archivo_json = carpeta / \"biseccion_resumen.json\"\n\nresumen = {\n    \"metodo\": \"biseccion\",\n    \"funcion\": \"x^3 - x - 2\",\n    \"intervalo\": [1, 2],\n    \"tolerancia\": 1e-8,\n    \"raiz\": raiz,\n    \"iteraciones\": iters,\n    \"convergio\": True\n}\n\nwith open(archivo_json, \"w\") as f:\n    json.dump(resumen, f, indent=2)\n\nprint(f\"Resumen JSON guardado en {archivo_json}\")",
+          "explicacion": [
+            "<p>El CSV guarda todas las iteraciones (datos completos).</p>",
+            "<p>El JSON guarda un resumen compacto con los parámetros y el resultado.</p>",
+            "<p>Los dos archivos juntos dan el experimento completo.</p>"
+          ]
+        },
+        {
+          "titulo": "Leer y analizar después",
+          "codigo": "with open(archivo_csv, \"r\") as f:\n    lector = csv.DictReader(f)\n    errores = []\n    for fila in lector:\n        errores.append(float(fila[\"error\"]))\n\nprint(f\"Iteraciones totales: {len(errores)}\")\nprint(f\"Error inicial: {errores[0]:.3e}\")\nprint(f\"Error final:   {errores[-1]:.3e}\")\nprint(f\"Reducción: {errores[0] / errores[-1]:.2e}x\")",
+          "explicacion": [
+            "<p>Más tarde, puedes volver a abrir el CSV y analizarlo.</p>",
+            "<p>Aquí calculamos cuánto se redujo el error en total.</p>",
+            "<p>Este es el flujo típico de un análisis numérico profesional.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "No manejar el caso de no convergencia",
+          "razon": "El método puede no converger. Hay que capturarlo.",
+          "correcto": "Usa try/except con RuntimeError."
+        },
+        {
+          "error": "Guardar floats sin formato",
+          "razon": "Los archivos quedan ilegibles con números como 1.5213797468354535.",
+          "correcto": "Usa f\"{x:.10f}\" para decimales y f\"{x:.3e}\" para científicos."
+        },
+        {
+          "error": "No separar datos crudos de resumen",
+          "razon": "Un solo archivo mezclando todo es difícil de analizar.",
+          "correcto": "CSV para datos por iteración. JSON para resumen."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> guarda el historial completo en CSV. Es la mejor forma de analizar la convergencia.</p>",
+        "<p>💡 <strong>Truco 2:</strong> guarda un resumen en JSON con parámetros y resultado. Es fácil de cargar después.</p>",
+        "<p>💡 <strong>Truco 3:</strong> nombra los archivos con el nombre del método y la fecha: <code>biseccion_2024-03-15.csv</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico profesional, este flujo es estándar. Todos los métodos guardan su historial así.</p>"
+      ],
+      "ejercicios": [
+        "Implementa el método de bisección guardando el historial.",
+        "Guarda el historial en un CSV con columnas k, a, b, c, error.",
+        "Guarda un resumen en JSON con método, raíz e iteraciones.",
+        "Carga el CSV después y calcula la reducción total del error.",
+        "Repite con Newton y compara los archivos."
+      ],
+      "resumen": "Guarda el historial de iteraciones en CSV y el resumen en JSON. Usa formato para los floats. Después puedes cargar y analizar. Es el flujo estándar de análisis numérico."
+    }
+  ]
+}

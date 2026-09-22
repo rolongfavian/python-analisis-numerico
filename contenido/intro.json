@@ -1,0 +1,28 @@
+{
+  "titulo": "Python para Análisis Numérico",
+  "emoji": "🐍",
+  "descripcion": "Guía interactiva para aprender Python desde cero y aplicarlo a la resolución de ecuaciones con métodos numéricos. Ejecuta el código directamente en tu navegador.",
+  "secciones": [
+    {
+      "titulo": "🐍 ¿Qué es Python?",
+      "contenido": "<p><strong>Python</strong> es un lenguaje de programación de alto nivel, interpretado, de código abierto y orientado a objetos. Fue creado por el programador holandés Guido van Rossum y su primera versión vio la luz el 20 de febrero de 1991.</p><p>Su nombre no viene del reptil, sino del grupo de comedia británico <em>Monty Python's Flying Circus</em>.</p><p>Python está diseñado para ser <strong>fácil de leer y escribir</strong>. Su sintaxis se parece mucho al inglés, lo que lo hace ideal para aprender a programar. Además, es uno de los lenguajes más usados en la industria: ciencia de datos, inteligencia artificial, desarrollo web, automatización y, por supuesto, análisis numérico.</p>"
+    },
+    {
+      "titulo": "🎯 ¿Por qué Python para análisis numérico?",
+      "contenido": "<p>Python se usa en muchísimos campos, pero para este curso nos interesa especialmente su uso en <strong>matemáticas y análisis numérico</strong>:</p><ul><li><strong>Cálculo numérico</strong>: resolver ecuaciones que no tienen solución exacta.</li><li><strong>Simulación</strong>: modelar sistemas físicos, económicos o biológicos.</li><li><strong>Optimización</strong>: encontrar el mejor valor posible de una función.</li><li><strong>Análisis de datos</strong>: procesar información para sacar conclusiones.</li></ul><p>Python es la herramienta estándar en la industria porque combina un lenguaje sencillo con librerías muy potentes (NumPy, SciPy, Matplotlib, Pandas...).</p>"
+    },
+    {
+      "titulo": "📚 ¿Cómo está organizada esta guía?",
+      "contenido": "<p>La guía está dividida en <strong>15 partes</strong>, ordenadas de menor a mayor dificultad. Cada parte contiene varios temas, y cada tema tiene:</p><ul><li><strong>¿Qué es?</strong> — Explicación clara y directa.</li><li><strong>¿Para qué sirve?</strong> — Casos de uso reales.</li><li><strong>Sintaxis</strong> — La forma correcta de escribirlo.</li><li><strong>Ejemplos</strong> — Código que puedes ejecutar en la propia página.</li><li><strong>Errores comunes</strong> — Los fallos típicos y cómo evitarlos.</li><li><strong>Trucos y buenas prácticas</strong> — Consejos para escribir mejor código.</li><li><strong>Resumen</strong> — Lo esencial en una línea.</li></ul><p>Además, hay un <strong>buscador</strong> (Ctrl+K) para encontrar cualquier tema al instante, y una <strong>tienda de extensiones</strong> para añadir librerías como NumPy o Matplotlib.</p>"
+    },
+    {
+      "titulo": "⚙️ ¿Cómo funciona el motor de Python?",
+      "contenido": "<p>Esta web ejecuta Python <strong>directamente en tu navegador</strong>, sin enviar nada a ningún servidor. Usamos una tecnología llamada <strong>Pyodide</strong>, que es Python compilado a WebAssembly.</p><p><strong>La primera vez</strong> que abres la web, Pyodide se descarga en segundo plano (~10 MB). Mientras tanto, puedes seguir leyendo la guía sin problema: verás una barra de progreso arriba.</p><p><strong>Las siguientes veces</strong> se carga al instante porque queda cacheado en tu navegador.</p><p>Si quieres usar librerías como NumPy o Matplotlib, puedes instalarlas desde la <strong>tienda de extensiones</strong>. Se cachean también, así que no se descargan de nuevo.</p>"
+    },
+    {
+      "titulo": "🙌 Créditos y agradecimientos",
+      "contenido": "<p>Este material está <strong>inspirado en</strong> el proyecto <a href='https://github.com/Asabeneh/30-Days-Of-Python' target='_blank' rel='noopener'>30 Days of Python</a>, creado por <strong>Asabeneh Yetayeh</strong>. Su estructura de aprendizaje progresivo, sus ejemplos y su enfoque práctico han sido una gran referencia para organizar esta guía.</p><p>El repositorio original se distribuye bajo <strong>licencia MIT</strong>. Te recomendamos visitarlo y explorarlo, porque es uno de los mejores recursos gratuitos para aprender Python desde cero.</p><p>Los contenidos de esta web son una <strong>adaptación y reorganización propia</strong>, con explicaciones, ejemplos y ejercicios añadidos para el contexto del análisis numérico.</p>"
+    }
+  ],
+  "creditos": "<p>🐍 <strong>Python para Análisis Numérico</strong> — Inspirado en <a href='https://github.com/Asabeneh/30-Days-Of-Python' target='_blank' rel='noopener'>30 Days of Python</a> por Asabeneh Yetayeh. Contenidos adaptados y ampliados bajo licencia MIT.</p>"
+}

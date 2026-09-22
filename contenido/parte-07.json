@@ -1,95 +1,12 @@
 {
-  "parte": 4,
-  "titulo": "Control de flujo",
-  "emoji": "🔀",
-  "descripcion": "Los programas no solo ejecutan instrucciones en orden: también toman decisiones y repiten cosas. Aquí aprendes if, while, for y todas las formas de controlar qué hace tu programa en cada momento.",
+  "parte": 8,
+  "titulo": "Bucles",
+  "emoji": "🔄",
+  "descripcion": "Los bucles son la herramienta más poderosa de la programación: repetir código automáticamente. Aquí aprenderás for, while, range, break, continue y todo lo necesario para iterar. En análisis numérico, casi todo se resuelve con bucles.",
   "temas": [
     {
-      "id": "if",
-      "numero": "1",
-      "titulo": "if / elif / else — Tomar decisiones",
-      "emoji": "🤔",
-      "subtitulo": "Ejecutar código solo si se cumple una condición",
-      "que_es": [
-        "<p><code>if</code> permite ejecutar un bloque de código <strong>solo si se cumple una condición</strong>. Si la condición es verdadera, se ejecuta; si no, se salta.</p>",
-        "<p>Es la base de las decisiones en un programa. Sin <code>if</code>, todos los programas serían lineales: ejecutarían siempre lo mismo.</p>",
-        "<p><strong>Muy importante:</strong> después de los dos puntos <code>:</code> hay que <strong>indentar</strong> el código (4 espacios). La indentación en Python no es decorativa: es lo que le dice al intérprete qué código está dentro del <code>if</code>.</p>"
-      ],
-      "para_que_sirve": [
-        "<p>Se usa en cualquier situación donde haya que decidir:</p>",
-        "<ul><li><strong>Validar entradas</strong>: comprobar que un valor es correcto.</li><li><strong>Clasificar</strong>: nota aprobada/reprobada.</li><li><strong>Elegir caminos</strong>: si pasa esto, haz aquello; si no, otra cosa.</li><li><strong>Cortar bucles</strong>: verificar si ya convergió.</li></ul>",
-        "<p>En análisis numérico, se usa para verificar convergencia, validar intervalos, etc.</p>"
-      ],
-      "sintaxis": "if condicion:\n    # código si la condición es True\n\nif condicion:\n    # código si True\nelse:\n    # código si False\n\nif condicion1:\n    # código si cond1\nelif condicion2:\n    # código si cond2\nelif condicion3:\n    # código si cond3\nelse:\n    # código si ninguna",
-      "ejemplos": [
-        {
-          "titulo": "El if más simple",
-          "codigo": "edad = 20\n\nif edad >= 18:\n    print(\"Eres mayor de edad\")",
-          "explicacion": [
-            "<p>Si la condición <code>edad &gt;= 18</code> es True, se ejecuta el print. Si es False, no pasa nada.</p>",
-            "<p><strong>Fíjate en la indentación:</strong> los 4 espacios antes de <code>print</code> indican que está dentro del if. Si quitas esos espacios, Python da error.</p>"
-          ]
-        },
-        {
-          "titulo": "if / else",
-          "codigo": "edad = 15\n\nif edad >= 18:\n    print(\"Eres mayor de edad\")\nelse:\n    print(\"Eres menor de edad\")",
-          "explicacion": [
-            "<p><code>else</code> se ejecuta cuando la condición del if es False.</p>",
-            "<p>Es obligatorio que vaya acompañado de un if. No puede estar solo.</p>"
-          ]
-        },
-        {
-          "titulo": "if / elif / else",
-          "codigo": "nota = 85\n\nif nota >= 90:\n    print(\"Excelente\")\nelif nota >= 70:\n    print(\"Bien\")\nelif nota >= 60:\n    print(\"Aprobado\")\nelse:\n    print(\"Reprobado\")",
-          "explicacion": [
-            "<p>Python evalúa las condiciones <strong>de arriba hacia abajo</strong> y ejecuta <strong>la primera que sea True</strong>. Las demás se ignoran.</p>",
-            "<ul><li>Si <code>nota = 85</code>: 90 no, 70 sí → imprime \"Bien\".</li></ul>",
-            "<p><strong>Ojo con el orden:</strong> si pones <code>nota &gt;= 60</code> antes que <code>nota &gt;= 90</code>, todas las notas altas caerían en el primer caso.</p>"
-          ]
-        },
-        {
-          "titulo": "Condiciones compuestas",
-          "codigo": "edad = 25\ntiene_licencia = True\n\nif edad >= 18 and tiene_licencia:\n    print(\"Puede conducir\")\nelse:\n    print(\"No puede conducir\")\n\n# También se pueden encadenar\nx = 7\nif 0 <= x <= 10:\n    print(\"x está entre 0 y 10\")",
-          "explicacion": [
-            "<p>Puedes combinar varias condiciones con <code>and</code> y <code>or</code>.</p>",
-            "<p>También puedes encadenar comparaciones: <code>0 &lt;= x &lt;= 10</code> es equivalente a <code>0 &lt;= x and x &lt;= 10</code>.</p>"
-          ]
-        }
-      ],
-      "errores_comunes": [
-        {
-          "error": "if x = 5:",
-          "razon": "El operador de comparación es ==, no =. = es para asignar.",
-          "correcto": "if x == 5:"
-        },
-        {
-          "error": "if x > 5:\nprint(\"mayor\")",
-          "razon": "Falta la indentación. El print tiene que estar dentro del if.",
-          "correcto": "if x > 5:\n    print(\"mayor\")"
-        },
-        {
-          "error": "if x > 5:\npass",
-          "razon": "El cuerpo del if no puede estar vacío. Al menos necesita un pass.",
-          "correcto": "if x > 5:\n    pass"
-        },
-        {
-          "error": "if x > 5:\n    print(\"A\")\n  print(\"B\")",
-          "razon": "Indentación inconsistente: 4 espacios en una línea, 2 en la siguiente. Python da IndentationError.",
-          "correcto": "Usa siempre 4 espacios (o siempre el mismo número)."
-        }
-      ],
-      "tips": [
-        "<p>💡 <strong>Truco 1:</strong> los dos puntos <code>:</code> al final del if son obligatorios. Olvidarlos es un error clásico.</p>",
-        "<p>💡 <strong>Truco 2:</strong> Python te obliga a indentar bien. Copiar código de otros lenguajes sin ajustar la indentación da error.</p>",
-        "<p>💡 <strong>Truco 3:</strong> <code>elif</code> es la abreviatura de \"else if\". Se usa cuando hay varias condiciones excluyentes.</p>",
-        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, usa if para verificar la condición de Bolzano:</p>",
-        "<pre class='cmd-sintaxis'>if f(a) * f(b) > 0:\n    print(\"No hay cambio de signo en el intervalo\")</pre>"
-      ],
-      "resumen": "if ejecuta código solo si se cumple una condición. elif añade más condiciones. else se ejecuta si ninguna se cumplió. La indentación es obligatoria."
-    },
-    {
       "id": "while",
-      "numero": "2",
+      "numero": "1",
       "titulo": "while — Repetir mientras se cumpla algo",
       "emoji": "🔁",
       "subtitulo": "El bucle que se ejecuta mientras una condición sea verdadera",
@@ -163,13 +80,20 @@
         "<p>💡 <strong>Truco 2:</strong> en análisis numérico, siempre usa <code>and k &lt; max_iter</code> como segundo criterio. Te salva de bucles infinitos si el método diverge.</p>",
         "<p>💡 <strong>Truco 3:</strong> para probar rápido, añade un contador temporal: <code>k += 1; if k &gt; 20: break</code>.</p>"
       ],
+      "ejercicios": [
+        "Imprime los números del 1 al 10 con un while.",
+        "Suma los números del 1 al 100 con un acumulador y while.",
+        "Repite hasta que el usuario introduzca un número positivo.",
+        "Implementa el método de Newton para sqrt(2) con while y doble criterio.",
+        "Imprime la tabla del 5 usando while."
+      ],
       "resumen": "while repite mientras la condición sea True. Cuidado con los bucles infinitos: algo debe cambiar dentro para que termine. En análisis numérico, se usa con doble criterio (convergencia + máximo de iteraciones)."
     },
     {
       "id": "for",
-      "numero": "3",
+      "numero": "2",
       "titulo": "for — Iterar sobre una colección",
-      "emoji": "🔄",
+      "emoji": "🔂",
       "subtitulo": "El bucle que recorre elementos uno a uno",
       "que_es": [
         "<p><code>for</code> repite un bloque de código <strong>para cada elemento</strong> de una colección (lista, string, tupla, diccionario, rango, etc.).</p>",
@@ -244,11 +168,18 @@
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, para iteraciones controladas por número fijo, el for con <code>range()</code> es más limpio que el while con contador.</p>",
         "<p>💡 <strong>Truco 4:</strong> si solo necesitas repetir algo N veces sin usar el contador, usa <code>for _ in range(N):</code>.</p>"
       ],
+      "ejercicios": [
+        "Recorre la lista ['a', 'b', 'c'] y muestra cada elemento.",
+        "Recorre la palabra 'Python' y muestra cada letra.",
+        "Usa `enumerate` para mostrar el índice y valor de [10, 20, 30].",
+        "Recorre un diccionario y muestra clave y valor.",
+        "Imprime los números del 1 al 10 con un for y range."
+      ],
       "resumen": "for recorre los elementos de una colección uno a uno. Se usa con listas, strings, diccionarios, rangos. enumerate() da índice, zip() combina listas. Es el bucle más usado en Python."
     },
     {
       "id": "range",
-      "numero": "4",
+      "numero": "3",
       "titulo": "range() — Generar secuencias de números",
       "emoji": "🔢",
       "subtitulo": "La forma más común de iterar un número fijo de veces",
@@ -322,11 +253,18 @@
         "<p>💡 <strong>Truco 3:</strong> <code>for _ in range(N):</code> cuando no necesitas el índice. El <code>_</code> significa \"no me importa el valor\".</p>",
         "<p>💡 <strong>Truco 4:</strong> <code>sum(range(1, 101))</code> es más limpio que un bucle para sumar.</p>"
       ],
+      "ejercicios": [
+        "Imprime los números del 1 al 20 con range.",
+        "Imprime los números pares del 0 al 20 con range y paso.",
+        "Cuenta hacia atrás del 10 al 1.",
+        "Suma los números del 1 al 50 con un for y range.",
+        "Genera la tabla del 3 del 1 al 10."
+      ],
       "resumen": "range() genera secuencias de números. Admite 1, 2 o 3 argumentos. No incluye el final. Se usa con for para repetir N veces o recorrer índices."
     },
     {
       "id": "break-continue",
-      "numero": "5",
+      "numero": "4",
       "titulo": "break, continue y pass",
       "emoji": "⏭️",
       "subtitulo": "Control fino dentro de los bucles",
@@ -394,13 +332,20 @@
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>break</code> se usa para cortar el bucle cuando el método ya convergió:</p>",
         "<pre class='cmd-sintaxis'>for k in range(max_iter):\n    x_nuevo = x - f(x) / df(x)\n    error = abs(x_nuevo - x)\n    x = x_nuevo\n    if error < tol:\n        break</pre>"
       ],
+      "ejercicios": [
+        "Imprime los números del 1 al 10 y sal con break al llegar a 5.",
+        "Imprime los números del 1 al 10 saltando el 5 con continue.",
+        "Busca un elemento en una lista y sal con break al encontrarlo.",
+        "Usa `pass` para dejar un if vacío temporalmente.",
+        "Implementa un bucle que pare cuando el error sea menor que 1e-6."
+      ],
       "resumen": "break sale del bucle, continue salta a la siguiente iteración, pass no hace nada. Son herramientas para controlar el flujo dentro de bucles."
     },
     {
       "id": "bucles-anidados",
-      "numero": "6",
+      "numero": "5",
       "titulo": "Bucles anidados",
-      "emoji": "🔂",
+      "emoji": "🔁",
       "subtitulo": "Un bucle dentro de otro bucle",
       "que_es": [
         "<p>Puedes poner un bucle dentro de otro. Esto se llama <strong>anidación</strong>. El bucle interno se ejecuta completo para cada iteración del bucle externo.</p>",
@@ -469,11 +414,18 @@
         "<p>💡 <strong>Truco 2:</strong> en análisis numérico, matrices de 2D se manejan mejor con numpy que con listas anidadas.</p>",
         "<p>💡 <strong>Truco 3:</strong> para imprimir tablas alineadas, usa f-strings con formato: <code>f\"{x:8.4f}\"</code>.</p>"
       ],
+      "ejercicios": [
+        "Imprime la tabla de multiplicar del 1 al 5 usando bucles anidados.",
+        "Recorre una matriz 3x3 e imprime cada elemento.",
+        "Genera todas las combinaciones de ['a', 'b'] con [1, 2].",
+        "Imprime un triángulo de asteriscos de 5 filas.",
+        "Calcula la suma de todos los elementos de una matriz."
+      ],
       "resumen": "Los bucles anidados ejecutan el interno completo por cada iteración del externo. Son útiles para matrices y combinaciones. A partir de 3 niveles, mejor buscar alternativas."
     },
     {
       "id": "else-bucles",
-      "numero": "7",
+      "numero": "6",
       "titulo": "else en bucles (for...else, while...else)",
       "emoji": "🎭",
       "subtitulo": "Una característica única de Python",
@@ -532,84 +484,13 @@
         "<p>💡 <strong>Truco 3:</strong> en análisis numérico, es muy útil para detectar convergencia:</p>",
         "<pre class='cmd-sintaxis'>for k in range(max_iter):\n    if error < tol:\n        print(\"Convergió\")\n        break\nelse:\n    print(\"No convergió en max_iter\")</pre>"
       ],
+      "ejercicios": [
+        "Busca si el número 25 está en [10, 20, 30] y usa else para avisar.",
+        "Usa for/else para detectar si un método convergió.",
+        "Reescribe un bucle con bandera usando for/else.",
+        "Comprueba si todos los elementos de una lista son positivos con for/else."
+      ],
       "resumen": "El else del bucle se ejecuta solo si el for/while termina sin break. Es una forma limpia de detectar que no se encontró lo que buscabas."
-    },
-    {
-      "id": "comprensiones",
-      "numero": "8",
-      "titulo": "Listas por comprensión",
-      "emoji": "⚡",
-      "subtitulo": "Crear listas en una sola línea de forma elegante",
-      "que_es": [
-        "<p>Una <strong>lista por comprensión</strong> (list comprehension) es una forma compacta de crear una lista a partir de otra, aplicando una operación o un filtro.</p>",
-        "<p>En vez de escribir 4 líneas con un for y un append, escribes 1 línea. Es más rápido y, cuando te acostumbras, más legible.</p>",
-        "<p>El formato básico es: <code>[expresion for x in iterable if condicion]</code>.</p>"
-      ],
-      "para_que_sirve": [
-        "<p>Se usan cuando quieres transformar o filtrar una colección:</p>",
-        "<ul><li><strong>Transformar</strong>: elevar al cuadrado cada número.</li><li><strong>Filtrar</strong>: quedarte solo con los pares.</li><li><strong>Combinar</strong>: ambas cosas a la vez.</li><li><strong>Crear matrices</strong>: listas de listas generadas programáticamente.</li></ul>"
-      ],
-      "sintaxis": "[expresion for elemento in iterable]\n[expresion for elemento in iterable if condicion]\n[expresion1 if cond else expresion2 for elemento in iterable]",
-      "ejemplos": [
-        {
-          "titulo": "Lo básico: elevar al cuadrado",
-          "codigo": "# Versión tradicional\ncuadrados = []\nfor x in range(6):\n    cuadrados.append(x**2)\nprint(cuadrados)\n\n# Con comprensión\ncuadrados = [x**2 for x in range(6)]\nprint(cuadrados)",
-          "explicacion": [
-            "<p>Ambas versiones dan el mismo resultado: <code>[0, 1, 4, 9, 16, 25]</code>.</p>",
-            "<p>La comprensión es más corta y clara una vez te acostumbras.</p>"
-          ]
-        },
-        {
-          "titulo": "Con filtro",
-          "codigo": "pares = [x for x in range(10) if x % 2 == 0]\nprint(pares)   # [0, 2, 4, 6, 8]\n\ncuadrados_pares = [x**2 for x in range(10) if x % 2 == 0]\nprint(cuadrados_pares)   # [0, 4, 16, 36, 64]",
-          "explicacion": [
-            "<p>El <code>if</code> al final filtra qué elementos incluir.</p>",
-            "<p>Puedes combinar transformación y filtro en la misma línea.</p>"
-          ]
-        },
-        {
-          "titulo": "Sobre strings",
-          "codigo": "palabra = \"Python\"\n\nmayusculas = [c.upper() for c in palabra]\nprint(mayusculas)   # ['P', 'Y', 'T', 'H', 'O', 'N']\n\nvocales = [c for c in palabra if c.lower() in \"aeiou\"]\nprint(vocales)   # ['o']",
-          "explicacion": [
-            "<p>También funcionan con strings.</p>",
-            "<ul><li>El primero convierte cada letra a mayúscula.</li><li>El segundo filtra solo las vocales.</li></ul>"
-          ]
-        },
-        {
-          "titulo": "Condicional dentro de la expresión",
-          "codigo": "numeros = [1, 2, 3, 4, 5]\n\nresultado = [x if x % 2 == 0 else -x for x in numeros]\nprint(resultado)   # [-1, 2, -3, 4, -5]",
-          "explicacion": [
-            "<p>Cuando pones un if/else al inicio de la comprensión, se evalúa para cada elemento:</p>",
-            "<ul><li>Si es par: x.</li><li>Si es impar: -x.</li></ul>",
-            "<p><strong>Ojo:</strong> este if/else es distinto del if al final. El de al final filtra, este transforma.</p>"
-          ]
-        }
-      ],
-      "errores_comunes": [
-        {
-          "error": "[x for x in 5]",
-          "razon": "No puedes iterar sobre un número. Necesitas una colección o range.",
-          "correcto": "[x for x in range(5)]"
-        },
-        {
-          "error": "Comprensiones muy complejas",
-          "razon": "Si la comprensión ocupa varias líneas o tiene muchos if anidados, es mejor un bucle normal.",
-          "correcto": "Usa comprensión solo si es simple. Prioriza legibilidad."
-        },
-        {
-          "error": "Modificar la lista original dentro de la comprensión",
-          "razon": "Las comprensiones crean una lista nueva. No modifican la original.",
-          "correcto": "Para modificar in-place, usa un bucle normal."
-        }
-      ],
-      "tips": [
-        "<p>💡 <strong>Truco 1:</strong> las comprensiones son más rápidas que un bucle con append.</p>",
-        "<p>💡 <strong>Truco 2:</strong> también existen comprensiones de diccionarios (<code>{k: v for ...}</code>) y de sets (<code>{x for ...}</code>).</p>",
-        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, las comprensiones son útiles para generar listas de valores:</p>",
-        "<pre class='cmd-sintaxis'>errores = [abs(x - raiz) for x in aproximaciones]</pre>",
-        "<p>💡 <strong>Truco 4:</strong> si te cuesta leerla, no la uses. Un bucle claro vale más que una comprensión críptica.</p>"
-      ],
-      "resumen": "Las comprensiones crean listas en una línea: [expresion for x in iterable if condicion]. Son rápidas y limpias, pero úsalas solo si son legibles."
     }
   ]
 }

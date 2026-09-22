@@ -3,10 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Python para Análisis Numérico · Guía Completa</title>
+<title>Python para Análisis Numérico · Guía</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
+<!-- CodeMirror (para el entorno admin) -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
@@ -15,8 +16,13 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
 
+<!-- Pyodide (se carga en background, no bloquea) -->
+<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js" defer></script>
+
+<!-- Google Identity (solo si es admin) -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
+<!-- MathJax -->
 <script>
 window.MathJax = {
   tex: {
@@ -33,339 +39,407 @@ window.MathJax = {
 </head>
 <body>
 
+<!-- ============================================================
+     BARRA SUPERIOR
+     ============================================================ -->
 <div id="view-bar">
+  <button id="menu-toggle-bar" onclick="toggleMenu()" aria-label="Menú">
+    <span class="material-symbols-outlined">menu</span>
+  </button>
   <div class="title">Python para Análisis Numérico</div>
-  <div id="view-tabs">
-    <button class="view-tab active" onclick="switchView('guide')">Guía</button>
-    <button class="view-tab" onclick="switchView('env')">Entorno</button>
-  </div>
-  <button id="btn-buscar" onclick="abrirBuscador()" title="Buscar en la guía (Ctrl+K)">
+  <button id="btn-buscar" onclick="abrirBuscador()" title="Buscar (Ctrl+K)">
     <span class="material-symbols-outlined">search</span>
     <span class="btn-buscar-label">Buscar</span>
+  </button>
+  <button id="btn-idle" onclick="abrirIdle()" title="IDLE Python (Ctrl+Alt+I)">
+    <span style="font-size:18px;line-height:1;">🐍</span>
+    <span class="btn-buscar-label">IDLE</span>
   </button>
   <select id="theme-select" title="Tema">
     <option value="dark">Oscuro</option>
     <option value="light">Claro</option>
     <option value="system">Sistema</option>
   </select>
-  <div id="drive-status" onclick="connectDrive()">Drive: no conectado</div>
+  <div id="drive-status" onclick="connectDrive()" style="display:none;">Drive: no conectado</div>
 </div>
 
-<div id="view-guide" class="view active">
-<header class="guide-header">
-  <h1>Python para Análisis Numérico</h1>
-  <p>Guía interactiva desde cero. Aprende Python paso a paso hasta resolver ecuaciones con métodos numéricos. Ejecuta el código directamente en tu navegador.</p>
-  <div id="status-badge">Cargando...</div>
-</header>
+<!-- ============================================================
+     CONTENIDO PRINCIPAL
+     ============================================================ -->
 <div class="container">
   <div id="guide-content">
     <div id="loading-guide">Cargando contenido...</div>
   </div>
 </div>
-</div>
 
-<div id="view-env" class="view">
-<div id="drive-setup">
-  <h2>Entorno de Programación</h2>
-  <p>Conecta tu cuenta de Google para guardar tus notebooks en tu Drive y usar Google Colab. Los archivos se organizan en la carpeta <code>Python_Análisis_Numérico</code>.</p>
-  <button onclick="connectDrive()">Conectar con Google Drive</button>
-  <button class="secondary" onclick="activarModoInvitado()">Continuar como invitado</button>
-  <p style="margin-top:1rem;font-size:0.72rem;">Como invitado puedes ejecutar comandos básicos de Python en tu navegador. Para librerías científicas necesitas conectar tu cuenta.</p>
-</div>
-
-<div class="env-layout" id="env-layout" style="display:none;">
-  <div class="env-sidebar" id="env-sidebar">
-    <div class="env-breadcrumb" id="env-breadcrumb">
-      <div class="breadcrumb-path">
-        <a onclick="navigateTo('root')">🏠 Raíz</a>
-      </div>
-      <button class="btn-expand-sidebar" onclick="toggleExpandSidebar()" title="Ampliar explorador">
-        <span class="material-symbols-outlined" id="expand-icon">expand_content</span>
-      </button>
-    </div>
-    <div class="env-actions">
-      <button class="primary" onclick="createFolder()">
-        <span class="material-symbols-outlined">create_new_folder</span> Carpeta
-      </button>
-      <button class="primary" onclick="createNotebook()">
-        <span class="material-symbols-outlined">note_add</span> Notebook
-      </button>
-      <button class="primary" onclick="createPythonFile()">
-        <span class="material-symbols-outlined">code</span> .py
-      </button>
-      <button class="primary" onclick="abrirSelectorImportar()">
-        <span class="material-symbols-outlined">upload_file</span> Importar
-      </button>
-      <button onclick="refreshFileList()" title="Recargar">
-        <span class="material-symbols-outlined">refresh</span>
-      </button>
-      <button onclick="salirDrive()" title="Salir" class="danger">
-        <span class="material-symbols-outlined">logout</span> Salir
-      </button>
-    </div>
-    <input type="file" id="import-input" accept=".ipynb,.py" style="display:none" onchange="importarArchivo(event)">
-    <ul class="env-files" id="env-file-list">
-      <li class="empty">Conecta tu Drive para ver tus archivos</li>
-    </ul>
-  </div>
-  <div class="env-main">
-    <div id="reconnect-banner">
-      <span>⚠️ La sesión de Google expiró. Vuelve a conectar para guardar en Drive.</span>
-      <button onclick="connectDrive()">Reconectar</button>
-    </div>
-    <div class="env-toolbar" id="env-toolbar">
-      <button onclick="abrirMenuEjemplos()" title="Cargar ejemplo">
-        <span class="material-symbols-outlined">menu_book</span> Ejemplos
-      </button>
-      <input type="text" id="env-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-      <button class="primary" onclick="runEnvCode()" title="Ejecuta local o en Colab según el código">
-        <span class="material-symbols-outlined">play_arrow</span> Ejecutar
-      </button>
-      <button onclick="saveEnvToDrive()">
-        <span class="material-symbols-outlined">save</span> Guardar
-      </button>
-      <button onclick="descargarActual()">
-        <span class="material-symbols-outlined">download</span> Descargar
-      </button>
-      <button onclick="openInColab()">
-        <span class="material-symbols-outlined">open_in_new</span> Colab
-      </button>
-      <button onclick="generarIpynb()" title="Generar archivo .ipynb">
-        <span class="material-symbols-outlined">description</span> Generar .ipynb
-      </button>
-      <span id="autosave-status"></span>
-    </div>
-    <div class="env-editor-wrap">
-      <textarea id="env-editor"></textarea>
-    </div>
-    <div class="output-resizer" id="output-resizer"></div>
-    <div class="env-output" id="env-output">Presiona Ejecutar para ver el resultado...</div>
-    <button id="btn-show-output" onclick="mostrarOutput()" title="Mostrar salida">
-      <span class="material-symbols-outlined">expand_less</span> Mostrar salida
-    </button>
-    <button id="btn-clear-output" onclick="limpiarOutputEnv()" title="Limpiar salida">
-      <span class="material-symbols-outlined">delete_sweep</span> Limpiar
-    </button>
-  </div>
-</div>
-</div>
-
-<div id="overlay" onclick="toggleMenu()"></div>
-<button id="menu-toggle" onclick="toggleMenu()" aria-label="Menú">
-  <span></span><span></span><span></span>
-</button>
+<!-- ============================================================
+     MENÚ LATERAL
+     ============================================================ -->
+<div id="overlay" onclick="closeMenu()"></div>
 
 <nav id="sidebar">
-  <div class="sidebar-title">Niveles de la Guía</div>
+  <div class="sidebar-title">Python para Análisis Numérico</div>
 
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(0); closeMenu();">
-      <span>Nivel 0 · Antes de empezar</span>
+    <button class="menu-group-header" onclick="showSeccion('intro'); closeMenu();">
+      <span>📖 Introducción</span>
+    </button>
+  </div>
+
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showSeccion('seccion-00'); closeMenu();">
+      <span>📚 Cómo usar esta página</span>
+    </button>
+  </div>
+
+  <div class="sidebar-divider">Nivel 1 · Lo básico</div>
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showParte(1); closeMenu();">
+      <span>01 · Primeros pasos</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(1); closeMenu();">
-      <span>Nivel 1 · Lo más básico</span>
+    <button class="menu-group-header" onclick="showParte(2); closeMenu();">
+      <span>02 · Variables y tipos</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(2); closeMenu();">
-      <span>Nivel 2 · Tipos de datos</span>
+    <button class="menu-group-header" onclick="showParte(3); closeMenu();">
+      <span>03 · Operadores</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(3); closeMenu();">
-      <span>Nivel 3 · Operaciones</span>
+    <button class="menu-group-header" onclick="showParte(4); closeMenu();">
+      <span>04 · Strings</span>
+    </button>
+  </div>
+
+  <div class="sidebar-divider">Nivel 2 · Colecciones y control</div>
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showParte(5); closeMenu();">
+      <span>05 · Listas y tuplas</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(4); closeMenu();">
-      <span>Nivel 4 · Control de flujo</span>
+    <button class="menu-group-header" onclick="showParte(6); closeMenu();">
+      <span>06 · Sets y diccionarios</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(5); closeMenu();">
-      <span>Nivel 5 · Colecciones</span>
+    <button class="menu-group-header" onclick="showParte(7); closeMenu();">
+      <span>07 · Condicionales</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(6); closeMenu();">
-      <span>Nivel 6 · Funciones</span>
+    <button class="menu-group-header" onclick="showParte(8); closeMenu();">
+      <span>08 · Bucles</span>
+    </button>
+  </div>
+
+  <div class="sidebar-divider">Nivel 3 · Funciones y módulos</div>
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showParte(9); closeMenu();">
+      <span>09 · Funciones</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(7); closeMenu();">
-      <span>Nivel 7 · Módulos</span>
+    <button class="menu-group-header" onclick="showParte(10); closeMenu();">
+      <span>10 · Módulos</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(8); closeMenu();">
-      <span>Nivel 8 · Errores</span>
+    <button class="menu-group-header" onclick="showParte(11); closeMenu();">
+      <span>11 · Errores y excepciones</span>
+    </button>
+  </div>
+
+  <div class="sidebar-divider">Nivel 4 · Avanzado</div>
+  <div class="menu-group">
+    <button class="menu-group-header" onclick="showParte(12); closeMenu();">
+      <span>12 · Clases y objetos</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(9); closeMenu();">
-      <span>Nivel 9 · Clases y objetos</span>
+    <button class="menu-group-header" onclick="showParte(13); closeMenu();">
+      <span>13 · Archivos y datos</span>
     </button>
   </div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(10); closeMenu();">
-      <span>Nivel 10 · Análisis numérico</span>
+    <button class="menu-group-header" onclick="showParte(14); closeMenu();">
+      <span>14 · Análisis numérico</span>
     </button>
   </div>
+
+  <div class="sidebar-divider">Extra</div>
   <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(11); closeMenu();">
-      <span>Nivel 11 · Entorno de trabajo</span>
+    <button class="menu-group-header" onclick="showSeccion('glosario'); closeMenu();">
+      <span>15 · Glosario y recursos</span>
     </button>
   </div>
-  <div class="menu-group">
-    <button class="menu-group-header" onclick="showLevel(99); closeMenu();">
-      <span>Glosario</span>
+
+  <div class="menu-group" id="menu-admin" style="display:none;">
+    <button class="menu-group-header" onclick="showEntorno(); closeMenu();">
+      <span>🔧 Entorno (admin)</span>
     </button>
   </div>
 </nav>
 
-<div id="item-menu"></div>
-
-<div class="modal-overlay" id="modal-rename" onclick="if(event.target===this) cerrarModal('modal-rename')">
-  <div class="modal-box">
-    <h3>Renombrar</h3>
-    <label for="rename-input">Nuevo nombre</label>
-    <input type="text" id="rename-input" placeholder="nuevo_nombre">
-    <div class="actions">
-      <button onclick="cerrarModal('modal-rename')">Cancelar</button>
-      <button class="primary" onclick="confirmarRenombrar()">Renombrar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-copy" onclick="if(event.target===this) cerrarModal('modal-copy')">
-  <div class="modal-box">
-    <h3>Copiar</h3>
-    <label for="copy-input">Nombre de la copia</label>
-    <input type="text" id="copy-input" placeholder="copia">
-    <div class="actions">
-      <button onclick="cerrarModal('modal-copy')">Cancelar</button>
-      <button class="primary" onclick="confirmarCopiar()">Copiar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-delete" onclick="if(event.target===this) cerrarModal('modal-delete')">
-  <div class="modal-box">
-    <h3 style="color:var(--danger)">Eliminar</h3>
-    <p id="delete-text">¿Estás seguro?</p>
-    <div class="actions">
-      <button onclick="cerrarModal('modal-delete')">Cancelar</button>
-      <button class="danger" onclick="confirmarEliminar()">Eliminar</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-share" onclick="if(event.target===this) cerrarModal('modal-share')">
-  <div class="modal-box">
-    <h3>Compartir</h3>
-    <p>Comparte <strong id="share-name">archivo</strong> con otra persona. Necesita una cuenta de Google.</p>
-
-    <label for="share-email">Correo electrónico</label>
-    <input type="email" id="share-email" placeholder="correo@gmail.com">
-
-    <label>Permisos</label>
-    <div class="radio-group">
-      <div class="radio-option selected" data-role="reader" onclick="seleccionarRolShare(this)">
-        <span class="material-symbols-outlined">visibility</span>
-        Solo lectura
-      </div>
-      <div class="radio-option" data-role="writer" onclick="seleccionarRolShare(this)">
-        <span class="material-symbols-outlined">edit</span>
-        Puede editar
-      </div>
-    </div>
-
-    <div class="actions">
-      <button onclick="cerrarModal('modal-share')">Cancelar</button>
-      <button class="primary" onclick="confirmarCompartir()">Compartir con correo</button>
-    </div>
-
-    <div style="margin-top: 1.2rem; padding-top: 1rem; border-top: 1px solid var(--border);">
-      <label>Enlace público para copiar</label>
-      <p style="font-size: 0.75rem; color: var(--text-dim); margin: 0.3rem 0 0.6rem;">
-        Cualquiera con el enlace podrá abrirlo (necesita cuenta de Google). El permiso será el mismo que elegiste arriba.
-      </p>
-      <button class="primary" onclick="generarEnlaceCompartido()" style="width: 100%;">
-        <span class="material-symbols-outlined">link</span> Generar enlace
-      </button>
-      <div id="share-link-result" style="display:none; margin-top: 0.8rem;">
-        <input type="text" id="share-link-input" readonly style="width: 100%; font-size: 0.75rem; padding: 8px; background: var(--bg-input); border: 1px solid var(--border); border-radius: 4px; color: var(--text); margin-bottom: 6px;">
-        <button onclick="copiarEnlaceAlPortapapeles()" style="width: 100%;">
-          <span class="material-symbols-outlined">content_copy</span> Copiar enlace
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-move" onclick="if(event.target===this) cerrarModal('modal-move')">
-  <div class="modal-box">
-    <h3>Mover</h3>
-    <p>Mueve <strong id="move-name">archivo</strong> a otra carpeta de tu Drive.</p>
-    <label>Carpeta destino</label>
-    <div class="folder-list" id="move-folder-list"></div>
-    <div class="actions">
-      <button onclick="cerrarModal('modal-move')">Cancelar</button>
-      <button class="primary" onclick="confirmarMover()">Mover</button>
-    </div>
-  </div>
-</div>
-
-<div class="modal-overlay" id="modal-import" onclick="if(event.target===this) cerrarModal('modal-import')">
-  <div class="modal-box">
-    <h3>Ya existe un archivo con ese nombre</h3>
-    <p id="import-text">¿Qué quieres hacer con <strong>archivo.ipynb</strong>?</p>
-    <div class="actions">
-      <button onclick="cerrarModal('modal-import')">Cancelar</button>
-      <button onclick="confirmarImportar('rename')">Renombrar</button>
-      <button class="primary" onclick="confirmarImportar('replace')">Reemplazar</button>
-    </div>
-  </div>
-</div>
-
+<!-- ============================================================
+     MODAL DEL BUSCADOR
+     ============================================================ -->
 <div class="modal-overlay" id="modal-buscador" onclick="if(event.target===this) cerrarBuscador()">
-  <div class="modal-box">
+  <div class="modal-box modal-buscador">
     <input type="text" id="buscador-input" placeholder="Buscar en la guía… (Ctrl+K)" autocomplete="off" spellcheck="false">
     <div id="buscador-resultados"></div>
   </div>
 </div>
 
-<div id="ejemplos-menu" class="ejemplos-menu"></div>
+<!-- ============================================================
+     MODAL DE LA TIENDA
+     ============================================================ -->
+<div class="modal-overlay" id="modal-tienda" onclick="if(event.target===this) cerrarTienda()">
+  <div class="modal-box modal-tienda">
+    <div class="tienda-header">
+      <h3>
+        <span class="material-symbols-outlined" style="color:var(--accent); font-size:22px;">storefront</span>
+        Tienda de extensiones
+      </h3>
+      <button class="tienda-refresh" id="tienda-recargar" title="Recargar catálogo">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    </div>
+    <p>Instala extensiones para Pyodide. Se cachean en tu navegador para no descargarlas de nuevo.</p>
 
-<div id="offline-banner" style="display:none; position:fixed; top:0; left:0; right:0; background:#b91c1c; color:white; padding:8px; text-align:center; font-size:0.8rem; z-index:9999;">
-  ⚠️ Sin conexión · Los cambios se guardan localmente y se subirán al volver
+    <div class="tienda-input-row">
+      <input type="text" id="tienda-search" placeholder="Buscar extensión…" autocomplete="off" spellcheck="false">
+    </div>
+
+    <div id="tienda-result"></div>
+    <div id="tienda-categorias" class="tienda-categorias"></div>
+    <div id="tienda-catalogo" class="tienda-catalogo"></div>
+
+    <label style="margin-top:1.2rem; display:block;">Instaladas</label>
+    <div id="tienda-instaladas" class="tienda-instaladas"></div>
+
+    <div class="actions">
+      <button onclick="cerrarTienda()">Cerrar</button>
+    </div>
+  </div>
 </div>
 
+<!-- ============================================================
+     MODAL DE LA IDLE GENERAL
+     ============================================================ -->
+<div class="modal-overlay modal-idle-overlay" id="modal-idle" onclick="if(event.target===this) cerrarIdle()">
+  <div class="modal-box modal-idle-box">
+
+    <div class="idle-header">
+      <h3>
+        <span style="font-size:20px;">🐍</span>
+        IDLE · Python libre
+      </h3>
+      <button class="idle-close" onclick="cerrarIdle()" title="Cerrar">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <div class="idle-acciones">
+      <button onclick="idleCrearNotebook()" title="Nuevo notebook .ipynb">
+        <span class="material-symbols-outlined">note_add</span> Notebook
+      </button>
+      <button onclick="idleCrearPy()" title="Nuevo archivo .py">
+        <span class="material-symbols-outlined">code</span> .py
+      </button>
+      <button onclick="idleImportar()" title="Importar archivo local">
+        <span class="material-symbols-outlined">upload_file</span> Importar
+      </button>
+      <button onclick="idleRefrescar()" title="Refrescar lista">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    </div>
+    <input type="file" id="idle-import-input" accept=".py,.ipynb" style="display:none" onchange="idleImportarArchivo(event)">
+
+    <div class="idle-lista-archivos" id="idle-lista-archivos">
+      <div class="empty">Sin archivos guardados localmente</div>
+    </div>
+
+    <div class="idle-toolbar">
+      <button onclick="idleCargarEjemplo()">
+        <span class="material-symbols-outlined">menu_book</span> Ejemplos
+      </button>
+      <input type="text" id="idle-filename" value="scratch.ipynb" placeholder="nombre.ipynb">
+      <button class="primary" onclick="ejecutarIdle()">
+        <span class="material-symbols-outlined">play_arrow</span> Ejecutar
+      </button>
+      <button onclick="idleConvertir()" title="Convertir y guardar entre .py y .ipynb">
+        <span class="material-symbols-outlined">swap_horiz</span> Convertir
+      </button>
+      <button onclick="idleDescargar()" title="Descargar archivo">
+        <span class="material-symbols-outlined">download</span> Descargar
+      </button>
+      <button onclick="abrirTiendaDesdeIdle()" title="Tienda de extensiones">
+        <span class="material-symbols-outlined">storefront</span> Tienda
+      </button>
+    </div>
+
+    <div class="idle-editor-wrap">
+      <textarea id="idle-editor"># IDLE Python libre
+# Escribe tu código aquí y pulsa Ejecutar.
+# Se guarda automáticamente en tu navegador.
+
+print("Hola, mundo")
+print(2 + 2)
+</textarea>
+    </div>
+
+    <div class="idle-resize-handle" id="idle-resize-handle" title="Arrastra para redimensionar la salida"></div>
+
+    <div class="idle-output" id="idle-output">Presiona Ejecutar para ver el resultado...</div>
+
+  </div>
+</div>
+
+<!-- ============================================================
+     MODAL DE AVISO DE DESCARGA
+     ============================================================ -->
+<div class="modal-overlay" id="modal-aviso-descarga" onclick="if(event.target===this) cerrarAvisoDescarga()">
+  <div class="modal-box">
+    <h3>⚠️ Descarga de extensión</h3>
+    <p id="aviso-descarga-texto">Vas a descargar una extensión. Esto consume datos.</p>
+    <p style="font-size: 0.78rem; color: var(--text-dim);">
+      Se recomienda estar en Wi-Fi. La extensión se cacheará y no volverá a descargarse mientras no borres el caché del navegador.
+    </p>
+    <div class="actions">
+      <button onclick="cancelarAvisoDescarga()">Cancelar</button>
+      <button class="primary" onclick="confirmarAvisoDescarga()">Descargar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     VISTA DEL ENTORNO (SOLO ADMIN)
+     ============================================================ -->
+<div id="view-entorno" style="display:none;">
+  <div class="entorno-header">
+    <h2>🔧 Entorno de código</h2>
+    <button onclick="cerrarEntorno()">Volver a la guía</button>
+  </div>
+
+  <div class="entorno-layout">
+    <div class="entorno-sidebar">
+      <div class="entorno-breadcrumb" id="entorno-breadcrumb">
+        <span>🏠 Raíz</span>
+      </div>
+      <div class="entorno-acciones">
+        <button onclick="crearCarpeta()">
+          <span class="material-symbols-outlined">create_new_folder</span> Carpeta
+        </button>
+        <button onclick="crearNotebook()">
+          <span class="material-symbols-outlined">note_add</span> Notebook
+        </button>
+        <button onclick="crearPythonFile()">
+          <span class="material-symbols-outlined">code</span> .py
+        </button>
+        <button onclick="abrirSelectorImportar()">
+          <span class="material-symbols-outlined">upload_file</span> Importar
+        </button>
+        <button onclick="actualizarListaArchivos()">
+          <span class="material-symbols-outlined">refresh</span>
+        </button>
+      </div>
+      <input type="file" id="import-input" accept=".ipynb,.py" style="display:none" onchange="importarArchivo(event)">
+      <ul class="entorno-archivos" id="entorno-file-list">
+        <li class="empty">Conecta tu Drive para ver archivos</li>
+      </ul>
+    </div>
+
+    <div class="entorno-main">
+      <div class="entorno-toolbar">
+        <input type="text" id="entorno-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
+        <button class="primary" onclick="ejecutarCodigoEntorno()">
+          <span class="material-symbols-outlined">play_arrow</span> Ejecutar
+        </button>
+        <button onclick="guardarArchivoEntorno()">
+          <span class="material-symbols-outlined">save</span> Guardar
+        </button>
+        <button onclick="descargarIpynb()">
+          <span class="material-symbols-outlined">download</span> .ipynb
+        </button>
+        <button onclick="guardarComoIpynb()">
+          <span class="material-symbols-outlined">description</span> Generar .ipynb
+        </button>
+      </div>
+      <div class="entorno-editor-wrap">
+        <textarea id="entorno-editor"></textarea>
+      </div>
+      <div class="entorno-output" id="entorno-output">Presiona Ejecutar para ver el resultado...</div>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     TOAST
+     ============================================================ -->
 <div id="toast"></div>
 
+<!-- ============================================================
+     SCRIPTS
+     ============================================================ -->
+<script src="js/tema.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/pyodide.js"></script>
+<script src="js/ejecutor.js"></script>
+<script src="js/codemirror.js"></script>
+<script src="js/guia.js"></script>
+<script src="js/buscador.js"></script>
+<script src="js/tienda.js"></script>
+<script src="js/drive.js"></script>
+<script src="js/guardado.js"></script>
+<script src="js/explorador.js"></script>
+<script src="js/idle.js"></script>
+
 <script>
+// ============================================================
+// REGISTRAR SERVICE WORKER CON CONTROL GARANTIZADO
+// ============================================================
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js', { scope: './' })
-      .then(reg => console.log('[SW] Registrado. Scope:', reg.scope))
-      .catch(err => console.warn('[SW] No se pudo registrar:', err));
+  window.addEventListener('load', async () => {
+    try {
+      const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
+      console.log('[SW] Registrado. Scope:', reg.scope);
+
+      if (navigator.serviceWorker.controller) {
+        console.log('[SW] Ya controla la página');
+        return;
+      }
+
+      await navigator.serviceWorker.ready;
+      console.log('[SW] Listo (ready)');
+
+      if (!navigator.serviceWorker.controller) {
+        console.log('[SW] Esperando a que tome el control…');
+        navigator.serviceWorker.addEventListener('controllerchange', () => {
+          console.log('[SW] Controller cambiado. Recargando una vez…');
+          window.location.reload();
+        });
+      }
+    } catch (err) {
+      console.warn('[SW] No se pudo registrar:', err);
+    }
   });
 }
-</script>
 
-<script src="js/tema.js"></script>
-<script src="js/guardado.js"></script>
-<script src="js/drive.js"></script>
-<script src="js/explorador.js"></script>
-<script src="js/codemirror.js"></script>
-<script src="js/ui.js"></script>
-<script src="js/guia.js"></script>
-<script src="js/ejemplos.js"></script>
-<script src="js/buscador.js"></script>
-<script src="js/skulpt-runner.js"></script>
-<script src="js/ejecutor.js"></script>
+// ============================================================
+// DETECTAR MODO ADMIN (?admin=1)
+// ============================================================
+(function() {
+  const params = new URLSearchParams(window.location.search);
+  if (params.get('admin') === '1') {
+    document.documentElement.setAttribute('data-admin', 'true');
+    console.log('[admin] Modo administrador activado');
+  }
+})();
+</script>
 
 </body>
 </html>

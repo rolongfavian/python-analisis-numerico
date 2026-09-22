@@ -1,0 +1,465 @@
+{
+  "parte": 4,
+  "titulo": "Strings",
+  "emoji": "📝",
+  "descripcion": "Ya usaste strings para mostrar mensajes. Ahora vamos a fondo: cómo crear, modificar, recorrer y transformar texto. Los strings son una de las estructuras más usadas, y dominarlos te ahorrará mucho tiempo.",
+  "temas": [
+    {
+      "id": "crear-strings",
+      "numero": "1",
+      "titulo": "Crear y manipular strings",
+      "emoji": "🔤",
+      "subtitulo": "Las distintas formas de escribir texto en Python",
+      "que_es": [
+        "<p>Un <strong>string</strong> es una secuencia de caracteres. Se crea con comillas simples <code>'texto'</code>, dobles <code>\"texto\"</code> o triples <code>\"\"\"texto\"\"\"</code>.</p>",
+        "<p>Las comillas simples y dobles son equivalentes. La diferencia solo importa cuando el texto contiene comillas dentro:</p>",
+        "<ul><li><code>'Él dijo \"hola\"'</code> → funciona porque las comillas externas son simples.</li><li><code>\"Él dijo 'hola'\"</code> → también funciona.</li></ul>",
+        "<p>Las comillas triples permiten strings multilínea, con saltos de línea reales:</p>",
+        "<pre class='cmd-sintaxis'>mensaje = \"\"\"Línea 1\nLínea 2\nLínea 3\"\"\"</pre>"
+      ],
+      "para_que_sirve": [
+        "<p>Los strings son la forma principal de comunicarse:</p>",
+        "<ul><li><strong>Mensajes al usuario</strong>: mostrar resultados, avisos, errores.</li><li><strong>Nombres de archivos</strong>: <code>\"datos.csv\"</code>.</li><li><strong>Documentación</strong>: los docstrings son strings.</li><li><strong>Datos externos</strong>: leer de APIs, archivos, formularios.</li></ul>",
+        "<p>En análisis numérico, los strings aparecen en los mensajes de progreso, en los nombres de archivos de salida y en las etiquetas de gráficas.</p>"
+      ],
+      "sintaxis": "s1 = 'comillas simples'\ns2 = \"comillas dobles\"\ns3 = \"\"\"triple\ncomilla\"\"\"\ns4 = \"\"                    # string vacío",
+      "ejemplos": [
+        {
+          "titulo": "Tres formas de crear strings",
+          "codigo": "s1 = 'Hola'\ns2 = \"Mundo\"\ns3 = \"\"\"Línea 1\nLínea 2\"\"\"\ns4 = \"\"\n\nprint(s1)\nprint(s2)\nprint(s3)\nprint(\"Longitud de s4:\", len(s4))",
+          "explicacion": [
+            "<p>Las comillas simples y dobles son equivalentes. Las triples son para varias líneas.</p>",
+            "<p><code>len(s4)</code> es 0 porque el string está vacío.</p>"
+          ]
+        },
+        {
+          "titulo": "Strings con comillas internas",
+          "codigo": "frase1 = 'Él dijo \"hola\"'\nfrase2 = \"Ella dijo 'adiós'\"\n\nprint(frase1)\nprint(frase2)",
+          "explicacion": [
+            "<p>Cuando el texto contiene comillas, se usan las del otro tipo para rodearlo.</p>",
+            "<p>Así Python no se confunde con dónde empieza y termina el string.</p>"
+          ]
+        },
+        {
+          "titulo": "El carácter de escape \\",
+          "codigo": "print(\"Hola\\nmundo\")      # salto de línea\nprint(\"Columna1\\tColumna2\")  # tabulación\nprint(\"Comillas: \\\"texto\\\"\")  # comillas dentro\nprint(\"Ruta: C:\\\\Users\\\\Ana\")  # barra invertida",
+          "explicacion": [
+            "<p>La barra invertida <code>\\</code> se usa para escapar caracteres especiales:</p>",
+            "<ul><li><code>\\n</code> → salto de línea.</li><li><code>\\t</code> → tabulación.</li><li><code>\\\"</code> → comillas dobles dentro de un string con comillas dobles.</li><li><code>\\\\</code> → una barra invertida literal.</li></ul>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "s = 'Hola\"",
+          "razon": "Comillas desbalanceadas. Abres con simple y cierras con doble.",
+          "correcto": "s = 'Hola'   o   s = \"Hola\""
+        },
+        {
+          "error": "s = \"Hola mundo",
+          "razon": "Falta cerrar la comilla.",
+          "correcto": "s = \"Hola mundo\""
+        },
+        {
+          "error": "Pensar que 'a' y \"a\" son diferentes",
+          "razon": "Son exactamente iguales. Python no distingue.",
+          "correcto": "Usa la que prefieras, pero sé consistente."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> para strings muy largos, usa triple comilla y olvídate de los <code>\\n</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>len(s)</code> te da la longitud del string. Es una función built-in.</p>",
+        "<p>💡 <strong>Truco 3:</strong> si necesitas un string con muchas barras invertidas (rutas de Windows), usa <code>r\"...\"</code> (raw string): <code>r\"C:\\Users\\Ana\"</code>.</p>"
+      ],
+      "ejercicios": [
+        "Crea tres strings: uno con comillas simples, otro con dobles y otro multilínea.",
+        "Muestra un string que contenga una cita con comillas dobles dentro.",
+        "Usa `\\n` para mostrar dos líneas desde un solo print.",
+        "Crea un string vacío y muestra su longitud."
+      ],
+      "resumen": "Los strings se crean con comillas simples, dobles o triples. Las comillas triples permiten varias líneas. El carácter \\\\ escapa caracteres especiales."
+    },
+    {
+      "id": "acceder-caracteres",
+      "numero": "2",
+      "titulo": "Acceder a caracteres e indexar",
+      "emoji": "🔍",
+      "subtitulo": "Cada letra tiene una posición, y puedes acceder a ella",
+      "que_es": [
+        "<p>Un string es una <strong>secuencia</strong>, así que cada carácter tiene una <strong>posición</strong> (índice). Los índices empiezan en 0.</p>",
+        "<p>Para acceder a un carácter, usa corchetes: <code>s[0]</code>, <code>s[1]</code>, etc.</p>",
+        "<p>También puedes usar índices negativos: <code>s[-1]</code> es el último carácter, <code>s[-2]</code> el penúltimo.</p>",
+        "<p><strong>Importante:</strong> los strings son <strong>inmutables</strong>. No puedes modificar un carácter con <code>s[0] = 'x'</code>. Da error.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa mucho cuando necesitas:</p>",
+        "<ul><li><strong>Verificar el primer o último carácter</strong>: <code>s[0] == 'a'</code>.</li><li><strong>Recorrer un string carácter a carácter</strong>.</li><li><strong>Extraer partes</strong>: como el código de país de un teléfono.</li><li><strong>Analizar texto</strong>: contar vocales, buscar patrones.</li></ul>"
+      ],
+      "sintaxis": "s = \"Python\"\n\ns[0]     # 'P'   (primero)\ns[1]     # 'y'\ns[-1]    # 'n'   (último)\ns[-2]    # 'o'\n\nlen(s)   # 6     (longitud)",
+      "ejemplos": [
+        {
+          "titulo": "Acceder a caracteres",
+          "codigo": "s = \"Python\"\n\nprint(s[0])    # P\nprint(s[1])    # y\nprint(s[2])    # t\nprint(s[-1])   # n\nprint(s[-2])   # o",
+          "explicacion": [
+            "<p>Los índices positivos empiezan en 0 por la izquierda.</p>",
+            "<p>Los índices negativos empiezan en -1 por la derecha (el último).</p>",
+            "<ul><li><code>s[0]</code> → primer carácter.</li><li><code>s[-1]</code> → último.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Recorrer un string con un bucle",
+          "codigo": "palabra = \"Python\"\n\nfor letra in palabra:\n    print(letra)",
+          "explicacion": [
+            "<p>Puedes recorrer un string carácter a carácter con un <code>for</code>.</p>",
+            "<p>En cada iteración, <code>letra</code> toma el valor del siguiente carácter.</p>"
+          ]
+        },
+        {
+          "titulo": "Recorrer con índice",
+          "codigo": "palabra = \"Python\"\n\nfor i in range(len(palabra)):\n    print(f\"{i}: {palabra[i]}\")\n\n# O más limpio con enumerate:\nfor i, letra in enumerate(palabra):\n    print(f\"{i}: {letra}\")",
+          "explicacion": [
+            "<p>Si necesitas el índice, puedes usar <code>range(len(...))</code> o <code>enumerate</code>.</p>",
+            "<p><code>enumerate</code> es más limpio y menos propenso a errores.</p>"
+          ]
+        },
+        {
+          "titulo": "Los strings son inmutables",
+          "codigo": "s = \"Hola\"\n\n# s[0] = \"h\"    # ← Esto da error\n\n# La forma correcta: crear uno nuevo\ns_nuevo = \"h\" + s[1:]\nprint(s_nuevo)   # \"hola\"",
+          "explicacion": [
+            "<p>No puedes modificar un carácter de un string existente. Python da <code>TypeError</code>.</p>",
+            "<p>Para cambiar una letra, tienes que crear un string nuevo combinando partes.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "s[10]  en un string de 6 letras",
+          "razon": "Índice fuera de rango. Da IndexError.",
+          "correcto": "Verifica con len(s) antes, o usa s[-1] para el último."
+        },
+        {
+          "error": "s[0] = 'x'",
+          "razon": "Los strings son inmutables. No se puede modificar un carácter.",
+          "correcto": "Crea un string nuevo: s = 'x' + s[1:]"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> para saber el último carácter sin calcular el índice, usa <code>s[-1]</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>s[0]</code> y <code>s[-len(s)]</code> son el mismo carácter.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para verificar si algo es una letra o un número: <code>s[0].isalpha()</code> o <code>s[0].isdigit()</code>.</p>"
+      ],
+      "ejercicios": [
+        "Toma la palabra 'programación' y muestra su primer y último carácter.",
+        "Recorre la palabra 'Python' y muestra cada letra en una línea.",
+        "Usa `enumerate` para mostrar el índice y la letra de 'Hola'.",
+        "Intenta modificar `s[0] = 'x'` y observa el error que da Python."
+      ],
+      "resumen": "Los strings son secuencias de caracteres. Se accede por índice (positivo o negativo). Son inmutables: no se pueden modificar, solo crear nuevos."
+    },
+    {
+      "id": "slicing",
+      "numero": "3",
+      "titulo": "Slicing — Rebanar strings",
+      "emoji": "✂️",
+      "subtitulo": "Extraer partes de un string con [inicio:fin]",
+      "que_es": [
+        "<p>El <strong>slicing</strong> permite extraer una <strong>parte</strong> de un string. Se usa la sintaxis <code>[inicio:fin]</code>.</p>",
+        "<p>El <code>fin</code> no se incluye. Igual que en <code>range()</code>.</p>",
+        "<p>También hay un tercer parámetro opcional: el <strong>paso</strong>. <code>[inicio:fin:paso]</code>.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa para:</p>",
+        "<ul><li><strong>Extraer substrings</strong>: los primeros 5 caracteres.</li><li><strong>Invertir</strong>: <code>s[::-1]</code>.</li><li><strong>Saltar caracteres</strong>: uno de cada dos.</li><li><strong>Procesar partes</strong>: código de área, prefijos, sufijos.</li></ul>"
+      ],
+      "sintaxis": "s[inicio:fin]        # del inicio al fin-1\ns[inicio:]          # del inicio al final\ns[:fin]             # del principio al fin-1\ns[:]                # copia entera\ns[::paso]           # con paso\ns[::-1]             # invertida\ns[inicio:fin:paso]  # todo junto",
+      "ejemplos": [
+        {
+          "titulo": "Los básicos",
+          "codigo": "s = \"Python\"\n\nprint(s[0:3])     # Pyt\nprint(s[:3])      # Pyt\nprint(s[2:])      # thon\nprint(s[:])       # Python\nprint(s[-3:])     # hon\nprint(s[:-2])     # Pyth",
+          "explicacion": [
+            "<ul><li><code>[0:3]</code> → del índice 0 al 2.</li><li><code>[:3]</code> → del inicio al 2.</li><li><code>[2:]</code> → del 2 al final.</li><li><code>[:]</code> → copia completa.</li><li><code>[-3:]</code> → los últimos 3.</li><li><code>[:-2]</code> → todo menos los últimos 2.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Con paso",
+          "codigo": "s = \"Python\"\n\nprint(s[::2])     # Pto\nprint(s[1::2])    # yhn\nprint(s[::-1])    # nohtyP (invertida)",
+          "explicacion": [
+            "<p>El tercer argumento es el paso:</p>",
+            "<ul><li><code>[::2]</code> → uno de cada dos, empezando por el 0.</li><li><code>[1::2]</code> → uno de cada dos, empezando por el 1.</li><li><code>[::-1]</code> → inversa completa. Muy útil.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Verificar palíndromos",
+          "codigo": "def es_palindromo(s):\n    s = s.lower().replace(\" \", \"\")\n    return s == s[::-1]\n\nprint(es_palindromo(\"anita lava la tina\"))  # True\nprint(es_palindromo(\"hola\"))                # False",
+          "explicacion": [
+            "<p>Un palíndromo se lee igual al derecho y al revés. El truco es comparar el string con su versión invertida.</p>",
+            "<p><code>.lower()</code> y <code>.replace(\" \", \"\")</code> normalizan el texto para que mayúsculas y espacios no afecten.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "s[5:2]",
+          "razon": "No da error, pero devuelve string vacío. El inicio está después del fin.",
+          "correcto": "Verifica que inicio < fin, o usa paso negativo."
+        },
+        {
+          "error": "s[10]  en string de 6",
+          "razon": "Esto NO es slicing, es indexación. Da IndexError.",
+          "correcto": "s[8:10]   # devuelve lo que haya, sin error"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>s[::-1]</code> invierte un string. Se usa muchísimo.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>s[:]</code> crea una copia superficial. Más idiomático que <code>s.copy()</code> (que no existe para strings).</p>",
+        "<p>💡 <strong>Truco 3:</strong> el slicing siempre devuelve un string nuevo, nunca modifica el original.</p>"
+      ],
+      "ejercicios": [
+        "Toma 'programación' y muestra los primeros 5 caracteres.",
+        "Muestra los últimos 3 caracteres.",
+        "Invierte la palabra 'Python' usando slicing.",
+        "Verifica si 'reconocer' es un palíndromo.",
+        "Extrae cada segundo carácter de 'abcdefgh'."
+      ],
+      "resumen": "El slicing extrae partes de strings con [inicio:fin:paso]. El fin no se incluye. s[::-1] invierte."
+    },
+    {
+      "id": "metodos-strings",
+      "numero": "4",
+      "titulo": "Métodos de strings",
+      "emoji": "🛠️",
+      "subtitulo": "Las operaciones más útiles con texto",
+      "que_es": [
+        "<p>Los strings tienen muchos <strong>métodos</strong> incorporados: funciones que se llaman con un punto después del string. Sirven para transformar, buscar, limpiar y procesar texto.</p>",
+        "<p>Como los strings son inmutables, los métodos <strong>no modifican el string original</strong>. Devuelven uno nuevo.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Los métodos de strings se usan a diario:</p>",
+        "<ul><li><strong>Transformar</strong>: <code>.upper()</code>, <code>.lower()</code>, <code>.capitalize()</code>, <code>.title()</code>.</li><li><strong>Limpiar</strong>: <code>.strip()</code>, <code>.lstrip()</code>, <code>.rstrip()</code>.</li><li><strong>Buscar</strong>: <code>.find()</code>, <code>.count()</code>, <code>.startswith()</code>, <code>.endswith()</code>.</li><li><strong>Reemplazar y dividir</strong>: <code>.replace()</code>, <code>.split()</code>, <code>.join()</code>.</li><li><strong>Verificar</strong>: <code>.isalpha()</code>, <code>.isdigit()</code>, <code>.isalnum()</code>.</li></ul>"
+      ],
+      "sintaxis": "s.upper()                # MAYÚSCULAS\ns.lower()                # minúsculas\ns.capitalize()           # Primera letra mayúscula\ns.title()                # Cada Palabra Mayúscula\ns.strip()                # quitar espacios extremos\ns.replace(a, b)          # reemplazar\ns.split(sep)             # dividir en lista\nsep.join(lista)          # unir lista en string\ns.find(sub)              # posición de sub (-1 si no está)\ns.count(sub)             # contar apariciones\ns.startswith(prefijo)    # ¿empieza con?\ns.endswith(sufijo)       # ¿termina con?\ns.isalpha()              # ¿solo letras?\ns.isdigit()              # ¿solo dígitos?",
+      "ejemplos": [
+        {
+          "titulo": "Transformar mayúsculas y minúsculas",
+          "codigo": "s = \"hola mundo\"\n\nprint(s.upper())        # HOLA MUNDO\nprint(s.lower())        # hola mundo\nprint(s.capitalize())   # Hola mundo\nprint(s.title())        # Hola Mundo",
+          "explicacion": [
+            "<ul><li><code>.upper()</code> → todo a mayúsculas.</li><li><code>.lower()</code> → todo a minúsculas.</li><li><code>.capitalize()</code> → solo la primera letra.</li><li><code>.title()</code> → cada palabra empieza con mayúscula.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Limpiar espacios",
+          "codigo": "s = \"   Hola mundo   \"\n\nprint(repr(s.strip()))    # 'Hola mundo'\nprint(repr(s.lstrip()))   # 'Hola mundo   '\nprint(repr(s.rstrip()))   # '   Hola mundo'",
+          "explicacion": [
+            "<p><code>.strip()</code> quita espacios al inicio y al final.</p>",
+            "<p><code>.lstrip()</code> solo al inicio. <code>.rstrip()</code> solo al final.</p>",
+            "<p><code>repr()</code> sirve para ver el string con las comillas y los espacios visibles.</p>"
+          ]
+        },
+        {
+          "titulo": "Buscar y reemplazar",
+          "codigo": "s = \"Python es genial. Python es fácil.\"\n\nprint(s.find(\"Python\"))     # 0\nprint(s.rfind(\"Python\"))    # 18 (última aparición)\nprint(s.count(\"Python\"))    # 2\nprint(s.replace(\"Python\", \"Py\"))\nprint(s.startswith(\"Python\"))  # True\nprint(s.endswith(\"fácil.\"))    # True",
+          "explicacion": [
+            "<ul><li><code>.find(sub)</code> → posición de la primera aparición, o -1 si no está.</li><li><code>.rfind(sub)</code> → posición de la última.</li><li><code>.count(sub)</code> → cuántas veces aparece.</li><li><code>.replace(a, b)</code> → cambia todas las apariciones.</li><li><code>.startswith</code> / <code>.endswith</code> → verifican inicio/fin.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Verificar contenido",
+          "codigo": "print(\"hola\".isalpha())     # True\nprint(\"123\".isdigit())     # True\nprint(\"abc123\".isalnum())  # True\nprint(\"   \".isspace())     # True\nprint(\"Hola\".isupper())    # False\nprint(\"HOLA\".isupper())    # True",
+          "explicacion": [
+            "<p>Estos métodos verifican el contenido del string:</p>",
+            "<ul><li><code>.isalpha()</code> → solo letras.</li><li><code>.isdigit()</code> → solo dígitos.</li><li><code>.isalnum()</code> → letras o dígitos.</li><li><code>.isspace()</code> → solo espacios.</li><li><code>.isupper()</code> / <code>.islower()</code> → mayúsculas/minúsculas.</li></ul>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "s.upper()   esperando que modifique s",
+          "razon": "Los strings son inmutables. Los métodos devuelven uno nuevo.",
+          "correcto": "s = s.upper()"
+        },
+        {
+          "error": "s.split()  esperando lista de caracteres",
+          "razon": "split() divide por espacios por defecto.",
+          "correcto": "list(s)   →  ['h', 'o', 'l', 'a']"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>s.split()</code> sin argumento divide por cualquier espacio (incluidos tabuladores y saltos).</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>\"-\".join(['a','b','c'])</code> une con guion. El separador va antes del <code>.join()</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>s.replace()</code> devuelve un string nuevo, no modifica el original.</p>"
+      ],
+      "ejercicios": [
+        "Pasa 'hola mundo' a mayúsculas y a minúsculas.",
+        "Quita los espacios extremos de '   hola   '.",
+        "Cuenta cuántas veces aparece 'a' en 'banana'.",
+        "Reemplaza todos los 'a' por 'o' en 'banana'.",
+        "Verifica si 'Python3' es alfanumérico con `isalnum`."
+      ],
+      "resumen": "Los métodos de strings permiten transformar (.upper, .lower), limpiar (.strip), buscar (.find, .count, .startswith), reemplazar (.replace) y verificar (.isalpha, .isdigit)."
+    },
+    {
+      "id": "formateo-fstrings",
+      "numero": "5",
+      "titulo": "Formateo con f-strings",
+      "emoji": "🎨",
+      "subtitulo": "Insertar variables y dar formato a números dentro de texto",
+      "que_es": [
+        "<p>Las <strong>f-strings</strong> son strings precedidos de <code>f</code> que permiten insertar expresiones dentro del texto usando llaves <code>{}</code>.</p>",
+        "<p>Son la forma moderna y recomendada de construir mensajes con variables. Sustituyen al <code>.format()</code> antiguo y a la concatenación con <code>+</code>.</p>",
+        "<p>Dentro de las llaves puedes poner variables, operaciones, llamadas a funciones... casi cualquier expresión Python.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usan en cualquier situación donde necesites construir texto dinámico:</p>",
+        "<ul><li><strong>Mensajes al usuario</strong>: <code>f\"Hola, {nombre}\"</code>.</li><li><strong>Reportes de progreso</strong>: <code>f\"Iteración {k}\"</code>.</li><li><strong>Tablas alineadas</strong>: <code>f\"{x:10.4f}\"</code>.</li><li><strong>Formateo de números</strong>: decimales, notación científica, porcentajes.</li></ul>",
+        "<p>En análisis numérico son indispensables para mostrar iteraciones y errores.</p>"
+      ],
+      "sintaxis": "f\"texto {variable} más texto\"\nf\"texto {expresion} más texto\"\nf\"{valor:.2f}\"        # 2 decimales\nf\"{valor:10.4f}\"      # 10 caracteres, 4 decimales\nf\"{valor:>10}\"        # alineado a la derecha\nf\"{valor:<10}\"        # alineado a la izquierda\nf\"{valor:^10}\"        # centrado\nf\"{valor:.3e}\"        # notación científica",
+      "ejemplos": [
+        {
+          "titulo": "Insertar variables",
+          "codigo": "nombre = \"Ana\"\nedad = 25\n\nprint(f\"{nombre} tiene {edad} años\")\nprint(f\"El año que viene tendrá {edad + 1}\")\nprint(f\"Su nombre en mayúsculas es {nombre.upper()}\")",
+          "explicacion": [
+            "<p>Dentro de las <code>{}</code> puedes poner cualquier expresión:</p>",
+            "<ul><li><code>{nombre}</code> → el valor de la variable.</li><li><code>{edad + 1}</code> → una operación.</li><li><code>{nombre.upper()}</code> → una llamada a método.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Formatear decimales",
+          "codigo": "pi = 3.141592653589793\n\nprint(f\"{pi:.2f}\")     # 3.14\nprint(f\"{pi:.4f}\")     # 3.1416\nprint(f\"{pi:.8f}\")     # 3.14159265\nprint(f\"{pi:.3e}\")     # 3.142e+00",
+          "explicacion": [
+            "<p>El formato <code>:.Nf</code> muestra N decimales.</p>",
+            "<p>El formato <code>:.Ne</code> usa notación científica con N decimales.</p>",
+            "<p>Útil para mostrar resultados numéricos con precisión controlada.</p>"
+          ]
+        },
+        {
+          "titulo": "Alinear en columnas",
+          "codigo": "print(f\"{'Iter':>5} {'x':>12} {'err':>12}\")\nprint(\"-\" * 32)\nfor k in range(1, 5):\n    x = 1.5 ** k\n    err = 1 / (10 ** k)\n    print(f\"{k:>5} {x:>12.6f} {err:>12.3e}\")",
+          "explicacion": [
+            "<p>El formato <code>:&gt;N</code> alinea a la derecha en N caracteres.</p>",
+            "<p>Esto permite hacer tablas perfectamente alineadas sin contar espacios a mano.</p>",
+            "<p>Es el patrón estándar para mostrar iteraciones de un método numérico.</p>"
+          ]
+        },
+        {
+          "titulo": "Formato de porcentajes",
+          "codigo": "progreso = 0.756\n\nprint(f\"Progreso: {progreso:.1%}\")\nprint(f\"Progreso: {progreso:.2%}\")",
+          "explicacion": [
+            "<p>El formato <code>:%</code> convierte un número entre 0 y 1 a porcentaje.</p>",
+            "<p><code>0.756</code> con <code>:.1%</code> da <code>75.6%</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "print(f\"Hola {nombre}\")  sin definir nombre",
+          "razon": "Python da NameError si la variable no existe.",
+          "correcto": "nombre = \"Ana\"\nprint(f\"Hola {nombre}\")"
+        },
+        {
+          "error": "print(\"Hola {nombre}\")  sin la f",
+          "razon": "Sin la f delante, las llaves son texto literal, no se sustituyen.",
+          "correcto": "print(f\"Hola {nombre}\")"
+        },
+        {
+          "error": "print(f\"Hola {nombre}\")  con comillas mal cerradas",
+          "razon": "Olvidar cerrar la comilla o la llave.",
+          "correcto": "Verifica que cada { tenga su } y cada comilla su pareja."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> dentro de las llaves puedes poner lo que quieras: <code>f\"{a + b}\"</code>, <code>f\"{len(lista)}\"</code>, <code>f\"{x if x > 0 else 0}\"</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> si necesitas mostrar llaves literales, duplícalas: <code>f\"{{esto sale entre llaves}}\"</code>.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para tablas numéricas, el ancho fijo es la clave: <code>f\"{x:>15.8f}\"</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, el formato científico <code>.3e</code> es perfecto para errores: <code>1.234e-05</code>.</p>"
+      ],
+      "ejercicios": [
+        "Crea un mensaje con tu nombre y edad usando f-strings.",
+        "Muestra el número π con 2, 4 y 8 decimales.",
+        "Muestra 0.42 como porcentaje con 1 decimal.",
+        "Imprime una tabla con 3 columnas alineadas usando formato.",
+        "Usa una expresión dentro de las llaves: `f\"{3 * 4}\"`."
+      ],
+      "resumen": "Las f-strings insertan expresiones dentro de texto con {}. El formato :.Nf controla decimales, :>N alinea, :% convierte a porcentaje. Son la forma moderna de construir mensajes."
+    },
+    {
+      "id": "buenas-practicas-strings",
+      "numero": "6",
+      "titulo": "Buenas prácticas con strings",
+      "emoji": "✅",
+      "subtitulo": "Cómo escribir y manipular texto de forma limpia",
+      "que_es": [
+        "<p>Los strings son muy flexibles, y eso también significa que es fácil escribir código confuso con ellos. Aquí verás los principios que sigue la comunidad Python.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Buenas prácticas te dan:</p>",
+        "<ul><li><strong>Legibilidad</strong>: el código se lee mejor.</li><li><strong>Menos bugs</strong>: menos errores al construir mensajes.</li><li><strong>Portabilidad</strong>: los strings no fallan al cambiar de sistema.</li></ul>"
+      ],
+      "sintaxis": "# Buenas prácticas resumidas:\n# 1. Usa f-strings en lugar de + para concatenar\n# 2. Usa comillas dobles por defecto\n# 3. Usa .strip() antes de comparar input del usuario\n# 4. Convierte a .lower() si comparas sin importar mayúsculas\n# 5. Usa .join() en lugar de + en bucles",
+      "ejemplos": [
+        {
+          "titulo": "Concatenación vs f-strings",
+          "codigo": "# Mal\nnombre = \"Ana\"\nedad = 25\nmensaje = \"Hola \" + nombre + \", tienes \" + str(edad) + \" años\"\n\n# Bien\nmensaje = f\"Hola {nombre}, tienes {edad} años\"\n\nprint(mensaje)",
+          "explicacion": [
+            "<p>Las f-strings son más cortas, más legibles y no necesitan convertir tipos.</p>",
+            "<p>La concatenación con <code>+</code> requiere <code>str()</code> y se vuelve ilegible con muchas variables.</p>"
+          ]
+        },
+        {
+          "titulo": "Comparar strings del usuario",
+          "codigo": "respuesta = input(\"¿Continuar? (s/n): \").strip().lower()\n\nif respuesta in (\"s\", \"si\", \"sí\"):\n    print(\"Continuando...\")\nelse:\n    print(\"Cancelado\")",
+          "explicacion": [
+            "<p><code>.strip()</code> quita espacios accidentales. <code>.lower()</code> hace la comparación insensible a mayúsculas.</p>",
+            "<p><code>in (\"s\", \"si\")</code> verifica varias opciones a la vez.</p>"
+          ]
+        },
+        {
+          "titulo": "Unir listas con join",
+          "codigo": "# Mal: concatenar en bucle\npalabras = [\"Hola\", \"mundo\", \"desde\", \"Python\"]\nmensaje = \"\"\nfor p in palabras:\n    mensaje += p + \" \"\nprint(mensaje.strip())\n\n# Bien: usar join\nmensaje = \" \".join(palabras)\nprint(mensaje)",
+          "explicacion": [
+            "<p>Concatenar con <code>+=</code> en un bucle es lento (crea un string nuevo cada vez).</p>",
+            "<p><code>.join()</code> lo hace en una sola operación. Más limpio y más eficiente.</p>"
+          ]
+        },
+        {
+          "titulo": "Comillas consistentes",
+          "codigo": "# Recomendado: comillas dobles por defecto\nnombre = \"Ana\"\nmensaje = \"Ella dijo 'hola'\"\n\n# Usar simples solo cuando el string tenga dobles\ncita = 'Él dijo \"adiós\"'\n\nprint(nombre)\nprint(mensaje)\nprint(cita)",
+          "explicacion": [
+            "<p>No hay una regla obligatoria, pero la comunidad Python suele usar comillas dobles.</p>",
+            "<p>Cambiar a simples solo cuando el texto tenga dobles dentro evita tener que escapar con <code>\\\"</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Concatenar en bucle con += para muchos strings",
+          "razon": "Cada += crea un string nuevo. Muy ineficiente.",
+          "correcto": "Usa \" \".join(lista)"
+        },
+        {
+          "error": "Comparar input sin .strip() ni .lower()",
+          "razon": "El usuario puede escribir \"S\", \"s \", \"Si\"... y no coincidirá.",
+          "correcto": "input(...).strip().lower()"
+        },
+        {
+          "error": "Usar print para concatenar en una variable",
+          "razon": "print no devuelve nada; no puedes guardar su resultado.",
+          "correcto": "mensaje = f\"...\"  y luego print(mensaje)"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> siempre usa f-strings para construir mensajes con variables.</p>",
+        "<p>💡 <strong>Truco 2:</strong> normaliza el input del usuario con <code>.strip().lower()</code> antes de comparar.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para unir muchos strings, usa <code>.join()</code>, no <code>+=</code>.</p>",
+        "<p>💡 <strong>Truco 4:</strong> en análisis numérico, usa f-strings con formato para tablas de iteraciones.</p>"
+      ],
+      "ejercicios": [
+        "Convierte este código en algo más limpio usando f-strings: `\"Hola \" + nombre + \", tienes \" + str(edad) + \" años\"`.",
+        "Pide al usuario que responda 'sí' o 'no' y acepta cualquier combinación de mayúsculas y espacios.",
+        "Une la lista ['a', 'b', 'c'] con comas usando `.join()`.",
+        "Convierte `input()` a `.lower().strip()` antes de comparar."
+      ],
+      "resumen": "Usa f-strings para construir mensajes, normaliza el input con .strip().lower(), une listas con .join(), y sé consistente con las comillas. Estas prácticas hacen el código más legible y eficiente."
+    }
+  ]
+}

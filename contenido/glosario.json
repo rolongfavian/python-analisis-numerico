@@ -1,0 +1,43 @@
+{
+  "titulo": "Glosario y recursos",
+  "emoji": "📕",
+  "descripcion": "Todos los términos técnicos usados en la guía, ordenados por tema, más una lista de recursos externos para seguir aprendiendo.",
+  "secciones": [
+    {
+      "titulo": "🔤 Fundamentos de Python",
+      "contenido": "<ul><li><strong>Variable:</strong> nombre que apunta a un valor guardado en memoria.</li><li><strong>Tipo de dato:</strong> categoría de un valor (int, float, str, bool, list, dict...).</li><li><strong>Asignación:</strong> darle un valor a una variable con <code>=</code>.</li><li><strong>Indentación:</strong> espacios al inicio de línea. En Python definen bloques de código.</li><li><strong>Comentario:</strong> línea que Python no ejecuta. Empieza con <code>#</code>.</li><li><strong>Docstring:</strong> comentario especial entre triple comillas que documenta funciones o clases.</li><li><strong>Mutable:</strong> objeto cuyo contenido se puede modificar (list, dict, set).</li><li><strong>Inmutable:</strong> objeto cuyo contenido no se puede modificar (int, float, str, tuple).</li><li><strong>Casting:</strong> conversión explícita de un tipo a otro con <code>int()</code>, <code>float()</code>, <code>str()</code>.</li></ul>"
+    },
+    {
+      "titulo": "🎛️ Estructuras de control",
+      "contenido": "<ul><li><strong>Condicional:</strong> instrucción que ejecuta código solo si se cumple una condición (<code>if</code>, <code>elif</code>, <code>else</code>).</li><li><strong>Bucle:</strong> estructura que repite código (<code>for</code>, <code>while</code>).</li><li><strong>Iteración:</strong> cada vuelta del bucle.</li><li><strong>Condición de parada:</strong> la condición que termina un bucle.</li><li><strong>Bucle infinito:</strong> cuando la condición nunca se vuelve falsa.</li><li><strong>break:</strong> sale del bucle inmediatamente.</li><li><strong>continue:</strong> salta a la siguiente iteración.</li><li><strong>pass:</strong> no hace nada (marcador de posición).</li><li><strong>Off-by-one:</strong> error clásico de no tener en cuenta que <code>range(n)</code> va de 0 a n-1.</li></ul>"
+    },
+    {
+      "titulo": "📦 Colecciones",
+      "contenido": "<ul><li><strong>Lista:</strong> colección ordenada y mutable, con corchetes <code>[]</code>.</li><li><strong>Tupla:</strong> colección ordenada e inmutable, con paréntesis <code>()</code>.</li><li><strong>Diccionario:</strong> pares clave-valor, con llaves <code>{}</code>.</li><li><strong>Conjunto (set):</strong> colección sin orden y sin duplicados.</li><li><strong>Índice:</strong> posición de un elemento. Empieza en 0.</li><li><strong>Slicing:</strong> extraer una sublista con <code>lista[inicio:fin]</code>.</li><li><strong>Comprensión:</strong> sintaxis compacta para crear colecciones (<code>[x*2 for x in lista]</code>).</li><li><strong>Hashable:</strong> objeto que puede ser clave de diccionario. Debe ser inmutable.</li></ul>"
+    },
+    {
+      "titulo": "⚙️ Funciones",
+      "contenido": "<ul><li><strong>Función:</strong> bloque de código con nombre que hace una tarea.</li><li><strong>def:</strong> palabra clave para definir una función.</li><li><strong>return:</strong> devuelve un valor y termina la función.</li><li><strong>Parámetro:</strong> variable declarada en la definición.</li><li><strong>Argumento:</strong> valor que se pasa a la función al llamarla.</li><li><strong>Parámetro por defecto:</strong> valor que se usa si no se pasa el argumento.</li><li><strong>lambda:</strong> función anónima de una expresión.</li><li><strong>Recursión:</strong> función que se llama a sí misma.</li><li><strong>Caso base:</strong> condición que detiene la recursión.</li><li><strong>Docstring:</strong> texto entre triple comillas que documenta una función.</li></ul>"
+    },
+    {
+      "titulo": "⚠️ Errores y excepciones",
+      "contenido": "<ul><li><strong>Excepción:</strong> evento que interrumpe el flujo normal del programa.</li><li><strong>Traceback:</strong> rastro de llamadas hasta el error.</li><li><strong>try / except:</strong> capturar y manejar errores.</li><li><strong>finally:</strong> bloque que se ejecuta siempre.</li><li><strong>raise:</strong> lanzar una excepción manualmente.</li><li><strong>SyntaxError:</strong> error de sintaxis.</li><li><strong>NameError:</strong> nombre no definido.</li><li><strong>TypeError:</strong> tipos incompatibles.</li><li><strong>ValueError:</strong> valor inválido.</li><li><strong>IndexError:</strong> índice fuera de rango.</li><li><strong>KeyError:</strong> clave no encontrada.</li><li><strong>ZeroDivisionError:</strong> división entre cero.</li></ul>"
+    },
+    {
+      "titulo": "🏛️ Programación orientada a objetos",
+      "contenido": "<ul><li><strong>Clase:</strong> plantilla para crear objetos.</li><li><strong>Objeto / Instancia:</strong> copia concreta de una clase.</li><li><strong>Atributo:</strong> variable dentro de un objeto o clase.</li><li><strong>Método:</strong> función dentro de una clase.</li><li><strong>self:</strong> referencia al objeto actual dentro de un método.</li><li><strong>__init__:</strong> constructor. Se ejecuta al crear el objeto.</li><li><strong>Herencia:</strong> una clase hija reutiliza atributos y métodos del padre.</li><li><strong>super():</strong> llamar a un método de la clase padre.</li><li><strong>Polimorfismo:</strong> distintas clases responden a la misma llamada.</li><li><strong>Dunder:</strong> método especial con nombre <code>__x__</code> (como <code>__str__</code> o <code>__eq__</code>).</li></ul>"
+    },
+    {
+      "titulo": "🧮 Análisis numérico",
+      "contenido": "<ul><li><strong>Raíz:</strong> valor x* tal que f(x*) = 0.</li><li><strong>Iteración:</strong> cada paso del algoritmo mejorando la aproximación.</li><li><strong>Convergencia:</strong> las aproximaciones se acercan al valor real.</li><li><strong>Divergencia:</strong> se alejan.</li><li><strong>Tolerancia:</strong> error máximo aceptable.</li><li><strong>Error absoluto:</strong> |x_aprox − x_real|.</li><li><strong>Error relativo:</strong> error_absoluto / |x_real|.</li><li><strong>Teorema de Bolzano:</strong> si f es continua en [a,b] y f(a)·f(b) &lt; 0, existe una raíz en (a,b).</li><li><strong>Convergencia lineal:</strong> el error se multiplica por un factor constante.</li><li><strong>Convergencia cuadrática:</strong> el error se eleva al cuadrado cada iteración.</li><li><strong>Punto fijo:</strong> valor x* tal que g(x*) = x*.</li><li><strong>Cancelación catastrófica:</strong> pérdida de precisión al restar números muy cercanos.</li></ul>"
+    },
+    {
+      "titulo": "🔗 Recursos externos",
+      "contenido": "<p>Si quieres seguir aprendiendo por tu cuenta, estos son algunos recursos muy recomendados:</p><ul><li><strong>30 Days of Python</strong> — <a href='https://github.com/Asabeneh/30-Days-Of-Python' target='_blank' rel='noopener'>github.com/Asabeneh/30-Days-Of-Python</a> — La fuente de inspiración de esta guía.</li><li><strong>Documentación oficial de Python</strong> — <a href='https://docs.python.org/es/3/' target='_blank' rel='noopener'>docs.python.org</a></li><li><strong>Real Python</strong> — <a href='https://realpython.com/' target='_blank' rel='noopener'>realpython.com</a> — Tutoriales muy bien explicados.</li><li><strong>NumPy</strong> — <a href='https://numpy.org/doc/' target='_blank' rel='noopener'>numpy.org/doc</a></li><li><strong>Matplotlib</strong> — <a href='https://matplotlib.org/stable/' target='_blank' rel='noopener'>matplotlib.org</a></li><li><strong>SciPy</strong> — <a href='https://docs.scipy.org/doc/' target='_blank' rel='noopener'>docs.scipy.org</a></li><li><strong>freeCodeCamp</strong> — <a href='https://www.freecodecamp.org/' target='_blank' rel='noopener'>freecodecamp.org</a> — Cursos gratuitos de programación.</li></ul>"
+    },
+    {
+      "titulo": "📝 Convenciones de nombres",
+      "contenido": "<ul><li><strong>Variables y funciones:</strong> <code>minusculas_con_guion_bajo</code> (snake_case).</li><li><strong>Clases:</strong> <code>MayusculaInicial</code> (CamelCase).</li><li><strong>Constantes:</strong> <code>MAYUSCULAS_CON_GUION</code>.</li><li><strong>Módulos y paquetes:</strong> <code>minusculas_sin_guiones</code>.</li></ul><p>Seguir estas convenciones hace que tu código sea mucho más legible y fácil de mantener. Es parte del estándar <strong>PEP 8</strong>, la guía de estilo oficial de Python.</p>"
+    }
+  ]
+}

@@ -1,324 +1,196 @@
 /* ============================================
-   ejecutor.js — Motor de ejecución inteligente
-   v2 - Decide automáticamente: Skulpt local o Colab
-   - Aplica a TODA la página (Guía y Entorno)
-   - Modo invitado: solo Skulpt
+   ejecutor.js — Ejecuta código y pinta el resultado
+   v1 - Adaptado a la web unificada
    ============================================ */
 
 (function () {
   'use strict';
 
-  const LIBRERIAS_PESADAS = [
-    'numpy', 'np',
-    'matplotlib', 'plt', 'pyplot',
-    'scipy',
-    'pandas', 'pd',
-    'sympy',
-    'sklearn', 'scikit-learn',
-    'statsmodels',
-    'networkx',
-    'plotly',
-    'bokeh',
-    'seaborn',
-    'altair',
-    'geopandas',
-    'mpmath',
-    'tensorflow', 'torch', 'keras',
-    'cv2', 'opencv',
-    'PIL', 'Pillow',
-    'requests', 'urllib3',
-    'micropip',
-    'marimo'
-  ];
-
   // ============================================================
-  // DETECCIÓN
+  // RENDERIZAR RESULTADO EN UN CONTENEDOR
   // ============================================================
-  function usaLibreriaPesada(codigo) {
-    const regexes = [
-      /^\s*import\s+([a-zA-Z_][\w]*)/gm,
-      /^\s*from\s+([a-zA-Z_][\w]*)\s+import/gm
-    ];
+  /**
+   * Muestra el resultado de una ejecución en el contenedor dado.
+   * @param {HTMLElement} contenedor - donde pintar
+   * @param {string} stdout - salida de texto
+   * @param {string[]} imagenes - array de data URLs
+   * @param {string|null} error - mensaje de error (o null)
+   */
+  function renderResultado(contenedor, stdout, imagenes, error) {
+    if (!contenedor) return;
 
-    const modulosEncontrados = new Set();
-    regexes.forEach(re => {
-      let match;
-      while ((match = re.exec(codigo)) !== null) {
-        modulosEncontrados.add(match[1].toLowerCase());
-      }
-    });
+    contenedor.innerHTML = '';
 
-    for (const mod of modulosEncontrados) {
-      if (LIBRERIAS_PESADAS.includes(mod)) return true;
+    if (error) {
+      const pre = document.createElement('pre');
+      pre.className = 'output-error';
+      pre.textContent = 'Error:\n' + error;
+      contenedor.appendChild(pre);
     }
-    return false;
-  }
 
-  function estamosConectados() {
-    return typeof window.getDriveToken === 'function' && !!window.getDriveToken();
-  }
+    if (stdout && stdout.trim()) {
+      const pre = document.createElement('pre');
+      pre.className = 'output-text';
+      pre.textContent = stdout;
+      contenedor.appendChild(pre);
+    }
 
-  function estamosEnInvitado() {
-    const gw = document.getElementById('guest-warning');
-    return gw && gw.style.display !== 'none';
+    if (imagenes && imagenes.length > 0) {
+      imagenes.forEach((src) => {
+        const wrap = document.createElement('div');
+        wrap.className = 'output-image-wrap';
+        const img = document.createElement('img');
+        img.src = src;
+        img.alt = 'Gráfica';
+        img.className = 'output-image';
+        img.loading = 'lazy';
+        wrap.appendChild(img);
+        contenedor.appendChild(wrap);
+      });
+    }
+
+    if (!error && (!stdout || !stdout.trim()) && (!imagenes || imagenes.length === 0)) {
+      contenedor.innerText = '(sin salida)';
+    }
   }
 
   // ============================================================
-  // GENERADOR DE .ipynb
+  // EJECUTAR CÓDIGO Y PINTAR EN UN CONTENEDOR
   // ============================================================
-  function buildIpynbDesdeCodigo(codigo, nombre) {
-    const lineas = codigo.split('\n').map((l, i, a) =>
-      i < a.length - 1 ? l + '\n' : l
-    );
+  /**
+   * Ejecuta el código y pinta el resultado.
+   * @param {string} codigo
+   * @param {HTMLElement} contenedor
+   */
+  async function ejecutarYMostrar(codigo, contenedor) {
+    if (!contenedor) return;
 
-    return {
-      cells: [
-        {
-          cell_type: 'markdown',
-          metadata: {},
-          source: [
-            `# ${nombre || 'Ejercicio'}\n`,
-            '\n',
-            'Generado desde la guía de Python para Análisis Numérico.\n'
-          ]
-        },
-        {
-          cell_type: 'code',
-          execution_count: null,
-          metadata: {},
-          outputs: [],
-          source: lineas
+    // Estado de carga
+    if (!window.isPyodideReady()) {
+      contenedor.innerHTML = '<span class="output-text">Esperando a que Python cargue…</span>';
+    } else {
+      contenedor.innerHTML = '<span class="output-text">Ejecutando…</span>';
+    }
+
+    // Esperar a que Pyodide esté listo (con timeout)
+    const listo = await esperarPyodide(30000);
+    if (!listo) {
+      contenedor.innerHTML = '<pre class="output-error">Python no se cargó a tiempo. Revisa tu conexión.</pre>';
+      return;
+    }
+
+    try {
+      const { stdout, imagenes, errorEjecucion } = await window.executeCode(codigo);
+      renderResultado(contenedor, stdout, imagenes, errorEjecucion);
+    } catch (err) {
+      renderResultado(contenedor, '', [], String(err));
+    }
+  }
+
+  // ============================================================
+  // ESPERAR A PYODIDE
+  // ============================================================
+  function esperarPyodide(timeoutMs) {
+    return new Promise((resolve) => {
+      if (window.isPyodideReady()) return resolve(true);
+
+      const inicio = Date.now();
+      const check = setInterval(() => {
+        if (window.isPyodideReady()) {
+          clearInterval(check);
+          resolve(true);
+        } else if (Date.now() - inicio > timeoutMs) {
+          clearInterval(check);
+          resolve(false);
         }
-      ],
-      metadata: {
-        kernelspec: {
-          display_name: 'Python 3',
-          language: 'python',
-          name: 'python3'
-        },
-        language_info: { name: 'python', version: '3.11' }
-      },
-      nbformat: 4,
-      nbformat_minor: 5
-    };
+      }, 200);
+
+      // También escuchamos el evento por si acaso
+      window.addEventListener('pyodide-ready', () => {
+        clearInterval(check);
+        resolve(true);
+      }, { once: true });
+    });
   }
 
   // ============================================================
-  // MOTOR PRINCIPAL
+  // BOTÓN DE EJEMPLO (guía)
   // ============================================================
-  async function ejecutarCodigo(codigo, out, editorId, nombreSugerido) {
-    if (!codigo || !codigo.trim()) {
-      out.innerText = 'Escribe algo de código para ejecutar.';
+  /**
+   * Se llama desde el botón "Ejecutar" de un ejemplo.
+   * Busca el textarea asociado y ejecuta su contenido.
+   * @param {string} editorId
+   * @param {string} outputId
+   */
+  async function ejecutarEjemplo(editorId, outputId) {
+    const contenedor = document.getElementById(outputId);
+    if (!contenedor) return;
+
+    const textarea = document.getElementById(editorId);
+    if (!textarea) {
+      contenedor.innerText = 'Editor no encontrado.';
       return;
     }
 
-    if (usaLibreriaPesada(codigo)) {
-      if (estamosEnInvitado() || !estamosConectados()) {
-        out.innerHTML = `
-          <div class="output-error">
-            ⚠️ Este código usa librerías como <strong>NumPy</strong> o
-            <strong>Matplotlib</strong>, que no se pueden ejecutar aquí.<br><br>
-            Para ejecutarlo, conecta tu cuenta de Google con el botón
-            <strong>"Drive: no conectado"</strong> de arriba.
-          </div>
-        `;
-        return;
-      }
-      await subirYabrirEnColab(codigo, editorId, out, nombreSugerido);
+    let codigo = '';
+    if (typeof editorsMap !== 'undefined' && editorsMap[editorId]) {
+      codigo = editorsMap[editorId].getValue();
+    } else {
+      codigo = textarea.value;
+    }
+
+    if (!codigo.trim()) {
+      contenedor.innerText = 'El ejemplo está vacío.';
       return;
     }
 
-    out.innerText = 'Ejecutando…';
-    try {
-      const { stdout, error } = await window.ejecutarConSkulpt(codigo);
-      window.renderResultadoSkulpt(out, stdout, error);
-    } catch (e) {
-      out.innerText = 'Error: ' + e.message;
-    }
+    await ejecutarYMostrar(codigo, contenedor);
   }
 
   // ============================================================
-  // SUBIR A DRIVE + ABRIR COLAB
+  // BOTÓN DE EJECUCIÓN DEL ENTORNO (admin)
   // ============================================================
-  async function subirYabrirEnColab(codigo, editorId, out, nombreSugerido) {
-    const token = window.getDriveToken && window.getDriveToken();
+  async function ejecutarCodigoEntorno() {
+    const contenedor = document.getElementById('entorno-output');
+    if (!contenedor) return;
 
-    if (!token) {
-      out.innerText = 'Conecta tu cuenta de Google para usar Colab.';
+    const editor = (typeof editorsMap !== 'undefined') ? editorsMap['entorno-editor'] : null;
+    if (!editor) {
+      contenedor.innerText = 'Editor no encontrado.';
       return;
     }
-
-    let nombre = nombreSugerido;
-    if (!nombre) {
-      const fnInput = document.getElementById('env-filename');
-      nombre = (fnInput && fnInput.value) ? fnInput.value : 'ejercicio';
-    }
-    nombre = nombre.replace(/\.\w+$/, '');
-    if (!nombre) nombre = 'ejercicio';
-
-    const nombreIpynb = nombre + '.ipynb';
-    const ipynb = buildIpynbDesdeCodigo(codigo, nombre);
-    const contenido = JSON.stringify(ipynb, null, 1);
-
-    out.innerText = 'Subiendo a Drive y abriendo Colab…';
-
-    try {
-      const parentId = window.getDriveFolderId ? window.getDriveFolderId() : null;
-      if (!parentId) {
-        out.innerText = 'No se encontró la carpeta de Drive. Reconecta tu cuenta.';
-        return;
-      }
-
-      const q = encodeURIComponent(
-        `name='${nombreIpynb}' and '${parentId}' in parents and trashed=false`
-      );
-      const buscar = await fetch(
-        `https://www.googleapis.com/drive/v3/files?q=${q}&fields=files(id)`,
-        { headers: { 'Authorization': 'Bearer ' + token } }
-      );
-      const buscarData = await buscar.json();
-      let fileId = buscarData.files && buscarData.files.length > 0
-        ? buscarData.files[0].id
-        : null;
-
-      if (fileId) {
-        const res = await fetch(
-          `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
-          {
-            method: 'PATCH',
-            headers: {
-              'Authorization': 'Bearer ' + token,
-              'Content-Type': 'application/json'
-            },
-            body: contenido
-          }
-        );
-        if (!res.ok) throw new Error('No se pudo actualizar el archivo');
-      } else {
-        const boundary = 'foo_bar';
-        const metadata = {
-          name: nombreIpynb,
-          mimeType: 'application/json',
-          parents: [parentId]
-        };
-        const body =
-          `--${boundary}\r\n` +
-          `Content-Type: application/json\r\n\r\n` +
-          `${JSON.stringify(metadata)}\r\n` +
-          `--${boundary}\r\n` +
-          `Content-Type: application/json\r\n\r\n` +
-          `${contenido}\r\n` +
-          `--${boundary}--`;
-
-        const res = await fetch(
-          'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
-          {
-            method: 'POST',
-            headers: {
-              'Authorization': 'Bearer ' + token,
-              'Content-Type': `multipart/related; boundary=${boundary}`
-            },
-            body
-          }
-        );
-        if (!res.ok) throw new Error('No se pudo crear el archivo');
-        const data = await res.json();
-        fileId = data.id;
-      }
-
-      out.innerHTML = '✅ Abierto en Google Colab. Revisa la nueva pestaña.';
-
-      window.open(
-        `https://colab.research.google.com/drive/${fileId}`,
-        '_blank'
-      );
-    } catch (e) {
-      out.innerHTML = '<div class="output-error">Error al subir a Colab:\n' + e.message + '</div>';
-    }
-  }
-
-  // ============================================================
-  // BOTONES GLOBALES
-  // ============================================================
-  async function runEnvCode() {
-    const out = document.getElementById('env-output');
-    if (!out) return;
-
-    const editor = (typeof editorsMap !== 'undefined') ? editorsMap['env-editor'] : null;
-    if (!editor) { out.innerText = 'Editor no encontrado.'; return; }
 
     const codigo = editor.getValue();
-    await ejecutarCodigo(codigo, out, 'env-editor');
-  }
+    if (!codigo.trim()) {
+      contenedor.innerText = 'El editor está vacío.';
+      return;
+    }
 
-  async function runCode(editorId, outputId) {
-    const out = document.getElementById(outputId);
-    if (!out) return;
-
-    const editor = (typeof editorsMap !== 'undefined') ? editorsMap[editorId] : null;
-    if (!editor) { out.innerText = 'Editor no encontrado.'; return; }
-
-    const codigo = editor.getValue();
-    await ejecutarCodigo(codigo, out, editorId);
+    await ejecutarYMostrar(codigo, contenedor);
   }
 
   // ============================================================
-  // LIMPIAR OUTPUTS
+  // LIMPIAR SALIDAS
   // ============================================================
-  function limpiarOutputEnv() {
-    const out = document.getElementById('env-output');
-    if (out) out.innerText = 'Presiona Ejecutar para ver el resultado...';
+  function limpiarSalida(outputId) {
+    const contenedor = document.getElementById(outputId);
+    if (contenedor) contenedor.innerText = '';
   }
 
-  function limpiarOutputsGuia() {
+  function limpiarSalidasGuia() {
     document.querySelectorAll('.output-box').forEach(o => {
       o.innerText = 'Presiona Ejecutar para ver el resultado...';
     });
   }
 
   // ============================================================
-  // STUBS
-  // ============================================================
-  function isPyodideReady() { return true; }
-  function getPyodide() { return null; }
-  async function instalarPaquete() {
-    return { ok: false, mensaje: 'Tienda deshabilitada.' };
-  }
-  async function listarPaquetes() { return []; }
-
-  // ============================================================
-  // INIT
-  // ============================================================
-  function init() {
-    const badge = document.getElementById('status-badge');
-    if (badge) {
-      badge.innerText = 'Listo · Python local + Colab para librerías';
-      badge.classList.add('status-ready');
-    }
-
-    window.dispatchEvent(new CustomEvent('pyodide-ready'));
-    window.dispatchEvent(new CustomEvent('motor-listo'));
-  }
-
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-
-  // ============================================================
   // EXPOSICIÓN GLOBAL
   // ============================================================
-  window.runCode = runCode;
-  window.runEnvCode = runEnvCode;
-  window.isPyodideReady = isPyodideReady;
-  window.getPyodide = getPyodide;
-  window.instalarPaquetePyodide = instalarPaquete;
-  window.listarPaquetesPyodide = listarPaquetes;
-  window.limpiarOutputEnv = limpiarOutputEnv;
-  window.limpiarOutputsGuia = limpiarOutputsGuia;
-  window.buildIpynbDesdeCodigo = buildIpynbDesdeCodigo;
-  window.subirYabrirEnColab = subirYabrirEnColab;
-  window.usaLibreriaPesada = usaLibreriaPesada;
-  window.ejecutarCodigo = ejecutarCodigo;
+  window.renderResultado = renderResultado;
+  window.ejecutarYMostrar = ejecutarYMostrar;
+  window.ejecutarEjemplo = ejecutarEjemplo;
+  window.ejecutarCodigoEntorno = ejecutarCodigoEntorno;
+  window.limpiarSalida = limpiarSalida;
+  window.limpiarSalidasGuia = limpiarSalidasGuia;
+  window.esperarPyodide = esperarPyodide;
 })();
