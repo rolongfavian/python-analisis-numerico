@@ -16,11 +16,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
 
-<!-- Pyodide -->
-<script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js" defer></script>
-
-<!-- Google Identity -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<!-- Skulpt (Python en el navegador, ligero) -->
+<script src="https://skulpt.org/js/skulpt.min.js"></script>
+<script src="https://skulpt.org/js/skulpt-stdlib.js"></script>
 
 <!-- MathJax -->
 <script>
@@ -55,16 +53,11 @@ window.MathJax = {
     <span style="font-size:18px;line-height:1;">🐍</span>
     <span class="btn-buscar-label">IDLE</span>
   </button>
-  <button id="btn-tienda" onclick="abrirTienda()" title="Tienda de extensiones">
-    <span class="material-symbols-outlined">storefront</span>
-    <span class="btn-buscar-label">Tienda</span>
-  </button>
   <select id="theme-select" title="Tema">
     <option value="dark">Oscuro</option>
     <option value="light">Claro</option>
     <option value="system">Sistema</option>
   </select>
-  <div id="drive-status" onclick="connectDrive()" style="display:none;">Drive: no conectado</div>
 </div>
 
 <!-- ============================================================
@@ -180,12 +173,6 @@ window.MathJax = {
       <span>15 · Glosario y recursos</span>
     </button>
   </div>
-
-  <div class="menu-group" id="menu-admin" style="display:none;">
-    <button class="menu-group-header" onclick="showEntorno(); closeMenu();">
-      <span>🔧 Entorno (admin)</span>
-    </button>
-  </div>
 </nav>
 
 <!-- ============================================================
@@ -195,39 +182,6 @@ window.MathJax = {
   <div class="modal-box modal-buscador">
     <input type="text" id="buscador-input" placeholder="Buscar en la guía… (Ctrl+K)" autocomplete="off" spellcheck="false">
     <div id="buscador-resultados"></div>
-  </div>
-</div>
-
-<!-- ============================================================
-     MODAL DE LA TIENDA
-     ============================================================ -->
-<div class="modal-overlay" id="modal-tienda" onclick="if(event.target===this) cerrarTienda()">
-  <div class="modal-box modal-tienda">
-    <div class="tienda-header">
-      <h3>
-        <span class="material-symbols-outlined" style="color:var(--accent); font-size:22px;">storefront</span>
-        Tienda de extensiones
-      </h3>
-      <button class="tienda-refresh" id="tienda-recargar" title="Recargar catálogo">
-        <span class="material-symbols-outlined">refresh</span>
-      </button>
-    </div>
-    <p>Instala extensiones para Pyodide. Se cachean en tu navegador para no descargarlas de nuevo.</p>
-
-    <div class="tienda-input-row">
-      <input type="text" id="tienda-search" placeholder="Buscar extensión…" autocomplete="off" spellcheck="false">
-    </div>
-
-    <div id="tienda-result"></div>
-    <div id="tienda-categorias" class="tienda-categorias"></div>
-    <div id="tienda-catalogo" class="tienda-catalogo"></div>
-
-    <label style="margin-top:1.2rem; display:block;">Instaladas</label>
-    <div id="tienda-instaladas" class="tienda-instaladas"></div>
-
-    <div class="actions">
-      <button onclick="cerrarTienda()">Cerrar</button>
-    </div>
   </div>
 </div>
 
@@ -281,8 +235,8 @@ window.MathJax = {
       <button onclick="idleDescargar()" title="Descargar archivo">
         <span class="material-symbols-outlined">download</span> Descargar
       </button>
-      <button onclick="abrirTiendaDesdeIdle()" title="Tienda de extensiones">
-        <span class="material-symbols-outlined">storefront</span> Tienda
+      <button onclick="limpiarIdle()" title="Limpiar editor y salida">
+        <span class="material-symbols-outlined">delete_sweep</span> Limpiar
       </button>
     </div>
 
@@ -304,109 +258,6 @@ print(2 + 2)
 </div>
 
 <!-- ============================================================
-     MODAL DE AVISO DE DESCARGA
-     ============================================================ -->
-<div class="modal-overlay" id="modal-aviso-descarga" onclick="if(event.target===this) cerrarAvisoDescarga()">
-  <div class="modal-box">
-    <h3>⚠️ Descarga de extensión</h3>
-    <p id="aviso-descarga-texto">Vas a descargar una extensión. Esto consume datos.</p>
-    <p style="font-size: 0.78rem; color: var(--text-dim);">
-      Se recomienda estar en Wi-Fi. La extensión se cacheará y no volverá a descargarse mientras no borres el caché del navegador.
-    </p>
-    <div class="actions">
-      <button onclick="cancelarAvisoDescarga()">Cancelar</button>
-      <button class="primary" onclick="confirmarAvisoDescarga()">Descargar</button>
-    </div>
-  </div>
-</div>
-
-<!-- ============================================================
-     VISTA DEL ENTORNO (ADMIN) — Rediseñada como IDLE
-     ============================================================ -->
-<div id="view-entorno" style="display:none;">
-  <div class="modal-idle-box entorno-box">
-
-    <!-- Cabecera -->
-    <div class="idle-header">
-      <h3>
-        <span style="font-size:20px;">🔧</span>
-        Entorno · Drive
-      </h3>
-      <button class="idle-close" onclick="cerrarEntorno()" title="Volver a la guía">
-        <span class="material-symbols-outlined">close</span>
-      </button>
-    </div>
-
-    <!-- Barra de acciones -->
-    <div class="idle-acciones">
-      <button onclick="crearCarpeta()" title="Nueva carpeta en Drive">
-        <span class="material-symbols-outlined">create_new_folder</span> Carpeta
-      </button>
-      <button onclick="crearNotebook()" title="Nuevo notebook .ipynb">
-        <span class="material-symbols-outlined">note_add</span> Notebook
-      </button>
-      <button onclick="crearPythonFile()" title="Nuevo archivo .py">
-        <span class="material-symbols-outlined">code</span> .py
-      </button>
-      <button onclick="abrirSelectorImportar()" title="Importar archivo local">
-        <span class="material-symbols-outlined">upload_file</span> Importar
-      </button>
-      <button onclick="actualizarListaArchivos()" title="Refrescar lista">
-        <span class="material-symbols-outlined">refresh</span>
-      </button>
-    </div>
-    <input type="file" id="import-input" accept=".ipynb,.py" style="display:none" onchange="importarArchivo(event)">
-
-    <!-- Breadcrumb -->
-    <div class="entorno-breadcrumb" id="entorno-breadcrumb">
-      <span>🏠 Raíz</span>
-    </div>
-
-    <!-- Lista de archivos de Drive -->
-    <div class="idle-lista-archivos" id="entorno-file-list-container">
-      <ul class="entorno-archivos" id="entorno-file-list">
-        <li class="empty">Conecta tu Drive para ver archivos</li>
-      </ul>
-    </div>
-
-    <!-- Toolbar de ejecución -->
-    <div class="idle-toolbar">
-      <button onclick="idleCargarEjemplo()" title="Cargar un ejemplo">
-        <span class="material-symbols-outlined">menu_book</span> Ejemplos
-      </button>
-      <input type="text" id="entorno-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-      <button class="primary" onclick="ejecutarCodigoEntorno()">
-        <span class="material-symbols-outlined">play_arrow</span> Ejecutar
-      </button>
-      <button onclick="guardarArchivoEntorno()" title="Guardar en Drive">
-        <span class="material-symbols-outlined">save</span> Guardar
-      </button>
-      <button onclick="descargarIpynb()" title="Descargar como .ipynb">
-        <span class="material-symbols-outlined">download</span> Descargar
-      </button>
-      <button onclick="guardarComoIpynb()" title="Generar .ipynb y subir a Drive">
-        <span class="material-symbols-outlined">description</span> Generar
-      </button>
-      <button onclick="abrirTiendaDesdeIdle()" title="Tienda de extensiones">
-        <span class="material-symbols-outlined">storefront</span> Tienda
-      </button>
-    </div>
-
-    <!-- Editor -->
-    <div class="idle-editor-wrap">
-      <textarea id="entorno-editor"></textarea>
-    </div>
-
-    <!-- Tirador de redimensión -->
-    <div class="idle-resize-handle" id="entorno-resize-handle" title="Arrastra para redimensionar la salida"></div>
-
-    <!-- Output -->
-    <div class="idle-output" id="entorno-output">Presiona Ejecutar para ver el resultado...</div>
-
-  </div>
-</div>
-
-<!-- ============================================================
      TOAST
      ============================================================ -->
 <div id="toast"></div>
@@ -416,58 +267,12 @@ print(2 + 2)
      ============================================================ -->
 <script src="js/tema.js"></script>
 <script src="js/ui.js"></script>
-<script src="js/pyodide.js"></script>
+<script src="js/skulpt.js"></script>
 <script src="js/ejecutor.js"></script>
 <script src="js/codemirror.js"></script>
 <script src="js/guia.js"></script>
 <script src="js/buscador.js"></script>
-<script src="js/tienda.js"></script>
-<script src="js/drive.js"></script>
-<script src="js/guardado.js"></script>
 <script src="js/idle.js"></script>
-
-<script>
-// ============================================================
-// REGISTRAR SERVICE WORKER CON CONTROL GARANTIZADO
-// ============================================================
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', async () => {
-    try {
-      const reg = await navigator.serviceWorker.register('sw.js', { scope: './' });
-      console.log('[SW] Registrado. Scope:', reg.scope);
-
-      if (navigator.serviceWorker.controller) {
-        console.log('[SW] Ya controla la página');
-        return;
-      }
-
-      await navigator.serviceWorker.ready;
-      console.log('[SW] Listo (ready)');
-
-      if (!navigator.serviceWorker.controller) {
-        console.log('[SW] Esperando a que tome el control…');
-        navigator.serviceWorker.addEventListener('controllerchange', () => {
-          console.log('[SW] Controller cambiado. Recargando una vez…');
-          window.location.reload();
-        });
-      }
-    } catch (err) {
-      console.warn('[SW] No se pudo registrar:', err);
-    }
-  });
-}
-
-// ============================================================
-// DETECTAR MODO ADMIN (?admin=1)
-// ============================================================
-(function() {
-  const params = new URLSearchParams(window.location.search);
-  if (params.get('admin') === '1') {
-    document.documentElement.setAttribute('data-admin', 'true');
-    console.log('[admin] Modo administrador activado');
-  }
-})();
-</script>
 
 </body>
 </html>

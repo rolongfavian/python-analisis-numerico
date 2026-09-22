@@ -1,21 +1,11 @@
 /* ============================================
    ejecutor.js — Ejecuta código y pinta el resultado
-   v1 - Adaptado a la web unificada
+   v2 - Adaptado a Skulpt
    ============================================ */
 
 (function () {
   'use strict';
 
-  // ============================================================
-  // RENDERIZAR RESULTADO EN UN CONTENEDOR
-  // ============================================================
-  /**
-   * Muestra el resultado de una ejecución en el contenedor dado.
-   * @param {HTMLElement} contenedor - donde pintar
-   * @param {string} stdout - salida de texto
-   * @param {string[]} imagenes - array de data URLs
-   * @param {string|null} error - mensaje de error (o null)
-   */
   function renderResultado(contenedor, stdout, imagenes, error) {
     if (!contenedor) return;
 
@@ -35,45 +25,21 @@
       contenedor.appendChild(pre);
     }
 
-    if (imagenes && imagenes.length > 0) {
-      imagenes.forEach((src) => {
-        const wrap = document.createElement('div');
-        wrap.className = 'output-image-wrap';
-        const img = document.createElement('img');
-        img.src = src;
-        img.alt = 'Gráfica';
-        img.className = 'output-image';
-        img.loading = 'lazy';
-        wrap.appendChild(img);
-        contenedor.appendChild(wrap);
-      });
-    }
-
-    if (!error && (!stdout || !stdout.trim()) && (!imagenes || imagenes.length === 0)) {
+    if (!error && (!stdout || !stdout.trim())) {
       contenedor.innerText = '(sin salida)';
     }
   }
 
-  // ============================================================
-  // EJECUTAR CÓDIGO Y PINTAR EN UN CONTENEDOR
-  // ============================================================
-  /**
-   * Ejecuta el código y pinta el resultado.
-   * @param {string} codigo
-   * @param {HTMLElement} contenedor
-   */
   async function ejecutarYMostrar(codigo, contenedor) {
     if (!contenedor) return;
 
-    // Estado de carga
     if (!window.isPyodideReady()) {
       contenedor.innerHTML = '<span class="output-text">Esperando a que Python cargue…</span>';
     } else {
       contenedor.innerHTML = '<span class="output-text">Ejecutando…</span>';
     }
 
-    // Esperar a que Pyodide esté listo (con timeout)
-    const listo = await esperarPyodide(30000);
+    const listo = await esperarPyodide(15000);
     if (!listo) {
       contenedor.innerHTML = '<pre class="output-error">Python no se cargó a tiempo. Revisa tu conexión.</pre>';
       return;
@@ -87,9 +53,6 @@
     }
   }
 
-  // ============================================================
-  // ESPERAR A PYODIDE
-  // ============================================================
   function esperarPyodide(timeoutMs) {
     return new Promise((resolve) => {
       if (window.isPyodideReady()) return resolve(true);
@@ -103,9 +66,8 @@
           clearInterval(check);
           resolve(false);
         }
-      }, 200);
+      }, 100);
 
-      // También escuchamos el evento por si acaso
       window.addEventListener('pyodide-ready', () => {
         clearInterval(check);
         resolve(true);
@@ -113,15 +75,6 @@
     });
   }
 
-  // ============================================================
-  // BOTÓN DE EJEMPLO (guía)
-  // ============================================================
-  /**
-   * Se llama desde el botón "Ejecutar" de un ejemplo.
-   * Busca el textarea asociado y ejecuta su contenido.
-   * @param {string} editorId
-   * @param {string} outputId
-   */
   async function ejecutarEjemplo(editorId, outputId) {
     const contenedor = document.getElementById(outputId);
     if (!contenedor) return;
@@ -147,9 +100,6 @@
     await ejecutarYMostrar(codigo, contenedor);
   }
 
-  // ============================================================
-  // BOTÓN DE EJECUCIÓN DEL ENTORNO (admin)
-  // ============================================================
   async function ejecutarCodigoEntorno() {
     const contenedor = document.getElementById('entorno-output');
     if (!contenedor) return;
@@ -169,9 +119,6 @@
     await ejecutarYMostrar(codigo, contenedor);
   }
 
-  // ============================================================
-  // LIMPIAR SALIDAS
-  // ============================================================
   function limpiarSalida(outputId) {
     const contenedor = document.getElementById(outputId);
     if (contenedor) contenedor.innerText = '';
@@ -183,9 +130,6 @@
     });
   }
 
-  // ============================================================
-  // EXPOSICIÓN GLOBAL
-  // ============================================================
   window.renderResultado = renderResultado;
   window.ejecutarYMostrar = ejecutarYMostrar;
   window.ejecutarEjemplo = ejecutarEjemplo;

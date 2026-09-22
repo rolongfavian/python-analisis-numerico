@@ -1,16 +1,12 @@
 /* ============================================
-   codemirror.js — Editores CodeMirror + autocompletado + linter
-   v4 - Adaptado a la web unificada
+   codemirror.js — Editores CodeMirror + autocompletado
+   v5 - Sin linter (Skulpt no expone compile)
    ============================================ */
 
 (function () {
   'use strict';
 
-  // ============================================================
-  // FRAGMENTOS DE CÓDIGO PYTHON (autocompletado)
-  // ============================================================
   const PYTHON_SNIPPETS = [
-    // Estructuras de control
     { text: 'if condicion:\n    pass', displayText: 'if condicion:' },
     { text: 'if condicion:\n    pass\nelse:\n    pass', displayText: 'if/else' },
     { text: 'if condicion:\n    pass\nelif otra:\n    pass\nelse:\n    pass', displayText: 'if/elif/else' },
@@ -20,28 +16,20 @@
     { text: 'break', displayText: 'break' },
     { text: 'continue', displayText: 'continue' },
     { text: 'pass', displayText: 'pass' },
-
-    // Funciones y clases
     { text: 'def nombre(parametros):\n    return resultado', displayText: 'def nombre(...)' },
     { text: 'def __init__(self):\n    pass', displayText: 'def __init__(self)' },
     { text: 'lambda x: x', displayText: 'lambda x: x' },
     { text: 'class Nombre:\n    def __init__(self):\n        pass', displayText: 'class Nombre:' },
-
-    // Manejo de errores
     { text: 'try:\n    pass\nexcept Exception as e:\n    print(e)', displayText: 'try/except' },
     { text: 'try:\n    pass\nfinally:\n    pass', displayText: 'try/finally' },
     { text: 'raise ValueError("mensaje")', displayText: 'raise ValueError(...)' },
     { text: 'assert condicion, "mensaje"', displayText: 'assert condicion' },
-
-    // Imports comunes (aunque no estén cargados, se sugieren)
     { text: 'import math', displayText: 'import math' },
     { text: 'from math import pi, e, sqrt', displayText: 'from math import ...' },
     { text: 'import random', displayText: 'import random' },
     { text: 'import time', displayText: 'import time' },
     { text: 'import datetime', displayText: 'import datetime' },
     { text: 'import json', displayText: 'import json' },
-
-    // Funciones built-in
     { text: 'print()', displayText: 'print(valor)' },
     { text: 'len(coleccion)', displayText: 'len(coleccion)' },
     { text: 'range(inicio, fin, paso)', displayText: 'range(...)' },
@@ -67,8 +55,6 @@
     { text: 'reversed(iterable)', displayText: 'reversed(...)' },
     { text: 'map(funcion, iterable)', displayText: 'map(...)' },
     { text: 'filter(funcion, iterable)', displayText: 'filter(...)' },
-
-    // Palabras comunes
     { text: 'return', displayText: 'return' },
     { text: 'import', displayText: 'import' },
     { text: 'from', displayText: 'from' },
@@ -82,8 +68,6 @@
     { text: 'not', displayText: 'not' },
     { text: 'in', displayText: 'in' },
     { text: 'is', displayText: 'is' },
-
-    // Operadores
     { text: '==', displayText: '== (igual)' },
     { text: '!=', displayText: '!= (distinto)' },
     { text: '<=', displayText: '<= (menor o igual)' },
@@ -97,9 +81,6 @@
     { text: '/=', displayText: '/= (divide y asigna)' }
   ];
 
-  // ============================================================
-  // AUTOCOMPLETADO
-  // ============================================================
   function pythonHint(editor) {
     const cur = editor.getCursor();
     const line = editor.getLine(cur.line);
@@ -131,96 +112,6 @@
     };
   }
 
-  // ============================================================
-  // LINTER EN VIVO
-  // ============================================================
-  const lintTimers = {};
-  const lastLinted = {};
-  const LINT_DEBOUNCE_MS = 700;
-
-  function aplicarMarcasLint(editor, errors) {
-    editor.clearGutter('CodeMirror-lint-markers');
-
-    if (editor._lintMarks) {
-      editor._lintMarks.forEach(m => m.clear());
-    }
-    editor._lintMarks = [];
-
-    if (!errors || errors.length === 0) return;
-
-    errors.forEach(err => {
-      const line = Math.max(0, (err.line || 1) - 1);
-
-      const marker = document.createElement('div');
-      marker.className = 'cm-lint-marker';
-      marker.title = err.message;
-      marker.textContent = '⚠';
-      editor.setGutterMarker(line, 'CodeMirror-lint-markers', marker);
-
-      const lineText = editor.getLine(line) || '';
-      if (lineText.length > 0) {
-        const mark = editor.markText(
-          CodeMirror.Pos(line, 0),
-          CodeMirror.Pos(line, lineText.length),
-          { className: 'cm-lint-underline', title: err.message }
-        );
-        editor._lintMarks.push(mark);
-      }
-    });
-  }
-
-  async function lintCode(code) {
-    if (typeof window.isPyodideReady !== 'function' || !window.isPyodideReady()) {
-      return null;
-    }
-    const pyodide = window.getPyodide();
-    if (!pyodide) return null;
-    if (!code || !code.trim()) return [];
-
-    try {
-      pyodide.globals.set('__lint_code__', code);
-      const resultJson = await pyodide.runPythonAsync(`
-import json as __json__
-__lint_errors__ = []
-try:
-    compile(__lint_code__, "<editor>", "exec")
-except SyntaxError as e:
-    __lint_errors__.append({
-        "line": e.lineno or 1,
-        "col": (e.offset or 1),
-        "message": str(e.msg or e)
-    })
-except Exception as e:
-    __lint_errors__.append({
-        "line": 1,
-        "col": 1,
-        "message": str(e)
-    })
-__json__.dumps(__lint_errors__)
-      `);
-      return JSON.parse(resultJson);
-    } catch (e) {
-      console.warn('[linter] Error inesperado:', e);
-      return [];
-    }
-  }
-
-  function programarLint(editor, editorId) {
-    clearTimeout(lintTimers[editorId]);
-    lintTimers[editorId] = setTimeout(async () => {
-      const code = editor.getValue();
-      if (lastLinted[editorId] === code) return;
-      lastLinted[editorId] = code;
-
-      const errors = await lintCode(code);
-      if (errors === null) return;
-      aplicarMarcasLint(editor, errors);
-    }, LINT_DEBOUNCE_MS);
-  }
-
-  // ============================================================
-  // CREACIÓN DE EDITORES
-  // ============================================================
   function createEditor(textarea, opciones = {}) {
     const editor = CodeMirror.fromTextArea(textarea, {
       mode: 'python',
@@ -231,7 +122,6 @@ __json__.dumps(__lint_errors__)
       lineWrapping: false,
       autoCloseBrackets: true,
       matchBrackets: true,
-      gutters: ['CodeMirror-linenumbers', 'CodeMirror-lint-markers'],
       extraKeys: {
         'Tab': (cm) => {
           if (cm.state.completionActive) {
@@ -246,7 +136,6 @@ __json__.dumps(__lint_errors__)
       }
     });
 
-    // Autocompletado al escribir
     function triggerHint(cm) {
       if (cm.state.completionActive) return;
       clearTimeout(cm._hintTimer);
@@ -274,8 +163,6 @@ __json__.dumps(__lint_errors__)
         const data = e.data || '';
         if (data && /[a-zA-Z0-9_.]/.test(data)) {
           triggerHint(editor);
-        } else if (e.inputType === 'insertText' && !data) {
-          triggerHint(editor);
         }
       });
 
@@ -284,27 +171,11 @@ __json__.dumps(__lint_errors__)
           triggerHint(editor);
         }
       });
-
-      ta.addEventListener('compositionend', (e) => {
-        const data = e.data || '';
-        if (data && /[a-zA-Z0-9_.]/.test(data.slice(-1))) {
-          triggerHint(editor);
-        }
-      });
-    }
-
-    // Linter en vivo (solo si es editor de código)
-    if (opciones.lint !== false) {
-      editor.on('change', () => programarLint(editor, textarea.id));
-      setTimeout(() => programarLint(editor, textarea.id), 1500);
     }
 
     return editor;
   }
 
-  // ============================================================
-  // INICIALIZAR TODOS LOS EDITORES EXISTENTES
-  // ============================================================
   function initEditors() {
     if (typeof editorsMap === 'undefined') {
       window.editorsMap = {};
@@ -319,38 +190,14 @@ __json__.dumps(__lint_errors__)
     console.log('[codemirror] Editores inicializados:', Object.keys(editorsMap).length);
   }
 
-  // ============================================================
-  // RE-LINTAR CUANDO PYODIDE ESTÉ LISTO
-  // ============================================================
-  function lintCuandoPyodideListo() {
-    if (typeof window.isPyodideReady === 'function' && window.isPyodideReady()) {
-      Object.entries(editorsMap).forEach(([id, ed]) => programarLint(ed, id));
-      return;
-    }
-    setTimeout(lintCuandoPyodideListo, 1500);
-  }
-
-  // ============================================================
-  // INIT
-  // ============================================================
   window.editorsMap = window.editorsMap || {};
 
   if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', () => {
-      initEditors();
-      lintCuandoPyodideListo();
-    });
+    document.addEventListener('DOMContentLoaded', initEditors);
   } else {
     initEditors();
-    lintCuandoPyodideListo();
   }
 
-  // ============================================================
-  // EXPOSICIÓN GLOBAL
-  // ============================================================
   window.createEditor = createEditor;
   window.pythonHint = pythonHint;
-  window.reLintAll = () => {
-    Object.entries(editorsMap).forEach(([id, ed]) => programarLint(ed, id));
-  };
 })();

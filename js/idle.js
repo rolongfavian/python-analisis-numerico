@@ -1,7 +1,7 @@
 /* ============================================
    idle.js — IDLE general (sin Drive)
    Editor libre de Python con archivos en localStorage
-   v3 - Con log de diagnóstico para la tienda
+   v4 - Sin tienda, con botón Limpiar
    ============================================ */
 
 (function () {
@@ -232,7 +232,7 @@
   }
 
   // ============================================================
-  // GUARDAR EN LOCALSTORAGE (interno)
+  // GUARDAR
   // ============================================================
   function guardarEnLocalStorage(nombre, codigo, tipo) {
     const archivos = leerArchivos();
@@ -404,31 +404,6 @@
   }
 
   // ============================================================
-  // ABRIR TIENDA DESDE EL IDLE (con diagnóstico)
-  // ============================================================
-  function abrirTiendaDesdeIdle() {
-    console.log('[idle] Pulsado botón Tienda');
-    console.log('[idle] typeof window.abrirTienda =', typeof window.abrirTienda);
-
-    if (typeof window.abrirTienda === 'function') {
-      try {
-        window.abrirTienda();
-        console.log('[idle] abrirTienda() llamado OK');
-      } catch (e) {
-        console.error('[idle] Error al llamar abrirTienda():', e);
-        if (typeof showToast === 'function') {
-          showToast('Error al abrir la tienda: ' + e.message, true);
-        }
-      }
-    } else {
-      console.warn('[idle] La tienda no está disponible');
-      if (typeof showToast === 'function') {
-        showToast('La tienda no está disponible. Revisa la consola.', true);
-      }
-    }
-  }
-
-  // ============================================================
   // UTILIDADES .IPYNB
   // ============================================================
   function buildIpynb(codigo, nombre) {
@@ -469,7 +444,7 @@
 
   function escapeHtml(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+      .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
   }
 
   // ============================================================
@@ -498,7 +473,7 @@
   }
 
   // ============================================================
-  // TIRADOR DE REDIMENSIÓN DEL OUTPUT
+  // TIRADOR DE REDIMENSIÓN
   // ============================================================
   function initResizeHandle() {
     const handle = document.getElementById('idle-resize-handle');
@@ -604,7 +579,6 @@
   window.idleDescargar = idleDescargar;
   window.idleConvertir = idleConvertir;
   window.idleCargarEjemplo = idleCargarEjemplo;
-  window.abrirTiendaDesdeIdle = abrirTiendaDesdeIdle;
 
   window.buildIpynb = buildIpynb;
   window.extraerCodigoDeIpynb = extraerCodigoDeIpynb;
