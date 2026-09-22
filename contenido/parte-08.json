@@ -1,0 +1,496 @@
+{
+  "parte": 8,
+  "titulo": "Bucles",
+  "emoji": "🔄",
+  "descripcion": "Los bucles son la herramienta más poderosa de la programación: repetir código automáticamente. Aquí aprenderás for, while, range, break, continue y todo lo necesario para iterar. En análisis numérico, casi todo se resuelve con bucles.",
+  "temas": [
+    {
+      "id": "while",
+      "numero": "1",
+      "titulo": "while — Repetir mientras se cumpla algo",
+      "emoji": "🔁",
+      "subtitulo": "El bucle que se ejecuta mientras una condición sea verdadera",
+      "que_es": [
+        "<p><code>while</code> repite un bloque de código <strong>mientras la condición sea verdadera</strong>. Cuando la condición se vuelve falsa, el bucle termina.</p>",
+        "<p>Es el bucle más flexible: no necesitas saber cuántas veces vas a repetir. Solo dices \"mientras pase esto, sigue\".</p>",
+        "<p><strong>Cuidado:</strong> si la condición nunca se vuelve falsa, el bucle es <strong>infinito</strong> y el programa se cuelga. Siempre hay que asegurarse de que algo cambie dentro del bucle para que eventualmente termine.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa cuando no sabes de antemano cuántas iteraciones harás:</p>",
+        "<ul><li><strong>Menús interactivos</strong>: repetir hasta que el usuario elija salir.</li><li><strong>Métodos numéricos</strong>: repetir hasta que el error sea pequeño.</li><li><strong>Juegos</strong>: repetir hasta que alguien gane.</li><li><strong>Validaciones</strong>: repetir hasta que el usuario dé un dato válido.</li></ul>",
+        "<p>En análisis numérico, prácticamente todos los métodos iterativos (bisección, Newton, punto fijo) usan <code>while</code> con criterio de parada.</p>"
+      ],
+      "sintaxis": "while condicion:\n    # código que se repite\n    # (algo debe cambiar para que la condición se vuelva falsa)",
+      "ejemplos": [
+        {
+          "titulo": "El while más simple: contar del 1 al 5",
+          "codigo": "i = 1\nwhile i <= 5:\n    print(i)\n    i += 1\n\nprint(\"Fin\")",
+          "explicacion": [
+            "<p>El bucle imprime del 1 al 5:</p>",
+            "<ul><li>Empieza con <code>i = 1</code>.</li><li>Mientras <code>i &lt;= 5</code>, imprime y suma 1.</li><li>Cuando i vale 6, la condición falla y sale.</li></ul>",
+            "<p><strong>Importante:</strong> sin el <code>i += 1</code>, el bucle es infinito porque i nunca cambia.</p>"
+          ]
+        },
+        {
+          "titulo": "El error más común: bucle infinito",
+          "codigo": "# ¡NO HAGAS ESTO! Bucle infinito\ni = 1\nwhile i <= 5:\n    print(i)\n    # Falta i += 1",
+          "explicacion": [
+            "<p>Si olvidas modificar la variable, la condición <code>i &lt;= 5</code> siempre es True (i siempre vale 1), y el bucle nunca termina.</p>",
+            "<p>El programa se queda colgado y hay que cerrarlo manualmente.</p>",
+            "<p>Si te pasa, en el navegador puedes cerrar la pestaña. En la terminal, <kbd>Ctrl</kbd>+<kbd>C</kbd>.</p>"
+          ]
+        },
+        {
+          "titulo": "While con doble criterio",
+          "codigo": "x = 1.0\ntol = 1e-6\nmax_iter = 100\nk = 0\n\nwhile abs(x**2 - 2) > tol and k < max_iter:\n    x = (x + 2/x) / 2   # Método de Newton para sqrt(2)\n    k += 1\n\nprint(f\"x = {x:.10f}\")\nprint(f\"Iteraciones: {k}\")",
+          "explicacion": [
+            "<p>En análisis numérico, siempre se usan dos criterios para cortar:</p>",
+            "<ul><li><strong>Convergencia</strong>: <code>abs(f(x)) &lt; tol</code>.</li><li><strong>Seguridad</strong>: <code>k &lt; max_iter</code>.</li></ul>",
+            "<p>Así el bucle termina si converge <strong>o</strong> si se superan las iteraciones máximas. Nunca se cuelga.</p>"
+          ]
+        },
+        {
+          "titulo": "While con condición que cambia",
+          "codigo": "activo = True\ncontador = 0\n\nwhile activo:\n    contador += 1\n    print(f\"Vuelta {contador}\")\n    if contador >= 3:\n        activo = False\n\nprint(\"Fin del bucle\")",
+          "explicacion": [
+            "<p>La condición puede ser una variable que cambia según lo que ocurra dentro del bucle.</p>",
+            "<p>Es muy útil para menús: <code>while ejecutando:</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "while i <= 5:\n    print(i)",
+          "razon": "No se modifica i, bucle infinito.",
+          "correcto": "while i <= 5:\n    print(i)\n    i += 1"
+        },
+        {
+          "error": "while True:  sin break",
+          "razon": "Bucle infinito. Si usas while True, asegúrate de que haya un break dentro.",
+          "correcto": "while True:\n    # algo\n    if condicion:\n        break"
+        },
+        {
+          "error": "while x != 0.3:",
+          "razon": "Comparar floats con != puede dar bucles infinitos por imprecisión. Usa tolerancia.",
+          "correcto": "while abs(x - 0.3) > 1e-10:"
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> antes de escribir un while, pregúntate: ¿qué tiene que cambiar para que el bucle termine? Si no hay respuesta clara, cuidado.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en análisis numérico, siempre usa <code>and k &lt; max_iter</code> como segundo criterio. Te salva de bucles infinitos si el método diverge.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para probar rápido, añade un contador temporal: <code>k += 1; if k &gt; 20: break</code>.</p>"
+      ],
+      "ejercicios": [
+        "Imprime los números del 1 al 10 con un while.",
+        "Suma los números del 1 al 100 con un acumulador y while.",
+        "Repite hasta que el usuario introduzca un número positivo.",
+        "Implementa el método de Newton para sqrt(2) con while y doble criterio.",
+        "Imprime la tabla del 5 usando while."
+      ],
+      "resumen": "while repite mientras la condición sea True. Cuidado con los bucles infinitos: algo debe cambiar dentro para que termine. En análisis numérico, se usa con doble criterio (convergencia + máximo de iteraciones)."
+    },
+    {
+      "id": "for",
+      "numero": "2",
+      "titulo": "for — Iterar sobre una colección",
+      "emoji": "🔂",
+      "subtitulo": "El bucle que recorre elementos uno a uno",
+      "que_es": [
+        "<p><code>for</code> repite un bloque de código <strong>para cada elemento</strong> de una colección (lista, string, tupla, diccionario, rango, etc.).</p>",
+        "<p>Es el bucle más usado en Python porque es muy expresivo: dices \"para cada elemento en esta colección, haz esto\" y Python se encarga del resto.</p>",
+        "<p>A diferencia del <code>while</code>, no tienes que gestionar un contador manualmente. Python itera por ti.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa cuando quieres hacer algo con cada elemento de una colección:</p>",
+        "<ul><li><strong>Recorrer listas</strong>: sumar todos los números.</li><li><strong>Recorrer strings</strong>: contar vocales de una palabra.</li><li><strong>Recorrer rangos</strong>: repetir N veces.</li><li><strong>Recorrer diccionarios</strong>: procesar cada par clave-valor.</li></ul>",
+        "<p>En análisis numérico, se usa para iteraciones controladas (número fijo de pasos) o para construir tablas de valores.</p>"
+      ],
+      "sintaxis": "for elemento in coleccion:\n    # hacer algo con elemento\n\n# Con índice\nfor i, elemento in enumerate(coleccion):\n    # i es el índice, elemento es el valor",
+      "ejemplos": [
+        {
+          "titulo": "Recorrer una lista",
+          "codigo": "frutas = [\"manzana\", \"pera\", \"uva\"]\n\nfor fruta in frutas:\n    print(fruta)",
+          "explicacion": [
+            "<p>El bucle asigna cada elemento a la variable <code>fruta</code> y ejecuta el bloque:</p>",
+            "<ul><li>Primera vuelta: fruta = \"manzana\".</li><li>Segunda vuelta: fruta = \"pera\".</li><li>Tercera vuelta: fruta = \"uva\".</li></ul>",
+            "<p>Cuando no hay más elementos, el bucle termina.</p>"
+          ]
+        },
+        {
+          "titulo": "Recorrer un string carácter a carácter",
+          "codigo": "palabra = \"Python\"\n\nfor letra in palabra:\n    print(letra)",
+          "explicacion": [
+            "<p>Los strings también son iterables. El for recorre cada carácter.</p>",
+            "<p>Es útil para contar vocales, verificar si tiene ciertos caracteres, etc.</p>"
+          ]
+        },
+        {
+          "titulo": "Recorrer con índice: enumerate()",
+          "codigo": "frutas = [\"manzana\", \"pera\", \"uva\"]\n\nfor i, fruta in enumerate(frutas):\n    print(f\"{i}: {fruta}\")",
+          "explicacion": [
+            "<p><code>enumerate()</code> devuelve pares (índice, valor):</p>",
+            "<ul><li>0, \"manzana\"</li><li>1, \"pera\"</li><li>2, \"uva\"</li></ul>",
+            "<p>Es la forma pitónica de recorrer con índice. No necesitas llevar un contador manual.</p>",
+            "<p>Puedes empezar el índice en 1 con <code>enumerate(frutas, start=1)</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Recorrer un diccionario",
+          "codigo": "persona = {\"nombre\": \"Ana\", \"edad\": 25, \"ciudad\": \"Madrid\"}\n\n# Por claves (comportamiento por defecto)\nfor clave in persona:\n    print(clave)\n\n# Por pares clave-valor\nfor clave, valor in persona.items():\n    print(f\"{clave}: {valor}\")",
+          "explicacion": [
+            "<p>Al iterar un diccionario, por defecto se obtienen las claves.</p>",
+            "<p>Con <code>.items()</code> obtienes pares (clave, valor) para recorrer ambos a la vez:</p>",
+            "<ul><li><code>nombre: Ana</code></li><li><code>edad: 25</code></li><li><code>ciudad: Madrid</code></li></ul>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "for i in 5:",
+          "razon": "No puedes iterar sobre un número. Necesitas una colección.",
+          "correcto": "for i in range(5):"
+        },
+        {
+          "error": "for x in lista:\nlista.append(x)",
+          "razon": "Modificar una lista mientras la recorres puede causar comportamientos extraños.",
+          "correcto": "for x in lista[:]:   # iterar sobre una copia\n    lista.append(x)"
+        },
+        {
+          "error": "for x in lista:\n    print(x)\nprint(x)",
+          "razon": "No es error, pero la variable x sigue existiendo después del bucle con el último valor. Puede confundir.",
+          "correcto": "Ten cuidado con el scope de las variables del for."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> si necesitas el índice, usa <code>enumerate()</code> en vez de llevar un contador aparte.</p>",
+        "<p>💡 <strong>Truco 2:</strong> <code>zip()</code> permite recorrer varias listas en paralelo:</p>",
+        "<pre class='cmd-sintaxis'>nombres = [\"Ana\", \"Luis\"]\nedades = [25, 30]\nfor n, e in zip(nombres, edades):\n    print(f\"{n}: {e} años\")</pre>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, para iteraciones controladas por número fijo, el for con <code>range()</code> es más limpio que el while con contador.</p>",
+        "<p>💡 <strong>Truco 4:</strong> si solo necesitas repetir algo N veces sin usar el contador, usa <code>for _ in range(N):</code>.</p>"
+      ],
+      "ejercicios": [
+        "Recorre la lista ['a', 'b', 'c'] y muestra cada elemento.",
+        "Recorre la palabra 'Python' y muestra cada letra.",
+        "Usa `enumerate` para mostrar el índice y valor de [10, 20, 30].",
+        "Recorre un diccionario y muestra clave y valor.",
+        "Imprime los números del 1 al 10 con un for y range."
+      ],
+      "resumen": "for recorre los elementos de una colección uno a uno. Se usa con listas, strings, diccionarios, rangos. enumerate() da índice, zip() combina listas. Es el bucle más usado en Python."
+    },
+    {
+      "id": "range",
+      "numero": "3",
+      "titulo": "range() — Generar secuencias de números",
+      "emoji": "🔢",
+      "subtitulo": "La forma más común de iterar un número fijo de veces",
+      "que_es": [
+        "<p><code>range()</code> genera una secuencia de números. Se usa casi siempre con <code>for</code> para repetir algo N veces.</p>",
+        "<p>Admite 1, 2 o 3 argumentos:</p>",
+        "<ul><li><code>range(n)</code> → de 0 a n-1.</li><li><code>range(inicio, fin)</code> → de inicio a fin-1.</li><li><code>range(inicio, fin, paso)</code> → con incremento.</li></ul>",
+        "<p><strong>Ojo:</strong> <code>range(5)</code> va del 0 al 4, no incluye el 5. Este es el error más común de principiante.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa en cualquier situación donde necesites iterar sobre números:</p>",
+        "<ul><li><strong>Repetir N veces</strong>: <code>for _ in range(10):</code>.</li><li><strong>Recorrer índices</strong>: <code>for i in range(len(lista)):</code>.</li><li><strong>Generar secuencias</strong>: pares, impares, múltiplos.</li><li><strong>Iteraciones controladas</strong>: máximo N iteraciones.</li></ul>"
+      ],
+      "sintaxis": "range(5)          # 0, 1, 2, 3, 4\nrange(2, 5)       # 2, 3, 4\nrange(0, 10, 2)   # 0, 2, 4, 6, 8\nrange(5, 0, -1)   # 5, 4, 3, 2, 1",
+      "ejemplos": [
+        {
+          "titulo": "Los 3 argumentos",
+          "codigo": "print(list(range(5)))         # [0, 1, 2, 3, 4]\nprint(list(range(2, 5)))      # [2, 3, 4]\nprint(list(range(0, 10, 2)))  # [0, 2, 4, 6, 8]\nprint(list(range(5, 0, -1)))  # [5, 4, 3, 2, 1]",
+          "explicacion": [
+            "<p><code>list(range(...))</code> convierte el objeto range en una lista visible:</p>",
+            "<ul><li><code>range(5)</code> → 0 a 4 (5 no incluido).</li><li><code>range(2, 5)</code> → 2 a 4.</li><li><code>range(0, 10, 2)</code> → 0, 2, 4, 6, 8 (paso 2).</li><li><code>range(5, 0, -1)</code> → 5, 4, 3, 2, 1 (paso negativo).</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Recorrer índices de una lista",
+          "codigo": "frutas = [\"manzana\", \"pera\", \"uva\"]\n\nfor i in range(len(frutas)):\n    print(f\"{i}: {frutas[i]}\")",
+          "explicacion": [
+            "<p>Esta es la forma tradicional de recorrer con índice.</p>",
+            "<p>Pero en Python se prefiere <code>enumerate()</code>, que es más limpio:</p>",
+            "<pre class='cmd-sintaxis'>for i, fruta in enumerate(frutas):\n    print(f\"{i}: {fruta}\")</pre>"
+          ]
+        },
+        {
+          "titulo": "Sumar los primeros 100 números",
+          "codigo": "suma = 0\nfor i in range(1, 101):\n    suma += i\n\nprint(suma)   # 5050",
+          "explicacion": [
+            "<p><code>range(1, 101)</code> va del 1 al 100 (101 no incluido).</p>",
+            "<p>Acumulas la suma de todos los números.</p>",
+            "<p><strong>Truco:</strong> Python tiene <code>sum()</code> que hace esto directo: <code>sum(range(1, 101))</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Tabla de multiplicar",
+          "codigo": "n = 7\nfor i in range(1, 11):\n    print(f\"{n} x {i} = {n * i}\")",
+          "explicacion": [
+            "<p>El clásico: generar una tabla de multiplicar.</p>",
+            "<p><code>range(1, 11)</code> da del 1 al 10. La f-string da formato.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "for i in range(1, 5):  esperando 1,2,3,4,5",
+          "razon": "range no incluye el final. Va del 1 al 4.",
+          "correcto": "for i in range(1, 6):"
+        },
+        {
+          "error": "for i in range(10, 0):",
+          "razon": "Con paso positivo, range(10, 0) está vacío. Va de 10 hacia arriba, no hacia abajo.",
+          "correcto": "for i in range(10, 0, -1):"
+        },
+        {
+          "error": "range(0.5, 5.0)",
+          "razon": "range solo acepta enteros. Da TypeError.",
+          "correcto": "Usa numpy.arange si necesitas decimales."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> memoriza: <code>range(inicio, fin)</code> va de <code>inicio</code> a <code>fin - 1</code>.</p>",
+        "<p>💡 <strong>Truco 2:</strong> para contar hacia atrás: <code>range(10, 0, -1)</code> → 10, 9, ..., 1.</p>",
+        "<p>💡 <strong>Truco 3:</strong> <code>for _ in range(N):</code> cuando no necesitas el índice. El <code>_</code> significa \"no me importa el valor\".</p>",
+        "<p>💡 <strong>Truco 4:</strong> <code>sum(range(1, 101))</code> es más limpio que un bucle para sumar.</p>"
+      ],
+      "ejercicios": [
+        "Imprime los números del 1 al 20 con range.",
+        "Imprime los números pares del 0 al 20 con range y paso.",
+        "Cuenta hacia atrás del 10 al 1.",
+        "Suma los números del 1 al 50 con un for y range.",
+        "Genera la tabla del 3 del 1 al 10."
+      ],
+      "resumen": "range() genera secuencias de números. Admite 1, 2 o 3 argumentos. No incluye el final. Se usa con for para repetir N veces o recorrer índices."
+    },
+    {
+      "id": "break-continue",
+      "numero": "4",
+      "titulo": "break, continue y pass",
+      "emoji": "⏭️",
+      "subtitulo": "Control fino dentro de los bucles",
+      "que_es": [
+        "<p>Estas tres palabras clave permiten controlar el flujo dentro de un bucle:</p>",
+        "<ul><li><code>break</code> → <strong>sale del bucle</strong> inmediatamente.</li><li><code>continue</code> → <strong>salta a la siguiente iteración</strong> sin ejecutar el resto.</li><li><code>pass</code> → <strong>no hace nada</strong>. Es un marcador de posición.</li></ul>",
+        "<p>Son muy útiles para cortar bucles cuando ya encontraste lo que buscabas, o para saltarte casos que no te interesan.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usan en situaciones específicas:</p>",
+        "<ul><li><strong>break</strong>: buscar en una lista y parar cuando encuentres.</li><li><strong>continue</strong>: saltar los elementos que no cumplen cierta condición.</li><li><strong>pass</strong>: dejar un bloque vacío temporalmente.</li></ul>"
+      ],
+      "sintaxis": "for i in range(10):\n    if i == 5:\n        break      # sale del bucle\n    print(i)\n\nfor i in range(5):\n    if i == 2:\n        continue   # salta el 2\n    print(i)\n\nif True:\n    pass   # no hace nada",
+      "ejemplos": [
+        {
+          "titulo": "break: salir cuando encuentres",
+          "codigo": "for i in range(1, 11):\n    print(i)\n    if i == 5:\n        break\n\nprint(\"Fin\")",
+          "explicacion": [
+            "<p>El bucle imprime del 1 al 5 y luego sale:</p>",
+            "<ul><li>Imprime 1, 2, 3, 4, 5.</li><li>Cuando i == 5, se ejecuta break y sale del bucle.</li><li>Nunca imprime 6, 7, 8, 9, 10.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "continue: saltar un caso",
+          "codigo": "for i in range(1, 6):\n    if i == 3:\n        continue\n    print(i)",
+          "explicacion": [
+            "<p>Imprime 1, 2, 4, 5. Se salta el 3:</p>",
+            "<ul><li>Cuando i == 3, <code>continue</code> salta al siguiente ciclo sin imprimir.</li></ul>",
+            "<p>Es útil para saltar casos especiales sin anidar código con ifs.</p>"
+          ]
+        },
+        {
+          "titulo": "pass: dejar un bloque vacío",
+          "codigo": "x = 5\n\nif x > 0:\n    pass   # TODO: implementar luego\nelse:\n    print(\"Es negativo\")",
+          "explicacion": [
+            "<p>Python no permite bloques vacíos. <code>pass</code> es un \"no-op\" que satisface esa regla.</p>",
+            "<p>Muy útil cuando estás escribiendo código y quieres dejar algo para después.</p>"
+          ]
+        },
+        {
+          "titulo": "break para buscar en una lista",
+          "codigo": "numeros = [10, 20, 30, 40, 50]\nbuscar = 30\n\nencontrado = False\nfor n in numeros:\n    if n == buscar:\n        encontrado = True\n        break\n\nif encontrado:\n    print(f\"{buscar} está en la lista\")\nelse:\n    print(f\"{buscar} no está\")",
+          "explicacion": [
+            "<p>Este patrón es muy común: buscar algo y parar cuando lo encuentres.</p>",
+            "<p>Sin <code>break</code>, seguiría recorriendo toda la lista sin necesidad.</p>",
+            "<p><strong>En Python hay una forma más simple:</strong> <code>if buscar in numeros:</code>.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "break fuera de un bucle",
+          "razon": "break y continue solo pueden ir dentro de for o while.",
+          "correcto": "Envuélvelo en un bucle."
+        },
+        {
+          "error": "continue antes de actualizar el contador en un while",
+          "razon": "Si haces continue antes de <code>i += 1</code>, el contador nunca cambia y el bucle es infinito.",
+          "correcto": "Actualiza el contador antes del continue, o al inicio del bucle."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> <code>break</code> solo sale del bucle más cercano. Si tienes bucles anidados, no sale de todos.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en Python, si buscas un elemento en una lista, usa <code>in</code> directamente. No hace falta bucle con break.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, <code>break</code> se usa para cortar el bucle cuando el método ya convergió:</p>",
+        "<pre class='cmd-sintaxis'>for k in range(max_iter):\n    x_nuevo = x - f(x) / df(x)\n    error = abs(x_nuevo - x)\n    x = x_nuevo\n    if error < tol:\n        break</pre>"
+      ],
+      "ejercicios": [
+        "Imprime los números del 1 al 10 y sal con break al llegar a 5.",
+        "Imprime los números del 1 al 10 saltando el 5 con continue.",
+        "Busca un elemento en una lista y sal con break al encontrarlo.",
+        "Usa `pass` para dejar un if vacío temporalmente.",
+        "Implementa un bucle que pare cuando el error sea menor que 1e-6."
+      ],
+      "resumen": "break sale del bucle, continue salta a la siguiente iteración, pass no hace nada. Son herramientas para controlar el flujo dentro de bucles."
+    },
+    {
+      "id": "bucles-anidados",
+      "numero": "5",
+      "titulo": "Bucles anidados",
+      "emoji": "🔁",
+      "subtitulo": "Un bucle dentro de otro bucle",
+      "que_es": [
+        "<p>Puedes poner un bucle dentro de otro. Esto se llama <strong>anidación</strong>. El bucle interno se ejecuta completo para cada iteración del bucle externo.</p>",
+        "<p>Si el bucle externo itera N veces y el interno M veces, el código interno se ejecuta <strong>N × M veces</strong>.</p>",
+        "<p>Los bucles anidados son útiles para recorrer estructuras bidimensionales (matrices, tablas), generar combinaciones, etc.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usan cuando necesitas hacer algo para cada combinación de dos cosas:</p>",
+        "<ul><li><strong>Matrices</strong>: recorrer filas y columnas.</li><li><strong>Tablas de multiplicar</strong>: para cada número, multiplicar por 1..10.</li><li><strong>Combinaciones</strong>: todas las parejas posibles.</li><li><strong>Algoritmos de ordenamiento</strong>: comparar todos con todos.</li></ul>"
+      ],
+      "sintaxis": "for i in range(N):\n    for j in range(M):\n        # código que se ejecuta N*M veces",
+      "ejemplos": [
+        {
+          "titulo": "Tabla de multiplicar 3x3",
+          "codigo": "for i in range(1, 4):\n    for j in range(1, 4):\n        print(f\"{i}x{j}={i*j}\", end=\"  \")\n    print()   # salto de línea al final de cada fila",
+          "explicacion": [
+            "<p>El bucle externo va por las filas (i = 1, 2, 3). El interno, por las columnas (j = 1, 2, 3).</p>",
+            "<p>Para cada i, el j recorre 1, 2, 3. Se imprimen 9 productos en 3 filas de 3.</p>",
+            "<p><code>end=\"  \"</code> evita el salto de línea para que todo quede en la misma fila. El <code>print()</code> final hace el salto de fila.</p>"
+          ]
+        },
+        {
+          "titulo": "Recorrer una matriz (lista de listas)",
+          "codigo": "matriz = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]\n\nfor i in range(len(matriz)):\n    for j in range(len(matriz[i])):\n        print(matriz[i][j], end=\" \")\n    print()",
+          "explicacion": [
+            "<p>Una matriz es una lista de listas. El bucle externo recorre las filas, el interno las columnas.</p>",
+            "<p>Para cada <code>i</code>, el <code>j</code> recorre los elementos de la fila <code>i</code>.</p>"
+          ]
+        },
+        {
+          "titulo": "Forma más pitónica de recorrer una matriz",
+          "codigo": "matriz = [\n    [1, 2, 3],\n    [4, 5, 6],\n    [7, 8, 9]\n]\n\nfor fila in matriz:\n    for elemento in fila:\n        print(elemento, end=\" \")\n    print()",
+          "explicacion": [
+            "<p>Python permite iterar directamente sobre los elementos sin usar índices. Es más limpio.</p>",
+            "<p>Usa esta forma siempre que no necesites los índices.</p>"
+          ]
+        },
+        {
+          "titulo": "Todas las parejas posibles",
+          "codigo": "colores = [\"rojo\", \"verde\", \"azul\"]\ntallas = [\"S\", \"M\", \"L\"]\n\nfor color in colores:\n    for talla in tallas:\n        print(f\"{color} - {talla}\")",
+          "explicacion": [
+            "<p>El bucle externo itera colores, el interno tallas.</p>",
+            "<p>El resultado son todas las combinaciones: 3 × 3 = 9.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Usar i en ambos bucles",
+          "razon": "El bucle interno sobrescribe la variable i del externo. Usa nombres distintos (i, j) o (fila, columna).",
+          "correcto": "for i in range(3):\n    for j in range(3):\n        ..."
+        },
+        {
+          "error": "break solo rompe el bucle interno",
+          "razon": "Si tienes bucles anidados, break solo sale del más cercano, no de todos.",
+          "correcto": "Usa una variable bandera o una función para salir de ambos."
+        },
+        {
+          "error": "Anidar 3 o 4 bucles",
+          "razon": "A partir de 3 niveles, el código se vuelve difícil de leer y lento.",
+          "correcto": "Usa funciones, listas por comprensión o librerías como numpy."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> si ves 3 bucles anidados, reconsidera el diseño. Casi siempre hay una forma más limpia.</p>",
+        "<p>💡 <strong>Truco 2:</strong> en análisis numérico, matrices de 2D se manejan mejor con numpy que con listas anidadas.</p>",
+        "<p>💡 <strong>Truco 3:</strong> para imprimir tablas alineadas, usa f-strings con formato: <code>f\"{x:8.4f}\"</code>.</p>"
+      ],
+      "ejercicios": [
+        "Imprime la tabla de multiplicar del 1 al 5 usando bucles anidados.",
+        "Recorre una matriz 3x3 e imprime cada elemento.",
+        "Genera todas las combinaciones de ['a', 'b'] con [1, 2].",
+        "Imprime un triángulo de asteriscos de 5 filas.",
+        "Calcula la suma de todos los elementos de una matriz."
+      ],
+      "resumen": "Los bucles anidados ejecutan el interno completo por cada iteración del externo. Son útiles para matrices y combinaciones. A partir de 3 niveles, mejor buscar alternativas."
+    },
+    {
+      "id": "else-bucles",
+      "numero": "6",
+      "titulo": "else en bucles (for...else, while...else)",
+      "emoji": "🎭",
+      "subtitulo": "Una característica única de Python",
+      "que_es": [
+        "<p>Python tiene una característica que casi ningún otro lenguaje tiene: los bucles <code>for</code> y <code>while</code> pueden llevar un <code>else</code>.</p>",
+        "<p>El <code>else</code> del bucle se ejecuta <strong>solo si el bucle terminó sin encontrar un break</strong>. Es decir, si el bucle se agotó normalmente, sin haber salido por break.</p>",
+        "<p>Es muy útil para detectar \"no encontrado\" sin usar banderas.</p>"
+      ],
+      "para_que_sirve": [
+        "<p>Se usa cuando quieres hacer algo solo si el bucle NO se interrumpió:</p>",
+        "<ul><li><strong>Búsquedas</strong>: si no encontraste el elemento, haz algo.</li><li><strong>Convergencia</strong>: si el método no convergió, avisa.</li><li><strong>Validaciones</strong>: si no se cumplió ninguna condición, actuar.</li></ul>"
+      ],
+      "sintaxis": "for x in coleccion:\n    if condicion:\n        break\nelse:\n    # se ejecuta si NO hubo break\n\nwhile condicion:\n    if algo:\n        break\nelse:\n    # se ejecuta si NO hubo break",
+      "ejemplos": [
+        {
+          "titulo": "Buscar sin break",
+          "codigo": "numeros = [10, 20, 30, 40]\nbuscar = 25\n\nfor n in numeros:\n    if n == buscar:\n        print(f\"Encontrado: {n}\")\n        break\nelse:\n    print(f\"{buscar} no está en la lista\")",
+          "explicacion": [
+            "<p>El <code>else</code> se ejecuta solo si el for terminó sin break.</p>",
+            "<ul><li>Si encuentra el número, hace break y <strong>no</strong> entra al else.</li><li>Si no lo encuentra, el for termina normal y entra al else.</li></ul>"
+          ]
+        },
+        {
+          "titulo": "Detectar convergencia",
+          "codigo": "def biseccion(f, a, b, tol=1e-8, max_iter=50):\n    for k in range(max_iter):\n        c = (a + b) / 2\n        if abs(f(c)) < tol:\n            print(f\"Convergió en iter {k}: c = {c}\")\n            break\n        if f(a) * f(c) < 0:\n            b = c\n        else:\n            a = c\n    else:\n        print(\"No convergió en max_iter\")\n\nf = lambda x: x**3 - x - 2\nbiseccion(f, 1, 2)",
+          "explicacion": [
+            "<p>Si el método converge, sale por break y el <code>else</code> no se ejecuta.</p>",
+            "<p>Si se agotan las iteraciones sin converger, entra al <code>else</code>.</p>",
+            "<p>Es una forma limpia de manejar ambos casos sin variables extra.</p>"
+          ]
+        },
+        {
+          "titulo": "Sin else: usando una bandera",
+          "codigo": "# Sin else: usando una bandera\nencontrado = False\nfor n in [10, 20, 30]:\n    if n == 25:\n        encontrado = True\n        break\n\nif not encontrado:\n    print(\"No encontrado\")",
+          "explicacion": [
+            "<p>Antes de que existiera el else del bucle, se usaba una bandera. Funciona, pero es más largo.</p>",
+            "<p>Con <code>else</code> del bucle, te ahorras la variable y el if extra.</p>"
+          ]
+        }
+      ],
+      "errores_comunes": [
+        {
+          "error": "Pensar que el else del bucle se ejecuta siempre",
+          "razon": "No. Solo se ejecuta si el bucle NO salió por break.",
+          "correcto": "El else es el \"plan B\" si el for/while se agotó normalmente."
+        },
+        {
+          "error": "Confundir else del if con else del bucle",
+          "razon": "El else del if se ejecuta cuando la condición es False. El else del bucle, cuando no hubo break.",
+          "correcto": "Son conceptos distintos aunque usen la misma palabra."
+        }
+      ],
+      "tips": [
+        "<p>💡 <strong>Truco 1:</strong> el else del bucle no es obligatorio. Si no lo necesitas, no lo pongas.</p>",
+        "<p>💡 <strong>Truco 2:</strong> algunos programadores lo consideran confuso. Es cuestión de gustos. Si tu equipo lo evita, respétalo.</p>",
+        "<p>💡 <strong>Truco 3:</strong> en análisis numérico, es muy útil para detectar convergencia:</p>",
+        "<pre class='cmd-sintaxis'>for k in range(max_iter):\n    if error < tol:\n        print(\"Convergió\")\n        break\nelse:\n    print(\"No convergió en max_iter\")</pre>"
+      ],
+      "ejercicios": [
+        "Busca si el número 25 está en [10, 20, 30] y usa else para avisar.",
+        "Usa for/else para detectar si un método convergió.",
+        "Reescribe un bucle con bandera usando for/else.",
+        "Comprueba si todos los elementos de una lista son positivos con for/else."
+      ],
+      "resumen": "El else del bucle se ejecuta solo si el for/while termina sin break. Es una forma limpia de detectar que no se encontró lo que buscabas."
+    }
+  ]
+}
