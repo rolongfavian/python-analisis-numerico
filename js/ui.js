@@ -136,6 +136,47 @@
   }
 
   // ============================================================
+  // MOSTRAR / CERRAR VISTA DEL ENTORNO (ADMIN)
+  // ============================================================
+  function showEntorno() {
+    if (!esAdmin()) {
+      showToast('Esta función solo está disponible para administradores', true);
+      return;
+    }
+
+    // Ocultar la guía
+    const guia = document.querySelector('.container');
+    if (guia) guia.style.display = 'none';
+
+    // Mostrar el entorno
+    const entorno = document.getElementById('view-entorno');
+    if (entorno) entorno.style.display = 'block';
+
+    // Cerrar el menú lateral
+    closeMenu();
+
+    // Refrescar la lista de Drive si hay token
+    if (typeof window.actualizarListaArchivos === 'function'
+        && typeof window.getDriveToken === 'function'
+        && window.getDriveToken()) {
+      window.actualizarListaArchivos();
+    }
+  }
+
+  function cerrarEntorno() {
+    const entorno = document.getElementById('view-entorno');
+    if (entorno) entorno.style.display = 'none';
+
+    const guia = document.querySelector('.container');
+    if (guia) guia.style.display = '';
+
+    // Volver a cargar la guía según el hash
+    if (typeof window.cargarSegunHash === 'function') {
+      window.cargarSegunHash();
+    }
+  }
+
+  // ============================================================
   // EXPOSICIÓN GLOBAL
   // ============================================================
   window.toggleMenu = toggleMenu;
@@ -148,4 +189,6 @@
   window.confirmarAvisoDescarga = confirmarAvisoDescarga;
   window.cancelarAvisoDescarga = cancelarAvisoDescarga;
   window.mostrarVista = mostrarVista;
+  window.showEntorno = showEntorno;
+  window.cerrarEntorno = cerrarEntorno;
 })();
