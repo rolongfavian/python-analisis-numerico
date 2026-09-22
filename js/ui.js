@@ -1,6 +1,6 @@
 /* ============================================
    ui.js — Menú hamburguesa, toasts, admin mode, aviso descarga
-   v3 - Adaptado a la web unificada
+   v4 - Añade showEntorno y cerrarEntorno
    ============================================ */
 
 (function () {
@@ -64,7 +64,43 @@
   }
 
   // ============================================================
-  // AVISO DE DESCARGA (para la tienda)
+  // MOSTRAR / CERRAR VISTA DEL ENTORNO (ADMIN)
+  // ============================================================
+  function showEntorno() {
+    if (!esAdmin()) {
+      showToast('Esta función solo está disponible para administradores', true);
+      return;
+    }
+
+    const guia = document.querySelector('.container');
+    if (guia) guia.style.display = 'none';
+
+    const entorno = document.getElementById('view-entorno');
+    if (entorno) entorno.style.display = 'flex';
+
+    closeMenu();
+
+    if (typeof window.actualizarListaArchivos === 'function'
+        && typeof window.getDriveToken === 'function'
+        && window.getDriveToken()) {
+      window.actualizarListaArchivos();
+    }
+  }
+
+  function cerrarEntorno() {
+    const entorno = document.getElementById('view-entorno');
+    if (entorno) entorno.style.display = 'none';
+
+    const guia = document.querySelector('.container');
+    if (guia) guia.style.display = '';
+
+    if (typeof window.cargarSegunHash === 'function') {
+      window.cargarSegunHash();
+    }
+  }
+
+  // ============================================================
+  // AVISO DE DESCARGA
   // ============================================================
   let avisoDescargaCallback = null;
 
@@ -98,12 +134,10 @@
   // NAVEGACIÓN ENTRE VISTAS
   // ============================================================
   function mostrarVista(nombre) {
-    // Ocultar todas las vistas
     document.querySelectorAll('.view-container').forEach(v => {
       v.style.display = 'none';
     });
 
-    // Mostrar la que toca
     const vista = document.getElementById('view-' + nombre);
     if (vista) vista.style.display = '';
   }
@@ -112,18 +146,15 @@
   // INIT
   // ============================================================
   function init() {
-    // Escape cierra el menú
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         closeMenu();
-        // También cierra el aviso de descarga si está abierto
         if (document.getElementById('modal-aviso-descarga')?.classList.contains('open')) {
           cancelarAvisoDescarga();
         }
       }
     });
 
-    // Detectar modo admin al inicio
     if (esAdmin()) {
       activarModoAdmin();
     }
@@ -133,47 +164,6 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
-  }
-
-  // ============================================================
-  // MOSTRAR / CERRAR VISTA DEL ENTORNO (ADMIN)
-  // ============================================================
-  function showEntorno() {
-    if (!esAdmin()) {
-      showToast('Esta función solo está disponible para administradores', true);
-      return;
-    }
-
-    // Ocultar la guía
-    const guia = document.querySelector('.container');
-    if (guia) guia.style.display = 'none';
-
-    // Mostrar el entorno
-    const entorno = document.getElementById('view-entorno');
-    if (entorno) entorno.style.display = 'block';
-
-    // Cerrar el menú lateral
-    closeMenu();
-
-    // Refrescar la lista de Drive si hay token
-    if (typeof window.actualizarListaArchivos === 'function'
-        && typeof window.getDriveToken === 'function'
-        && window.getDriveToken()) {
-      window.actualizarListaArchivos();
-    }
-  }
-
-  function cerrarEntorno() {
-    const entorno = document.getElementById('view-entorno');
-    if (entorno) entorno.style.display = 'none';
-
-    const guia = document.querySelector('.container');
-    if (guia) guia.style.display = '';
-
-    // Volver a cargar la guía según el hash
-    if (typeof window.cargarSegunHash === 'function') {
-      window.cargarSegunHash();
-    }
   }
 
   // ============================================================

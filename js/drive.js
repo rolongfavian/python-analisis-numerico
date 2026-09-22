@@ -1,6 +1,6 @@
 /* ============================================
    drive.js — Google Drive + explorador + OAuth oculto
-   v15 - Adaptado a la web unificada con admin oculto
+   v16 - Adaptado a la vista entorno rediseñada como IDLE
    ============================================ */
 
 (function () {
@@ -28,8 +28,8 @@
     const name = (file.name || '').toLowerCase();
     const isFolder = file.mimeType === 'application/vnd.google-apps.folder';
     if (isFolder) return '<span class="material-symbols-outlined" style="color:#f4b942">folder</span>';
-    if (name.endsWith('.py')) return '<img src="iconos/python.svg" alt="Python" style="width:18px;height:18px;">';
-    if (name.endsWith('.ipynb')) return '<img src="iconos/jupyter.svg" alt="Jupyter" style="width:18px;height:18px;">';
+    if (name.endsWith('.py')) return '<span class="material-symbols-outlined" style="color:#4ec9b0">code</span>';
+    if (name.endsWith('.ipynb')) return '<span class="material-symbols-outlined" style="color:#f4b942">description</span>';
     return '<span class="material-symbols-outlined" style="color:var(--text-dim)">draft</span>';
   }
 
@@ -453,7 +453,6 @@
     const ipynb = buildIpynb(code, nombre);
     const contenido = JSON.stringify(ipynb, null, 1);
 
-    // Si hay Drive, preguntar; si no, descargar
     if (!driveToken) {
       const ok = confirm(`Vas a generar "${nombreIpynb}".\n\n¿Descargar el archivo ahora?`);
       if (!ok) { showToast('Generación cancelada'); return; }
@@ -564,6 +563,73 @@
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;')
       .replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
   }
+
+  // ============================================================
+  // TIRADOR DE REDIMENSIÓN DEL ENTORNO
+  // ============================================================
+  (function initEntornoResizeHandle() {
+    function setup() {
+      const handle = document.getElementById('entorno-resize-handle');
+      const output = document.getElementById('entorno-output');
+      const modal = document.querySelector('.entorno-box');
+      if (!handle || !output || !modal) return;
+
+      let dragging = false;
+      let startY = 0;
+      let startH = 0;
+
+      function iniciar(clientY) {
+        dragging = true;
+        startY = clientY;
+        startH = output.offsetHeight;
+        document.body.style.cursor = 'ns-resize';
+        document.body.style.userSelect = 'none';
+      }
+
+      function mover(clientY) {
+        if (!dragging) return;
+        const delta = startY - clientY;
+        let nuevaAltura = startH + delta;
+        const alturaModal = modal.offsetHeight;
+        const maxH = alturaModal * 0.6;
+        if (nuevaAltura < 160) nuevaAltura = 160;
+        if (nuevaAltura > maxH) nuevaAltura = maxH;
+        output.style.height = nuevaAltura + 'px';
+        const ed = (typeof editorsMap !== 'undefined') ? editorsMap['entorno-editor'] : null;
+        if (ed) { try { ed.refresh(); } catch (e) {} }
+      }
+
+      function terminar() {
+        dragging = false;
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      }
+
+      handle.addEventListener('mousedown', (e) => {
+        e.preventDefault();
+        iniciar(e.clientY);
+      });
+      document.addEventListener('mousemove', (e) => mover(e.clientY));
+      document.addEventListener('mouseup', terminar);
+
+      handle.addEventListener('touchstart', (e) => {
+        iniciar(e.touches[0].clientY);
+      }, { passive: true });
+      document.addEventListener('touchmove', (e) => {
+        if (dragging) {
+          e.preventDefault();
+          mover(e.touches[0].clientY);
+        }
+      }, { passive: false });
+      document.addEventListener('touchend', terminar);
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', setup);
+    } else {
+      setup();
+    }
+  })();
 
   // ============================================================
   // EXPOSICIÓN GLOBAL

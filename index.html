@@ -7,7 +7,7 @@
 
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
 
-<!-- CodeMirror (para el entorno admin) -->
+<!-- CodeMirror -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/codemirror.min.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/hint/show-hint.min.css">
@@ -16,10 +16,10 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/closebrackets.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/6.65.7/addon/edit/matchbrackets.min.js"></script>
 
-<!-- Pyodide (se carga en background, no bloquea) -->
+<!-- Pyodide -->
 <script src="https://cdn.jsdelivr.net/pyodide/v0.25.0/full/pyodide.js" defer></script>
 
-<!-- Google Identity (solo si es admin) -->
+<!-- Google Identity -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <!-- MathJax -->
@@ -54,6 +54,10 @@ window.MathJax = {
   <button id="btn-idle" onclick="abrirIdle()" title="IDLE Python (Ctrl+Alt+I)">
     <span style="font-size:18px;line-height:1;">🐍</span>
     <span class="btn-buscar-label">IDLE</span>
+  </button>
+  <button id="btn-tienda" onclick="abrirTienda()" title="Tienda de extensiones">
+    <span class="material-symbols-outlined">storefront</span>
+    <span class="btn-buscar-label">Tienda</span>
   </button>
   <select id="theme-select" title="Tema">
     <option value="dark">Oscuro</option>
@@ -317,63 +321,88 @@ print(2 + 2)
 </div>
 
 <!-- ============================================================
-     VISTA DEL ENTORNO (SOLO ADMIN)
+     VISTA DEL ENTORNO (ADMIN) — Rediseñada como IDLE
      ============================================================ -->
 <div id="view-entorno" style="display:none;">
-  <div class="entorno-header">
-    <h2>🔧 Entorno de código</h2>
-    <button onclick="cerrarEntorno()">Volver a la guía</button>
-  </div>
+  <div class="modal-idle-box entorno-box">
 
-  <div class="entorno-layout">
-    <div class="entorno-sidebar">
-      <div class="entorno-breadcrumb" id="entorno-breadcrumb">
-        <span>🏠 Raíz</span>
-      </div>
-      <div class="entorno-acciones">
-        <button onclick="crearCarpeta()">
-          <span class="material-symbols-outlined">create_new_folder</span> Carpeta
-        </button>
-        <button onclick="crearNotebook()">
-          <span class="material-symbols-outlined">note_add</span> Notebook
-        </button>
-        <button onclick="crearPythonFile()">
-          <span class="material-symbols-outlined">code</span> .py
-        </button>
-        <button onclick="abrirSelectorImportar()">
-          <span class="material-symbols-outlined">upload_file</span> Importar
-        </button>
-        <button onclick="actualizarListaArchivos()">
-          <span class="material-symbols-outlined">refresh</span>
-        </button>
-      </div>
-      <input type="file" id="import-input" accept=".ipynb,.py" style="display:none" onchange="importarArchivo(event)">
+    <!-- Cabecera -->
+    <div class="idle-header">
+      <h3>
+        <span style="font-size:20px;">🔧</span>
+        Entorno · Drive
+      </h3>
+      <button class="idle-close" onclick="cerrarEntorno()" title="Volver a la guía">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+    </div>
+
+    <!-- Barra de acciones -->
+    <div class="idle-acciones">
+      <button onclick="crearCarpeta()" title="Nueva carpeta en Drive">
+        <span class="material-symbols-outlined">create_new_folder</span> Carpeta
+      </button>
+      <button onclick="crearNotebook()" title="Nuevo notebook .ipynb">
+        <span class="material-symbols-outlined">note_add</span> Notebook
+      </button>
+      <button onclick="crearPythonFile()" title="Nuevo archivo .py">
+        <span class="material-symbols-outlined">code</span> .py
+      </button>
+      <button onclick="abrirSelectorImportar()" title="Importar archivo local">
+        <span class="material-symbols-outlined">upload_file</span> Importar
+      </button>
+      <button onclick="actualizarListaArchivos()" title="Refrescar lista">
+        <span class="material-symbols-outlined">refresh</span>
+      </button>
+    </div>
+    <input type="file" id="import-input" accept=".ipynb,.py" style="display:none" onchange="importarArchivo(event)">
+
+    <!-- Breadcrumb -->
+    <div class="entorno-breadcrumb" id="entorno-breadcrumb">
+      <span>🏠 Raíz</span>
+    </div>
+
+    <!-- Lista de archivos de Drive -->
+    <div class="idle-lista-archivos" id="entorno-file-list-container">
       <ul class="entorno-archivos" id="entorno-file-list">
         <li class="empty">Conecta tu Drive para ver archivos</li>
       </ul>
     </div>
 
-    <div class="entorno-main">
-      <div class="entorno-toolbar">
-        <input type="text" id="entorno-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
-        <button class="primary" onclick="ejecutarCodigoEntorno()">
-          <span class="material-symbols-outlined">play_arrow</span> Ejecutar
-        </button>
-        <button onclick="guardarArchivoEntorno()">
-          <span class="material-symbols-outlined">save</span> Guardar
-        </button>
-        <button onclick="descargarIpynb()">
-          <span class="material-symbols-outlined">download</span> .ipynb
-        </button>
-        <button onclick="guardarComoIpynb()">
-          <span class="material-symbols-outlined">description</span> Generar .ipynb
-        </button>
-      </div>
-      <div class="entorno-editor-wrap">
-        <textarea id="entorno-editor"></textarea>
-      </div>
-      <div class="entorno-output" id="entorno-output">Presiona Ejecutar para ver el resultado...</div>
+    <!-- Toolbar de ejecución -->
+    <div class="idle-toolbar">
+      <button onclick="idleCargarEjemplo()" title="Cargar un ejemplo">
+        <span class="material-symbols-outlined">menu_book</span> Ejemplos
+      </button>
+      <input type="text" id="entorno-filename" value="nuevo.ipynb" placeholder="nombre.ipynb">
+      <button class="primary" onclick="ejecutarCodigoEntorno()">
+        <span class="material-symbols-outlined">play_arrow</span> Ejecutar
+      </button>
+      <button onclick="guardarArchivoEntorno()" title="Guardar en Drive">
+        <span class="material-symbols-outlined">save</span> Guardar
+      </button>
+      <button onclick="descargarIpynb()" title="Descargar como .ipynb">
+        <span class="material-symbols-outlined">download</span> Descargar
+      </button>
+      <button onclick="guardarComoIpynb()" title="Generar .ipynb y subir a Drive">
+        <span class="material-symbols-outlined">description</span> Generar
+      </button>
+      <button onclick="abrirTiendaDesdeIdle()" title="Tienda de extensiones">
+        <span class="material-symbols-outlined">storefront</span> Tienda
+      </button>
     </div>
+
+    <!-- Editor -->
+    <div class="idle-editor-wrap">
+      <textarea id="entorno-editor"></textarea>
+    </div>
+
+    <!-- Tirador de redimensión -->
+    <div class="idle-resize-handle" id="entorno-resize-handle" title="Arrastra para redimensionar la salida"></div>
+
+    <!-- Output -->
+    <div class="idle-output" id="entorno-output">Presiona Ejecutar para ver el resultado...</div>
+
   </div>
 </div>
 
@@ -395,7 +424,6 @@ print(2 + 2)
 <script src="js/tienda.js"></script>
 <script src="js/drive.js"></script>
 <script src="js/guardado.js"></script>
-<script src="js/explorador.js"></script>
 <script src="js/idle.js"></script>
 
 <script>
